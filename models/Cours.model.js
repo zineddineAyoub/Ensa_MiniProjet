@@ -2,13 +2,11 @@ const mongoose = require('mongoose')
 
 const Cours = new mongoose.Schema({
     Nom: {
-      type: String,
-      required: true
+      type: String
     },
 
    Fichier : {
-    type: String,
-    required: false
+    type: String
    },
 
 

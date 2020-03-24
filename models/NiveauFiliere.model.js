@@ -2,13 +2,11 @@ const mongoose = require('mongoose')
 
 const NiveauFiliere = new mongoose.Schema({
     filiere: {
-      type: String,
-      required: true
+      type: String
     },
 
     niveau: {
-      type:String,
-      required:true
+      type:String
     }
     
   })

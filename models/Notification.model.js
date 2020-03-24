@@ -3,27 +3,23 @@ const mongoose = require('mongoose')
 const Notification = new mongoose.Schema({
 
    sender : {
-    type: String,
-     required: true
+    type: String
    },
 
    receiver1 : {
-    type: String,
-     required: true
-   },
+    type: String
+     },
 
    receiver2 : {
-       type:String,
-       required:false
+       type:String
+      
    },
    
    content : {
-       type : String,
-       required : true
+       type : String  
    },
 
    date : {
-       required : false ,
        type: Date, 
        default: Date.now 
    }
