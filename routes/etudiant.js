@@ -38,7 +38,7 @@ router.route('/login').post((req,res)=>{
     if(!cne || !cin || !password){
         res.status(400).json({msg:'Enter Al fields'});
     }
-    Admin.findOne({cne})
+    Etudiant.findOne({cne})
     .then(user=>{
         if(!user){
             res.status.json({msg:'False Credentials'});
@@ -70,7 +70,7 @@ router.route('/login').post((req,res)=>{
 
 
 router.get('/user',auth,(req,res)=>{
-    Admin.findById(req.user.id)
+    Etudiant.findById(req.user.id)
     .then(user=>{
         res.json(user);
     })

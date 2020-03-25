@@ -2,7 +2,6 @@
 const express = require('express')
 const router = express.Router()
 const Prof = require('../models/Prof.model')
-const Etudiant=require('../models/Etudiant.model');
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 
@@ -40,7 +39,7 @@ router.route('/login').post((req,res)=>{
     if(!cin || !password){
         res.status(400).json({msg:'Enter Al fields'});
     }
-    Admin.findOne({cin})
+    Prof.findOne({cin})
     .then(user=>{
         if(!user){
             res.status.json({msg:'False Credentials'});
@@ -71,7 +70,7 @@ router.route('/login').post((req,res)=>{
 
 
 router.get('/user',auth,(req,res)=>{
-    Admin.findById(req.user.id)
+    Prof.findById(req.user.id)
     .then(user=>{
         res.json(user);
     })
