@@ -11,9 +11,7 @@ const Note = new mongoose.Schema({
 
     etudiant: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Etudiant'}
-
-    
+        ref: 'Etudiant'}  
   })
   
   module.exports = mongoose.model('Note', Note)

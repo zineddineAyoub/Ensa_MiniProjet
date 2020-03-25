@@ -1,13 +1,39 @@
-const express=require('express');
+
+const express = require('express')
+const router = express.Router()
+const Prof = require('../models/Prof.model')
 const Etudiant=require('../models/Etudiant.model');
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 
-const router=express.Router();
+// Getting all
+router.get('/', async (req, res) => {
+  try {
+    const profs= await Prof.find()
+    res.json(profs)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+ 
+})
 
-router.route('/').get((req,res)=>{
+// DELETE ALL
+router.delete('/', async (req, res) => {
+  Prof.deleteMany({}).then(
+    () => {
+      res.status(200).json({
+        message: 'Deleted!'
+      });
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
+  });
 
-});
 
 router.route('/login').post((req,res)=>{
     const {cne,cin,password}=req.body;
@@ -52,3 +78,4 @@ router.get('/user',auth,(req,res)=>{
 });
 
 module.exports=router;
+
