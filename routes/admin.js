@@ -8,12 +8,48 @@ const fs = require('fs');
 const generator = require('generate-password');
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
-
+const BusBoy = require('busboy');
 
 const router=express.Router();
 
 router.route('/').get((req,res)=>{
 
+});
+
+router.route('/sendExcel').post((req,res)=>{
+    const busboy = new BusBoy({ headers: req.headers });
+    
+    
+    let username;
+    let imageFileName;
+    res.send("nice haha");
+    console.log("yes");
+    
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        console.log("hhhhhhh");
+        
+      if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
+        return res.status(400).json({ msg: 'Wrong file type submitted' });
+      }
+      username=fieldname;
+      // my.image.png => ['my', 'image', 'png']
+      const imageExtension = filename.split('.')[filename.split('.').length - 1];
+      // 32756238461724837.png
+      imageFileName = `${Math.round(
+        Math.random() * 1000000000000
+      ).toString()}.${imageExtension}`;
+
+      console.log("haha");
+      console.log(imageFileName);
+      
+      
+     //const filepath = path.join('C://Users/Tarik Ouhamou/Desktop/Mern/chatApp/backend', `/uploads/${imageFileName}`);
+      //file.pipe(fs.createWriteStream(filepath));
+    });
+    busboy.on('finish', () => {
+       
+    });
+    req.pipe(busboy);
 });
 
 router.route('/login').post((req,res)=>{
