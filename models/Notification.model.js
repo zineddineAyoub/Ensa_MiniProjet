@@ -19,6 +19,10 @@ const Notification = new mongoose.Schema({
        type : String  
    },
 
+   read:{
+       type:Boolean
+   },
+   
    date : {
        type: Date, 
        default: Date.now 
