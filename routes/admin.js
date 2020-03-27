@@ -3,7 +3,7 @@ const express=require('express');
 const Admin=require('../models/Admin.model');
 const Etudiant=require('../models/Etudiant.model');
 const Prof=require('../models/Prof.model');
-const Module=require('../models/Module.model');
+//const Module =require('../models/Module.model');
 const Element=require('../models/Element.model');
 const NiveauFiliere_Module=require('../models/NiveauFiliere.model');
 //import packages
@@ -63,14 +63,15 @@ router.route('/login').post((req,res)=>{
     })
 });
 
-
 //ajoueter etudiants
 router.route('/ajouterEtudiant').post((req,res)=>{
-
-    const results = [];
     let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
 
-    fs.createReadStream('./Files/Etudiants1.csv')
+    const busboy = new BusBoy({ headers: req.headers });
+ 
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+   
+     file
       .pipe(csv())
       .on('data', (data) =>
       {
@@ -104,47 +105,60 @@ router.route('/ajouterEtudiant').post((req,res)=>{
         res.send("all data inserterd");
        
       });
+
+    });
+   
+    req.pipe(busboy);
+
 });
 
 
 //ajouter profs
 router.route('/ajouterProf').post((req,res)=>{
 
-    let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
+  let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
 
-     fs.createReadStream('./Files/Etudiants1.csv')
-       .pipe(csv())
-       .on('data', (data) =>
-       {
-         var password = generator.generate({
-             length: 6,
-             numbers: true
-         });
+    const busboy = new BusBoy({ headers: req.headers });
  
-         let mailOptions = {
-             // should be replaced with real recipient's account
-           //  from: 'zineddine.ayoub98@gmail.com',
-             to: data.email,
-             subject: "Site Officiel Ensa",
-             text: 'Login : '+data.email+'\n Password : '+password
-         };
- 
-        transporter.sendMail(mailOptions); 
- 
-         const prof = new Prof({
-             
-             nom:data.nom,
-             prenom:data.prenom,
-             cin:data.cin,
-             email:data.email,
-             password:password
-           })
-          prof.save();    
-       })
-       .on('end', () => {
-         res.send("all data inserterd");
-        
-       });
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+   
+     file
+      .pipe(csv())
+      .on('data', (data) =>
+      {
+        var password = generator.generate({
+            length: 6,
+            numbers: true
+        });
+
+        let mailOptions = {
+            // should be replaced with real recipient's account
+          //  from: 'zineddine.ayoub98@gmail.com',
+            to: data.email,
+            subject: "Site Officiel Ensa",
+            text: 'Login : '+data.email+'\n Password : '+password
+        };
+
+       transporter.sendMail(mailOptions);
+
+        const prof = new Prof({
+            
+            nom:data.nom,
+            prenom:data.prenom,
+            cin:data.cin,
+            email:data.email,
+            password:password
+          })
+         prof.save();    
+      })
+      .on('end', () => {
+        res.send("all data inserterd");
+       
+      });
+
+    });
+   
+    req.pipe(busboy);
 });
 
 
@@ -266,6 +280,7 @@ router.route('/addOneProf').post((req,res)=>{
     transporter.sendMail(mailOptions); 
 });
 
+/*
 //get all modules
 router.route('allModules').get((req,res)=>{
     Module.find()
@@ -274,7 +289,7 @@ router.route('allModules').get((req,res)=>{
     }).catch(err=>{
         res.json(err);
     })
-})
+})*/
 
 //ajouter module manuelement
 router.route('/ajoutOneModule').post((req,res)=>{
@@ -310,5 +325,9 @@ router.get('/user',auth,(req,res)=>{
         res.json(user);
     })
 });
+
+router.get('/ajouterNiveauFiliere',(req,res=>{
+    
+}))
 
 module.exports=router;
