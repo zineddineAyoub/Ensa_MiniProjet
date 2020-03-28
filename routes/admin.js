@@ -5,7 +5,8 @@ const Etudiant=require('../models/Etudiant.model');
 const Prof=require('../models/Prof.model');
 //const Module =require('../models/Module.model');
 const Element=require('../models/Element.model');
-const NiveauFiliere_Module=require('../models/NiveauFiliere.model');
+//const NiveauFiliere_Module=require('../models/NiveauFiliere.model');
+const NiveauFiliere = require('../models/NiveauFiliere.model');
 //import packages
 const csv = require('csv-parser');
 const nodeMailer = require('nodemailer');
@@ -16,6 +17,29 @@ const auth=require('../middleware/auth');
 const BusBoy = require('busboy');
 
 const router=express.Router();
+
+
+// Get the id of NiveauFiliere of the req.filiere&req.niveau
+const NiveauFiliereId=(niveau,filiere)=>{
+    const Id = NiveauFiliere.findOne({filiere:filiere,niveau:niveau});
+    return Id;
+}
+
+// TESTING
+router.post('/getId', async (req, res) => {
+    try {
+       // const data = await NiveauFiliereId(req.body.niveau,req.body.filiere);
+      const niveauFiliere= await NiveauFiliere.find({niveau:req.body.niveau,filiere:req.body.filiere});
+      //const niveauFiliere = NiveauFiliere.findOne({niveau,filiere});
+      console.log(niveauFiliere._id);
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ message: err.message })
+    }
+   
+  })
+  
+
 
 //mail Conf
 const mailConf=(user,pass)=>{
@@ -63,8 +87,18 @@ router.route('/login').post((req,res)=>{
     })
 });
 
+
+
+ 
+
 //ajoueter etudiants
 router.route('/ajouterEtudiant').post((req,res)=>{
+
+    const {niveau,filiere}=req.body;
+   const niveauFiliere = NiveauFiliere.findOne({niveau,filiere});
+   console.log(req.body);
+   
+
     let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
 
     const busboy = new BusBoy({ headers: req.headers });
@@ -317,8 +351,6 @@ router.route('/ajoutOneElement').post((req,res)=>{
     newElement.save();
 });
 
-
-
 router.get('/user',auth,(req,res)=>{
     Admin.findById(req.user.id)
     .then(user=>{
@@ -326,8 +358,18 @@ router.get('/user',auth,(req,res)=>{
     })
 });
 
-router.get('/ajouterNiveauFiliere',(req,res=>{
-    
-}))
+
+
+router.route('/ajouterNiveauFiliere').post((req,res)=>{
+    const {filiere,niveau}=req.body;
+    let newNiveauFiliere=new NiveauFiliere({
+        filiere,
+        niveau
+    });
+   const result =  newNiveauFiliere.save();
+   res.send("nice");
+});
+
+
 
 module.exports=router;
