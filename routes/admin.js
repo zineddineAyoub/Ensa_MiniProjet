@@ -90,21 +90,31 @@ router.route('/login').post((req,res)=>{
 
 
  
-
+// In form-data we send the csv file and key:filiere/value:informatique and key:niveau/value:CI1
+// We should send the two keys first then send the file
+// Cz the on('field') should fire before on('file')
 //ajoueter etudiants
 router.route('/ajouterEtudiant').post((req,res)=>{
 
-    const {niveau,filiere}=req.body;
-   const niveauFiliere = NiveauFiliere.findOne({niveau,filiere});
-   console.log(req.body);
+   // const {niveau,filiere}=req.body;
+   //const niveauFiliere = NiveauFiliere.findOne({niveau,filiere});
    
+   let formData = new Map();
 
     let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
 
     const busboy = new BusBoy({ headers: req.headers });
- 
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-   
+    
+    var Id;
+    var myId;
+    busboy.on('field',(fieldname, val) =>{
+        formData.set(fieldname, val);
+        
+    });
+
+    
+    
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {      
      file
       .pipe(csv())
       .on('data', (data) =>
@@ -123,17 +133,33 @@ router.route('/ajouterEtudiant').post((req,res)=>{
         };
 
        transporter.sendMail(mailOptions);
+       console.log( formData.get('filiere') + " and "+formData.get('niveau'));
 
-        const etudiant = new Etudiant({
+       const Id = NiveauFiliere.findOne({niveau:formData.get('niveau'),filiere:formData.get('filiere')},(err,obj)=>{
+       // console.log(obj);
+        myId = obj._id;
+        console.log("the id is "+myId);
+        
+        
+     }).then(()=>{
+         console.log("haha"+myId);
+         const etudiant = new Etudiant({
             
             nom:data.nom,
             prenom:data.prenom,
             cne:data.cne,
             cin:data.cin,
             email:data.email,
-            password:password
+            password:password,
+           niveauFiliere:myId
+            
           })
-         etudiant.save();    
+          console.log("done");
+          
+         etudiant.save();   
+     });
+
+        
       })
       .on('end', () => {
         res.send("all data inserterd");
