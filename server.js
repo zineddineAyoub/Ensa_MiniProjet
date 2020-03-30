@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const AdminRouter = require('./routes/admin')
 const etudiantRouter = require('./routes/etudiant')
 const profRouter = require('./routes/prof')
+const NiveauFiliereRouter = require('./routes/niveauFiliere');
 const cors=require('cors');
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use('/admin', AdminRouter);
 app.use('/etudiant', etudiantRouter);
 app.use('/prof', profRouter);
+app.use('/niveauFiliere', NiveauFiliereRouter);
 
 // Mongo Connection 
 mongoose.connect(process.env.DATABASE_URL, { useUnifiedTopology: true, useNewUrlParser: true}).catch((reason) => {

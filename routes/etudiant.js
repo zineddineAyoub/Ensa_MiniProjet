@@ -7,7 +7,7 @@ const auth=require('../middleware/auth');
 // Getting all
 router.get('/', async (req, res) => {
   try {
-    const etudiants= await Etudiant.find()
+    const etudiants= await Etudiant.find().populate('niveauFiliere');
     res.json(etudiants)
   } catch (err) {
     res.status(500).json({ message: err.message })
