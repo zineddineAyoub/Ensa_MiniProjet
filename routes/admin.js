@@ -19,27 +19,6 @@ const BusBoy = require('busboy');
 const router=express.Router();
 
 
-// Get the id of NiveauFiliere of the req.filiere&req.niveau
-const NiveauFiliereId=(niveau,filiere)=>{
-    const Id = NiveauFiliere.findOne({filiere:filiere,niveau:niveau});
-    return Id;
-}
-
-// TESTING
-router.post('/getId', async (req, res) => {
-    try {
-       // const data = await NiveauFiliereId(req.body.niveau,req.body.filiere);
-      const niveauFiliere= await NiveauFiliere.find({niveau:req.body.niveau,filiere:req.body.filiere});
-      //const niveauFiliere = NiveauFiliere.findOne({niveau,filiere});
-      console.log(niveauFiliere._id);
-      res.json(data);
-    } catch (err) {
-      res.status(500).json({ message: err.message })
-    }
-   
-  })
-  
-
 
 //mail Conf
 const mailConf=(user,pass)=>{
@@ -133,18 +112,12 @@ router.route('/ajouterEtudiant').post((req,res)=>{
         };
 
        transporter.sendMail(mailOptions);
-       console.log( formData.get('filiere') + " and "+formData.get('niveau'));
+      
 
        const Id = NiveauFiliere.findOne({niveau:formData.get('niveau'),filiere:formData.get('filiere')},(err,obj)=>{
-       // console.log(obj);
         myId = obj._id;
-        console.log("the id is "+myId);
-        
-        
      }).then(()=>{
-         console.log("haha"+myId);
          const etudiant = new Etudiant({
-            
             nom:data.nom,
             prenom:data.prenom,
             cne:data.cne,
