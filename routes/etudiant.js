@@ -32,11 +32,12 @@ router.delete('/', async (req, res) => {
   );
   });
 
-
+//Login 
 router.route('/login').post((req,res)=>{
     const {cne,cin,password}=req.body;
     if(!cne || !cin || !password){
-        res.status(400).json({msg:'Enter Al fields'});
+      console.log(req.body);
+      res.status(400).json({msg:'Enter Al fields'});
     }
     Etudiant.findOne({cne})
     .then(user=>{
@@ -68,13 +69,37 @@ router.route('/login').post((req,res)=>{
     })
 });
 
-
+//find Etudiant By Id 
 router.get('/user',auth,(req,res)=>{
     Etudiant.findById(req.user.id)
     .then(user=>{
         res.json(user);
     })
 });
+
+//Voir le Profil
+router.get("/:id",async (req,res)=>{
+  try{
+    const etudiants= await Etudiant.findById(req.params.id);
+    res.json(etudiants)
+  }catch(err){
+    res.json({message : err.message})
+  }
+});
+
+ //Modifier le profill
+ router.patch('/:id',async(req,res)=>{
+  try{
+    const updateEtudiant = await Etudiant.updateOne(
+      { _id : req.params.id},
+      { $set : { nom : req.body.nom, prenom:req.body.prenom , email:req.body.email,image:req.body.image ,password :req.body.password }}
+    );
+    res.json(updateEtudiant);
+  }catch(err){
+    res.json({message:err.message})
+  }
+});
+
 
 module.exports=router;
 
