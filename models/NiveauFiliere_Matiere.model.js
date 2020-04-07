@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
-const NiveauFiliere_Module = new mongoose.Schema({
+const NiveauFiliere_Matiere = new mongoose.Schema({
    
-   module: { 
+   matiere: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Module'},
+    ref: 'Matiere'},
 
     niveauFiliere: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -13,4 +13,4 @@ const NiveauFiliere_Module = new mongoose.Schema({
     
   })
   
-  module.exports = mongoose.model('NiveauFiliere_Module',NiveauFiliere_Module )
+  module.exports = mongoose.model('NiveauFiliere_Matiere',NiveauFiliere_Matiere )

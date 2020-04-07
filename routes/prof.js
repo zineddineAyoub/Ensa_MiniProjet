@@ -1,9 +1,10 @@
-
 const express = require('express')
 const router = express.Router()
 const Prof = require('../models/Prof.model')
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
+
+
 
 // Getting all
 router.get('/', async (req, res) => {
