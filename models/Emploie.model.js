@@ -11,6 +11,10 @@ const EmploieSchema=new Schema({
         type:String
     },
 
+    type:{
+        type:String
+    },
+
     niveauFiliere:{
         type:Schema.Types.ObjectId,
         ref:'NiveauFiliere'
