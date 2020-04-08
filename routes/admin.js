@@ -528,6 +528,42 @@ router.get('/NiveauFiliere_Matiere', async (req, res) => {
       res.status(500).json({ message: err.message })
     }
    
-  })
+  });
+
+  //add Emploie
+router.route('/addEmploie').post((req,res)=>{
+    //manage and save file in folder
+    //database
+    const busboy = new BusBoy({ headers: req.headers });
+    let formData = new Map();
+    let nameFile;
+    busboy.on('field',(fieldname, val) =>{
+        formData.set(fieldname, val);
+    });
+    busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+        nameFile=filename;
+        let appDir = path.dirname(require.main.filename);
+        let path2 = appDir.replace(/\\/g, "/");
+        let filepath = path.join(path2, `/emploie/${filename}`);
+        file.pipe(fs.createWriteStream(filepath));
+    });
+    busboy.on('finish',()=>{
+        let semestre=formData.get("semestre");
+        let niveauFiliere=formData.get("niveauFiliere");
+        let type=formData.get("type");
+        if(!semestre || !niveauFiliere || !type || !nameFile){
+            return res.status(400).json({msg:'Enter all fields'});
+        }
+        const emploie=new Emploie({
+            semestre,
+            filename:nameFile,
+            type,
+            niveauFiliere 
+        });
+        emploie.save();
+        res.json({semestre,filename:nameFile,type,niveauFiliere});
+    });
+    req.pipe(busboy);
+});
 
 module.exports=router;
