@@ -10,9 +10,9 @@ const Cours = new mongoose.Schema({
    },
 
 
-    element: { 
+    matiere: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Element'}
+        ref: 'Matiere'}
 
     
   })
