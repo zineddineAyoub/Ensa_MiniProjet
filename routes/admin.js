@@ -44,12 +44,12 @@ router.route('/').get((req,res)=>{
 router.route('/login').post((req,res)=>{
     const {username,password}=req.body;
     if(!username || !password){
-        res.status(400).json({msg:'Enter Al fields'});
+        return res.status(400).json({msg:'Enter Al fields'});
     }
     Admin.findOne({username})
     .then(user=>{
         if(!user){
-            res.status.json({msg:'False Credentials'});
+            return res.status(400).json({msg:'False Credentials'});
         }
         if(user.password==password){
             jwt.sign(
@@ -62,7 +62,8 @@ router.route('/login').post((req,res)=>{
                         token,
                         user:{
                             id:user._id,
-                            username:user.username
+                            username:user.username,
+                            type:user.type
                         }
                     })
                 }
