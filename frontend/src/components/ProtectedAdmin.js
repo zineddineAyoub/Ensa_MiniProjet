@@ -7,10 +7,11 @@ export default function(ComposedComponent){
             redirect:false
         }
         componentWillMount(){
-            let auth=localStorage.getItem('auth');
+            let auth=localStorage.getItem('authAdmin');
             let userType=localStorage.getItem('type');
-            if(auth==="false" && userType!=="admin"){
-                console.log("lol");
+            console.log(auth!=="true");
+            console.log(userType!=="prof");
+            if(auth!=="true" && userType!=="admin"){
                 this.setState({
                     redirect:true
                 });

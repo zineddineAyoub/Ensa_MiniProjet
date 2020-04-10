@@ -37,15 +37,15 @@ router.delete('/', async (req, res) => {
 
 router.route('/login').post((req,res)=>{
     const {email,cin,password}=req.body;
-    if(!cin || !password){
+    if(!email || !cin || !password){
         res.status(400).json({msg:'Enter Al fields'});
     }
     Prof.findOne({cin})
     .then(user=>{
-        if(!user){
+        if(!user || user.email!==email || user.password!==password){
             res.status.json({msg:'False Credentials'});
         }
-        if(user.password==password){
+        if(user.password==password && user.email==email){
             jwt.sign(
                 {id:user._id},
                 'secret',

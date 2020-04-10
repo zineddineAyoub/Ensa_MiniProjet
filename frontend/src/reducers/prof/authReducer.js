@@ -1,14 +1,14 @@
 import {
-    ADMIN_LOADED,
-    ADMIN_LOADING,
-    ADMIN_AUTH_ERROR,
-    ADMIN_LOGIN_SUCCESS,
-    ADMIN_LOGIN_FAIL,
-    ADMIN_LOGOUT_SUCCESS,
-  } from '../../actions/admin/types';
+    PROF_LOADED,
+    PROF_LOADING,
+    PROF_AUTH_ERROR,
+    PROF_LOGIN_SUCCESS,
+    PROF_LOGIN_FAIL,
+    PROF_LOGOUT_SUCCESS,
+  } from '../../actions/prof/types';
 
   const initialState={
-    token:localStorage.getItem('tokenAdmin'),
+    token:localStorage.getItem('tokenProf'),
     isAuthenticated:false,
     isLoading:false,
     user:null
@@ -16,14 +16,14 @@ import {
 
 export default function(state=initialState,action){
     switch(action.type){
-        case ADMIN_LOADING:
+        case PROF_LOADING:
             return{
                 ...state,
                 isLoading:true,
                 isAuthenticated:false
             }
-        case ADMIN_LOADED:
-            localStorage.setItem('authAdmin','true')
+        case PROF_LOADED:
+            localStorage.setItem('authProf','true')
             localStorage.setItem('type',action.payload.type)
             return{
                 ...state,
@@ -31,9 +31,9 @@ export default function(state=initialState,action){
                 user:action.payload,
                 isLoading:false
             }
-        case ADMIN_LOGIN_SUCCESS:
-            localStorage.setItem('tokenAdmin',action.payload.token)
-            localStorage.setItem('authAdmin','true')
+        case PROF_LOGIN_SUCCESS:
+            localStorage.setItem('tokenProf',action.payload.token)
+            localStorage.setItem('authProf','true')
             localStorage.setItem('type',action.payload.type)
             return{
                 ...state,
@@ -41,11 +41,11 @@ export default function(state=initialState,action){
                 isAuthenticated:true,
                 isLoading:false
             }
-        case ADMIN_AUTH_ERROR:
-        case ADMIN_LOGIN_FAIL:
-        case ADMIN_LOGOUT_SUCCESS:
-            localStorage.removeItem('tokenAdmin');
-            localStorage.setItem('authAdmin','false');
+        case PROF_AUTH_ERROR:
+        case PROF_LOGIN_FAIL:
+        case PROF_LOGOUT_SUCCESS:
+            localStorage.removeItem('tokenProf');
+            localStorage.setItem('authProf','false');
             localStorage.setItem('type','')
             return{
                 ...state,
