@@ -36,7 +36,7 @@ router.delete('/', async (req, res) => {
 
 
 router.route('/login').post((req,res)=>{
-    const {cne,cin,password}=req.body;
+    const {email,cin,password}=req.body;
     if(!cin || !password){
         res.status(400).json({msg:'Enter Al fields'});
     }
@@ -60,6 +60,7 @@ router.route('/login').post((req,res)=>{
                             cin:user.cin,
                             email:user.email,
                             image:user.image,
+                            type:user.type,
                             niveauFiliere:user.niveauFiliere
                         }
                     })

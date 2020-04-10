@@ -48,7 +48,7 @@ router.route('/login').post((req,res)=>{
     }
     Admin.findOne({username})
     .then(user=>{
-        if(!user){
+        if(!user || user.password!==password){
             return res.status(400).json({msg:'False Credentials'});
         }
         if(user.password==password){
