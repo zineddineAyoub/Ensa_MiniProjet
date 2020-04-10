@@ -22,7 +22,11 @@ class Login extends Component {
 
     onSubmit=(e)=>{
         e.preventDefault();
-        const body=this.state;
+        const {username,password}=this.state;
+        const body={
+            username,
+            password
+        }
         this.props.login(body);
     }
 
