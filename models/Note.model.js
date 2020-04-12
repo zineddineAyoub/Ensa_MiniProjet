@@ -5,9 +5,9 @@ const Note = new mongoose.Schema({
       type: Number
     },
     
-   element: { 
+   matiere: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Element'},
+    ref: 'Matiere'},
 
     etudiant: { 
         type: mongoose.Schema.Types.ObjectId, 
