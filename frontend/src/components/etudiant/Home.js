@@ -11,8 +11,10 @@ class Home extends Component {
     render() {
         return (
             <div>
+                <Container maxWidth="xs">
                 Home Etudiant<br />
                 <Link className="btn btn-danger" to="/etudiant/login" onClick={this.onLogout}>Logout</Link>
+                </Container>
             </div>
         )
     }

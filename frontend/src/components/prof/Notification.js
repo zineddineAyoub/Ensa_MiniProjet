@@ -5,24 +5,19 @@ import {logout} from '../../actions/prof/authActions';
 import {Redirect,Link} from 'react-router-dom';
 import { Container } from '@material-ui/core';
 
-class Home extends Component {
-    onLogout=()=>{
-        this.props.logout();
-    }
+class Notification extends Component {
+   
     render() {
         return (
             <div>
                 <Container maxWidth="xs">
-                Home Prof<br />
-                <Link className="btn btn-danger" to="/prof/login" onClick={this.onLogout}>Logout</Link>
+                Notification
+                
                 </Container>
             </div>
         )
     }
 }
 
-const mapStateToProps=(state)=>({
 
-});
-
-export default connect(mapStateToProps,{logout})(Home);
+export default Notification;
