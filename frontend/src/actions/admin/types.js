@@ -4,3 +4,36 @@ export const ADMIN_AUTH_ERROR = "ADMIN_AUTH_ERROR";
 export const ADMIN_LOGIN_SUCCESS = "ADMIN_LOGIN_SUCCESS";
 export const ADMIN_LOGIN_FAIL = "ADMIN_LOGIN_FAIL";
 export const ADMIN_LOGOUT_SUCCESS = "ADMIN_LOGOUT_SUCCESS";
+//etudiant
+export const ADD_STUDENT = "ADD_STUDENT";
+export const ADD_STUDENT_FAIL = "ADD_STUDENT_FAIL";
+export const ADD_STUDENTS = "ADD_STUDENTS";
+export const ADD_STUDENTS_FAIL = "ADD_STUDENTS_FAIL";
+export const ADD_EMPLOIE = "ADD_EMPLOIE";
+export const ADD_EMPLOIE_FAIL = "ADD_EMPLOIE_FAIL";
+export const LIST_STUDENTS="LIST_STUDENTS";
+export const LIST_STUDENTS_FAIL="LIST_STUDENTS_FAIL";
+export const DELETE_STUDENT="DELETE_STUDENT";
+export const GET_STUDENT="GET_STUDENT";
+export const GET_STUDENT_FAIL="GET_STUDENT_FAIL";
+//prof
+export const ADD_PROF = "ADD_PROF";
+export const ADD_PROF_FAIL = "ADD_PROF_FAIL";
+export const ADD_PROFS = "ADD_PROFS";
+export const ADD_PROFS_FAIL = "ADD_PROFS_FAIL";
+export const LIST_PROFS="LIST_PROFS";
+export const LIST_PROFS_FAIL="LIST_PROFS_FAIL";
+export const DELETE_PROF="DELETE_PROF";
+export const GET_PROF="GET_PROF";
+export const GET_PROF_FAIL="GET_PROF_FAIL";
+//matiere
+export const ADD_MATIERE = "ADD_MATIERE";
+export const ADD_MATIERE_FAIL = "ADD_MATIERE_FAIL";
+export const ADD_MATIERES = "ADD_MATIERES";
+export const ADD_MATIERES_FAIL = "ADD_MATIERES_FAIL";
+export const LIST_MATIERES="LIST_MATIERES";
+export const LIST_MATIERES_FAIL="LIST_MATIERES_FAIL";
+export const DELETE_MATIERE="DELETE_MATIERE";
+
+
+

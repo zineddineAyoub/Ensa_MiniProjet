@@ -3,6 +3,7 @@ const express=require('express');
 const Admin=require('../models/Admin.model');
 const Etudiant=require('../models/Etudiant.model');
 const Prof=require('../models/Prof.model');
+const Emploie=require('../models/Emploie.model');
 //const Element=require('../models/Element.model');
 const Matiere = require('../models/Matiere.model');
 const NiveauFiliere_Matiere=require('../models/NiveauFiliere_Matiere.model');
@@ -16,6 +17,9 @@ const generator = require('generate-password');
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 const BusBoy = require('busboy');
+const path=require('path');
+const { resolve } = require('path');
+const NiveauFiliere_MatiereModel = require('../models/NiveauFiliere_Matiere.model');
 
 const router=express.Router();
 
@@ -89,18 +93,15 @@ router.route('/ajouterEtudiant').post((req,res)=>{
     let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
 
     const busboy = new BusBoy({ headers: req.headers });
-    
-    var Id;
-    var myId;
+    let fileName;
+    let niveauFiliere;
     busboy.on('field',(fieldname, val) =>{
         formData.set(fieldname, val);
-       
-        
     });
 
-    
-    
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {      
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {    
+     fileName=filename;  
+     niveauFiliere=formData.get("niveauFiliere");
      file
       .pipe(csv())
       .on('data', (data) =>
@@ -120,10 +121,6 @@ router.route('/ajouterEtudiant').post((req,res)=>{
 
        transporter.sendMail(mailOptions);
       
-
-       const Id = NiveauFiliere.findOne({niveau:formData.get('niveau'),filiere:formData.get('filiere')},(err,obj)=>{
-        myId = obj._id;
-     }).then(()=>{
          const etudiant = new Etudiant({
             nom:data.nom,
             prenom:data.prenom,
@@ -131,21 +128,26 @@ router.route('/ajouterEtudiant').post((req,res)=>{
             cin:data.cin,
             email:data.email,
             password:password,
-           niveauFiliere:myId
+            niveauFiliere
             
           })
           console.log("done");
           
          etudiant.save();   
-     });
-
         
       })
       .on('end', () => {
-        res.send("all data inserterd");
+        res.json({msg:'success'});
        
       });
 
+    });
+
+    busboy.on("finish",()=>{
+        niveauFiliere=formData.get("niveauFiliere");
+        if(!niveauFiliere || !fileName){
+            return res.status(400).json({msg:'Enter all fields!'})
+        }
     });
    
     req.pipe(busboy);
@@ -156,12 +158,12 @@ router.route('/ajouterEtudiant').post((req,res)=>{
 //ajouter profs
 router.route('/ajouterProf').post((req,res)=>{
 
-  let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
+    let transporter = mailConf('tarik.ouhamou@gmail.com','dragonballz123+');
 
     const busboy = new BusBoy({ headers: req.headers });
- 
+    let fileName;
     busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-   
+     fileName=filename;
      file
       .pipe(csv())
       .on('data', (data) =>
@@ -192,45 +194,32 @@ router.route('/ajouterProf').post((req,res)=>{
          prof.save();    
       })
       .on('end', () => {
-        res.send("all data inserterd");
+        res.json({msg:'success'});
        
       });
 
     });
+
+    busboy.on('finish',()=>{
+        if(!fileName){
+            return res.status(400).json({msg:'Enter all fields!'});
+        }
+    })
    
     req.pipe(busboy);
 });
 
 
 //delete student
-router.route('/deleteEtudiant/:cne').delete((req,res)=>{
-    Etudiant.deleteOne({cne:req.params.cne})
-    .then(user=>{
+router.route('/deleteEtudiant/:id').delete((req,res)=>{
+    const _id=req.params.id;
+    Etudiant.findByIdAndRemove({_id},(err,user)=>{
+        if(err) throw err;
         res.json(user);
-    }).catch(err=>{
-        res.status(400).json(err);
     });
 });
 
-//delete prof
-router.route('/deleteProf/:cin').delete((req,res)=>{
-    Prof.deleteOne({cin:req.params.cin})
-    .then(user=>{
-        res.json(user);
-    }).catch(err=>{
-        res.status(400).json(err);
-    });
-});
 
-//getAll prof
-router.route('allProf').get((req,res)=>{
-    Prof.find()
-    .then(users=>{
-        res.json(users);
-    }).catch(err=>{
-        res.json(err);
-    })
-})
 
 //getAll etudiant
 router.route('allEtudiant').get((req,res)=>{
@@ -245,12 +234,27 @@ router.route('allEtudiant').get((req,res)=>{
 
 
 //get etudiant
-router.route('/etudiant/:cne').get((req,res)=>{
-    Etudiant.findOne({cne:req.params.cne})
+router.route('/getEtudiant/:cne').get((req,res)=>{
+    Etudiant.findOne({cne:req.params.cne}).populate('niveauFiliere')
     .then(user=>{
-        res.json(user);
+        if(!user){
+            return res.status(400).json({msg:"Etudiant n'existe pas!"})
+        }
+        return res.json({msg:'success',user});
     }).catch(err=>{
-        res.status(400).json(err);
+        res.status(400).json({msg:"Etudiant n'existe pas!"});
+    });
+});
+//get prof
+router.route('/getProf/:cin').get((req,res)=>{
+    Prof.findOne({cin:req.params.cin})
+    .then(user=>{
+        if(!user){
+            return res.status(400).json({msg:"Professeur n'existe pas!"})
+        }
+        return res.json({msg:'success',user});
+    }).catch(err=>{
+        res.status(400).json({msg:"Professeur n'existe pas!"});
     });
 });
 
@@ -315,24 +319,26 @@ router.route('/ModifierProf/:cin').put((req,res)=>{
 // !!!!!!!!!! SHOULD BE MODIFIED
 //ajouter etudiant manuelement
 router.route('/addOneEtudiant').post((req,res)=>{
-    const {nom,prenom,cin,cne,email,niveau,filiere}=req.body;
-    NiveauFiliere.findOne({niveau:req.body.niveau,filiere:req.body.filiere}).then(niveauFiliere=>{
-        let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
+    const {nom,prenom,cin,cne,email,niveauFiliere}=req.body;
+    if(!nom || !prenom || !cin || !cne || !email){
+        return res.status(400).json({msg:'Enter all fields'});
+    }
+    let transporter = mailConf('tarik.ouhamou@gmail.com','dragonballz123+');
    
     const password = generator.generate({
         length: 6,
         numbers: true
     });
-    let newProf=new Prof({
+    let newEtudiant=new Etudiant({
         nom,
         prenom,
         cne,
         cin,
         email,
         password,
-        niveauFiliere:niveauFiliere._id
+        niveauFiliere
     });
-    newProf.save();
+    newEtudiant.save();
     let mailOptions = {
         // should be replaced with real recipient's account
       //  from: 'zineddine.ayoub98@gmail.com',
@@ -341,8 +347,8 @@ router.route('/addOneEtudiant').post((req,res)=>{
         text: 'Login : '+email+'\n Password : '+password
     };
 
-   transporter.sendMail(mailOptions); 
-    })
+   transporter.sendMail(mailOptions);
+   return res.json({msg:'success'}); 
 
 });
 
@@ -351,6 +357,9 @@ router.route('/addOneEtudiant').post((req,res)=>{
 router.route('/addOneProf').post((req,res)=>{
     let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
     const {nom,prenom,cin,email}=req.body;
+    if(!nom || !prenom || !cin || !email){
+        return res.status(400).json({msg:'Enter all fields'});
+    }
     const password = generator.generate({
         length: 6,
         numbers: true
@@ -372,6 +381,7 @@ router.route('/addOneProf').post((req,res)=>{
     };
 
     transporter.sendMail(mailOptions); 
+    return res.json({msg:'success'});
 });
 
 
@@ -380,39 +390,30 @@ router.route('/addOneProf').post((req,res)=>{
 
 //ajouter Matiere manuelement
 router.route('/ajoutOneMatiere').post((req,res)=>{
-    if(req.body.filiere)
-    {
-        var shit = {niveau:req.body.niveau,filiere:req.body.filiere};
+    const {nom,niveauFiliere,prof}=req.body;
+    if(!nom || niveauFiliere.length==0 || !prof){
+        return res.status(400).json({msg:'Enter all fields!'});
     }
+    let newMatiere=new Matiere({
+        nom,
+        prof
+    });
     
-    else{
-        var shit = {niveau:req.body.niveau};
-    }
-    NiveauFiliere.findOne(shit)
-    .then(niveaufiliere=>{
-        Prof.findOne({nom : req.body.prof}).then(prof=>{
-            var newMatiere=new Matiere({
-                nom : req.body.nom,
-                prof:prof._id
+    newMatiere.save((err)=>{
+        if(err) throw err;
+        niveauFiliere.forEach(val => {
+            console.log(val)
+            let newFiliereMatiere=new NiveauFiliere_Matiere({
+                matiere:newMatiere._id,
+                niveauFiliere:val
             });
-    
-            newMatiere.save((err)=>{
-                if(err) throw err;
-                console.log("greate");
-                
-               var newFiliereMatiere=new NiveauFiliere_Matiere({
-                    matiere:newMatiere._id,
-                    niveauFiliere:niveaufiliere._id
-                });
-                newFiliereMatiere.save();
-                res.send("insrted");
-            });
-        })
-    })
-
-   
-    
+            newFiliereMatiere.save(); 
+        });
+        res.json({msg:'success'});
+    });
 });
+
+
 
 router.get('/user',auth,(req,res)=>{
     Admin.findById(req.user.id)
@@ -432,71 +433,13 @@ router.route('/ajouterNiveauFiliere').post((req,res)=>{
    const result =  newNiveauFiliere.save();
    res.send("nice");
 });
-
-// -------------------- MATIERE -------------------------
-//ajouter Matiere CSV
-router.route('/ajouterMatiereCSV').post((req,res)=>{
-
-    if(req.body.filiere)
-    {
-        var shit = {niveau:req.body.niveau,filiere:req.body.filiere};
-    }
     
-    else{
-        var shit = {niveau:req.body.niveau};
-    }
-
-    const busboy = new BusBoy({ headers: req.headers });  
-    
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {      
-     file
-      .pipe(csv())
-      .on('data', (data) =>
-      {
-          console.log(data);
-        NiveauFiliere.findOne(shit)
-       .then((niveaufiliere)=>{
-
-        Prof.findOne({nom : data.prof})
-        .then((prof)=>{
-
-            var newMatiere=new Matiere({
-                nom:data.nom,
-                prof:prof._id,
-            });
-            newMatiere.save((err)=>{
-                if(err) throw err;
-                console.log("greate");
-                
-               var newFiliereMatiere=new NiveauFiliere_Matiere({
-                    matiere:newMatiere._id,
-                    niveauFiliere:niveaufiliere._id
-                });
-                newFiliereMatiere.save();
-            });
-            
-        });
-     })
-           });
-          
-        
-      })
-      .on('end', () => {
-        res.send("all data inserterd");
-       
-      });
-      req.pipe(busboy);
-
-    });
-   
- 
-  
 // DELETE ALL MATIERES
 router.delete('/deleteMatieres', async (req, res) => {
     Matiere.deleteMany({}).then(
       () => {
         res.status(200).json({
-          message: 'Deleted!'
+          msg: 'success'
         });
       }
     ).catch(
@@ -526,7 +469,7 @@ router.get('/NiveauFiliere_Matiere', async (req, res) => {
       const matiere = await Matiere.find();
       res.json(matiere)
     } catch (err) {
-      res.status(500).json({ message: err.message })
+      res.status(500).json({ msg: err.message })
     }
    
   });
@@ -557,14 +500,229 @@ router.route('/addEmploie').post((req,res)=>{
         }
         const emploie=new Emploie({
             semestre,
-            filename:nameFile,
+            image:nameFile,
             type,
             niveauFiliere 
         });
         emploie.save();
-        res.json({semestre,filename:nameFile,type,niveauFiliere});
+        res.json({msg:'success'});
     });
     req.pipe(busboy);
 });
+
+
+//getNiveauFiliereById
+router.route('/getNiveauFiliere/:id').get((req,res)=>{
+    const _id=req.params.id;
+    NiveauFiliere.findById({_id})
+    .then(doc=>{
+        res.json(doc);
+    });
+})
+
+//get students selon niveau
+router.route('/getEtudiantByNiveau/:id').get((req,res)=>{
+    const niveauFiliere=req.params.id;
+    if(!niveauFiliere){
+        return res.json({users:[]});
+    }
+    Etudiant.find({niveauFiliere}).populate('niveauFiliere')
+    .then(users=>{
+        return res.json({users,msg:'success'})
+    }).catch(err=>{
+        return res.json({msg:err});
+    })
+})
+
+//getAll prof
+router.route('/allProf').get((req,res)=>{
+    Prof.find()
+    .then(users=>{
+        res.json(users);
+    }).catch(err=>{
+        res.status(400).json({msg:err});
+    })
+});
+
+//get all niveaufiliere
+router.route('/getNiveauFiliere').get((req,res)=>{
+    NiveauFiliere.find()
+    .then(docs=>{
+        res.json(docs);
+    }).catch(err=>{
+        res.status(400).json({msg:err});
+    });
+});
+
+// -------------------- MATIERE -------------------------
+//ajouter Matiere CSV
+router.route('/ajouterMatiereCSV').post((req,res)=>{
+    console.log("well");
+    const busboy = new BusBoy({ headers: req.headers });  
+    let fileName;
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {    
+        fileName=filename;  
+     file
+      .pipe(csv())
+      .on('data', (data) =>
+      {
+          if(data.filiere)
+          {
+              var nf = {niveau:data.niveau,filiere:data.filiere}
+          }
+          else{
+              var nf = {niveau:data.niveau}
+          }
+          console.log(data);
+        NiveauFiliere.findOne(nf)
+       .then((niveaufiliere)=>{
+
+        Prof.findOne({nom : data.prof})
+        .then((prof)=>{
+
+            var newMatiere=new Matiere({
+                nom:data.nom,
+                prof:prof._id,
+            });
+            newMatiere.save((err)=>{
+                if(err) throw err;
+                
+               var newFiliereMatiere=new NiveauFiliere_Matiere({
+                    matiere:newMatiere._id,
+                    niveauFiliere:niveaufiliere._id
+                });
+                newFiliereMatiere.save();
+                if(data.filiere2)
+                {
+                    NiveauFiliere.findOne({niveau:data.niveau,filiere:data.filiere2}).then(
+                       (niveaufiliere2)=>{
+                        var newFiliereMatiere2=new NiveauFiliere_Matiere({
+                            matiere:newMatiere._id,
+                            niveauFiliere:niveaufiliere2.id
+                        });
+                        newFiliereMatiere2.save();
+                       }
+                    )
+
+                    if(data.filiere3)
+                    {
+                        NiveauFiliere.findOne({niveau:data.niveau,filiere:data.filiere3}).then(
+                            (niveaufiliere3)=>{
+                             var newFiliereMatiere3=new NiveauFiliere_Matiere({
+                                 matiere:newMatiere._id,
+                                 niveauFiliere:niveaufiliere3.id
+                             });
+                             newFiliereMatiere3.save();
+                            }
+                         )
+                        
+                         if(data.filiere4)
+                         {
+                            NiveauFiliere.findOne({niveau:data.niveau,filiere:data.filiere4}).then(
+                                (niveaufiliere4)=>{
+                                 var newFiliereMatiere4=new NiveauFiliere_Matiere({
+                                     matiere:newMatiere._id,
+                                     niveauFiliere:niveaufiliere4.id
+                                 });
+                                 newFiliereMatiere4.save();
+                                }
+                             )
+                         }
+
+                    }
+                }
+            });   
+        }).then(console.log('finish'));
+     })
+           });
+          
+        
+      })
+      .on('end', () => {
+        console.log("all data inserterd");
+       
+      });
+
+      busboy.on('finish',()=>{
+          if(!fileName){
+              return res.status(400).json({msg:'Enter all fields!'});
+          }
+          return res.json({msg:'success'});
+      })
+      req.pipe(busboy);
+
+});
+
+//get Prof by niveauFiliere
+router.route('/getProfByNiveau/:id').get((req,res)=>{
+    const niveauFiliere=req.params.id;
+    let profs=[];
+    NiveauFiliere_Matiere.find({niveauFiliere}).populate('niveauFiliere')
+    .populate([{path:'matiere',populate:{path:'prof'}}])
+    .then(docs=>{
+        if(!docs){
+            return res.status(400).json({msg:'error'});
+        }
+        res.json({users:docs,msg:'success'});
+    });
+});
+
+//get matiere by niveau filiere
+router.route('/getMatiere/:id').get((req,res)=>{
+    const niveauFiliere=req.params.id;
+    NiveauFiliere_Matiere.find({niveauFiliere})
+    .populate([{path:'matiere',populate:{path:'prof'}}]).populate('niveauFiliere')
+    .then(docs=>{
+        if(!docs){
+            return res.status(400).json({msg:'erreur'});
+        }
+        return res.json(docs);
+    });
+});
+
+//delete one matiere
+router.route('/deleteMatiere/:id').delete((req,res)=>{
+    const _id=req.params.id;
+    Matiere.findByIdAndRemove({_id},(err,doc)=>{
+        if(err) throw err
+        NiveauFiliere_Matiere.deleteMany({matiere:_id},(err,docs)=>{
+            if(err) throw err;
+            res.json(doc);
+        });
+    });
+});
+
+const getDoc=(_id)=>{
+    return new Promise((resolve,reject)=>{
+        Matiere.find({prof:_id})
+        .then(doc=>{
+            resolve(doc)
+        })
+    })
+}
+
+//test
+router.route('/deleteOneProf/:id').delete(async(req,res)=>{
+    const _id=req.params.id;
+    Prof.findByIdAndRemove(_id)
+        .then(async(prof)=>{
+            try{
+                const doc=await getDoc(req.params.id);
+                doc.forEach(docs=>{
+                    Matiere.findByIdAndRemove(docs._id)
+                    .then(()=>{
+                        NiveauFiliere_Matiere.deleteMany({matiere:docs._id})
+                        .then(()=>{
+                            res.json(prof);
+                        })
+                    })
+                }) 
+            }
+            catch(err){
+                res.status(400).json({msg:'error'})
+            }
+        });  
+})
+
 
 module.exports=router;

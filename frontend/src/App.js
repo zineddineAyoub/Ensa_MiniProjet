@@ -10,6 +10,19 @@ import etudiantProtected from './components/ProtectedEtudiant';
 //admin components
 import LoginAdmin from './components/admin/Login';
 import HomeAdmin from './components/admin/Home';
+import AddStudent from './components/admin/AddStudent';
+import AddStudents from './components/admin/AddStudents';
+import AddEmploie from './components/admin/AddEmploie';
+import ListStudents from './components/admin/ListStudents';
+import AddProf from './components/admin/AddProf';
+import AddProfs from './components/admin/AddProfs';
+import ListProfs from './components/admin/ListProfs';
+import AddMatiere from './components/admin/AddMatiere';
+import AddMatieres from './components/admin/AddMatieres';
+import SearchStudent from './components/admin/SearchStudent';
+import SearchProf from './components/admin/SearchProf';
+import ListMatieres from './components/admin/ListMatieres';
+
 //prof components
 import LoginProf from './components/prof/Login';
 import HomeProf from './components/prof/Home';
@@ -33,7 +46,19 @@ class App extends React.Component{
         <Router>
           <Route path="/admin/login" component={LoginAdmin} exact />
           <Route path="/admin/home" component={adminProtected(HomeAdmin)} exact />
-
+          <Route path="/admin/addStudent" component={adminProtected(AddStudent)} exact />
+          <Route path="/admin/addStudents" component={adminProtected(AddStudents)} exact />
+          <Route path="/admin/emploie" component={adminProtected(AddEmploie)} exact />
+          <Route path="/admin/listStudents" component={adminProtected(ListStudents)} exact />
+          <Route path="/admin/addProf" component={adminProtected(AddProf)} exact />
+          <Route path="/admin/addProfs" component={adminProtected(AddProfs)} exact />
+          <Route path="/admin/listProfs" component={adminProtected(ListProfs)} exact />
+          <Route path="/admin/AddMatiere" component={adminProtected(AddMatiere)} exact />
+          <Route path="/admin/AddMatieres" component={adminProtected(AddMatieres)} exact />
+          <Route path="/admin/SearchStudent" component={adminProtected(SearchStudent)} exact />
+          <Route path="/admin/SearchProf" component={adminProtected(SearchProf)} exact />
+          <Route path="/admin/listMatieres" component={adminProtected(ListMatieres)} exact />
+      
           <Route path="/prof/login" component={LoginProf} exact />
           <Route path="/prof/home" component={profProtected(HomeProf)} exact />
 
