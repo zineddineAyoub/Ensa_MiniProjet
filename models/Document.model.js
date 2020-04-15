@@ -1,7 +1,11 @@
 const mongoose = require('mongoose')
 
-const Cours = new mongoose.Schema({
+const Document = new mongoose.Schema({
     Nom: {
+      type: String
+    },
+
+    Type: {
       type: String
     },
 
@@ -10,11 +14,11 @@ const Cours = new mongoose.Schema({
    },
 
 
-    element: { 
+    matiere: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Element'}
+        ref: 'Matiere'}
 
     
   })
   
-  module.exports = mongoose.model('Cours', Cours)
+  module.exports = mongoose.model('Document', Document)

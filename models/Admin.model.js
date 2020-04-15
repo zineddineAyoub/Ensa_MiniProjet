@@ -8,6 +8,10 @@ const AdminSchema=new Schema({
     },
     password:{
         type:String
+    },
+    type:{
+        type:String,
+        default:'admin'
     }
 });
 

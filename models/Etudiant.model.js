@@ -26,6 +26,10 @@ const EtudiantSchema=new Schema({
     niveauFiliere:{
         type:Schema.Types.ObjectId, 
         ref:'NiveauFiliere'
+    },
+    type:{
+        type:String,
+        default:'etudiant'
     }
 });
 

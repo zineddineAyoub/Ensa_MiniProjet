@@ -3,10 +3,11 @@ const express=require('express');
 const Admin=require('../models/Admin.model');
 const Etudiant=require('../models/Etudiant.model');
 const Prof=require('../models/Prof.model');
-//const Module =require('../models/Module.model');
-const Element=require('../models/Element.model');
-//const NiveauFiliere_Module=require('../models/NiveauFiliere.model');
+//const Element=require('../models/Element.model');
+const Matiere = require('../models/Matiere.model');
+const NiveauFiliere_Matiere=require('../models/NiveauFiliere_Matiere.model');
 const NiveauFiliere = require('../models/NiveauFiliere.model');
+//const Mod = require('../models/Module.model');
 //import packages
 const csv = require('csv-parser');
 const nodeMailer = require('nodemailer');
@@ -35,16 +36,20 @@ const mailConf=(user,pass)=>{
     return transporter;
 }
 
+router.route('/').get((req,res)=>{
+    res.send("Admin Route");
+})
+
 //login admin
 router.route('/login').post((req,res)=>{
     const {username,password}=req.body;
     if(!username || !password){
-        res.status(400).json({msg:'Enter Al fields'});
+        return res.status(400).json({msg:'Enter Al fields'});
     }
     Admin.findOne({username})
     .then(user=>{
-        if(!user){
-            res.status.json({msg:'False Credentials'});
+        if(!user || user.password!==password){
+            return res.status(400).json({msg:'False Credentials'});
         }
         if(user.password==password){
             jwt.sign(
@@ -57,7 +62,8 @@ router.route('/login').post((req,res)=>{
                         token,
                         user:{
                             id:user._id,
-                            username:user.username
+                            username:user.username,
+                            type:user.type
                         }
                     })
                 }
@@ -88,6 +94,7 @@ router.route('/ajouterEtudiant').post((req,res)=>{
     var myId;
     busboy.on('field',(fieldname, val) =>{
         formData.set(fieldname, val);
+       
         
     });
 
@@ -236,8 +243,9 @@ router.route('allEtudiant').get((req,res)=>{
 })
 
 
+
 //get etudiant
-router.route('etudiant/:cne').get((req,res)=>{
+router.route('/etudiant/:cne').get((req,res)=>{
     Etudiant.findOne({cne:req.params.cne})
     .then(user=>{
         res.json(user);
@@ -246,20 +254,71 @@ router.route('etudiant/:cne').get((req,res)=>{
     });
 });
 
+//Modifier Etudiant
+// On passe le niveau et filiere avec les parametres
+router.route('/ModifierEtudiant/:cne').put((req,res)=>{
+    const {nom,prenom,cne,cin,email,password,filiere,niveau}=req.body;
+     NiveauFiliere.findOne({niveau:niveau,filiere:filiere})
+    .then(filiere=>{
+        console.log(filiere);
+        Etudiant.findOne({cne:req.params.cne})
+        .then(user=>{
+            user.nom =nom,
+            user.prenom = prenom,
+            user.cne = cne,
+            user.cin= cin,
+            user.email = email,
+            user.password = password,
+            user.niveauFiliere = filiere._id;
+            user.save();
+    
+            res.json(user);
+    
+        }).catch(err=>{
+            res.status(400).json(err);
+        });
+    }).catch(err=>{
+        res.status(400).json(err);
+    });
+   
+});
+
 //get prof
-router.route('prof/:cin').get((req,res)=>{
-    Prof.findOne({cin:req.params.cin})
+router.route('/prof/:cin').get( (req,res)=>{
+   Prof.findOne({cin:req.params.cin})
     .then(user=>{
         res.json(user);
+    }).catch(err=>{
+        res.status(400).json(err);
+    });   
+});
+
+//Modifier Prof
+router.route('/ModifierProf/:cin').put((req,res)=>{
+    const {nom,prenom,cin,email,password}=req.body;
+    Prof.findOne({cin:req.params.cin})
+    .then(user=>{
+        user.nom =nom,
+        user.prenom = prenom,
+        user.cin= cin,
+        user.email = email,
+        user.password = password;
+        user.save();
+
+        res.json(user);
+
     }).catch(err=>{
         res.status(400).json(err);
     });
 });
 
+// !!!!!!!!!! SHOULD BE MODIFIED
 //ajouter etudiant manuelement
 router.route('/addOneEtudiant').post((req,res)=>{
-    let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
-    const {nom,prenom,cin,cne,email}=req.body;
+    const {nom,prenom,cin,cne,email,niveau,filiere}=req.body;
+    NiveauFiliere.findOne({niveau:req.body.niveau,filiere:req.body.filiere}).then(niveauFiliere=>{
+        let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
+   
     const password = generator.generate({
         length: 6,
         numbers: true
@@ -270,7 +329,8 @@ router.route('/addOneEtudiant').post((req,res)=>{
         cne,
         cin,
         email,
-        password
+        password,
+        niveauFiliere:niveauFiliere._id
     });
     newProf.save();
     let mailOptions = {
@@ -282,6 +342,7 @@ router.route('/addOneEtudiant').post((req,res)=>{
     };
 
    transporter.sendMail(mailOptions); 
+    })
 
 });
 
@@ -313,41 +374,44 @@ router.route('/addOneProf').post((req,res)=>{
     transporter.sendMail(mailOptions); 
 });
 
-/*
-//get all modules
-router.route('allModules').get((req,res)=>{
-    Module.find()
-    .then(modules=>{
-        res.json(modules);
-    }).catch(err=>{
-        res.json(err);
+
+
+
+
+//ajouter Matiere manuelement
+router.route('/ajoutOneMatiere').post((req,res)=>{
+    if(req.body.filiere)
+    {
+        var shit = {niveau:req.body.niveau,filiere:req.body.filiere};
+    }
+    
+    else{
+        var shit = {niveau:req.body.niveau};
+    }
+    NiveauFiliere.findOne(shit)
+    .then(niveaufiliere=>{
+        Prof.findOne({nom : req.body.prof}).then(prof=>{
+            var newMatiere=new Matiere({
+                nom : req.body.nom,
+                prof:prof._id
+            });
+    
+            newMatiere.save((err)=>{
+                if(err) throw err;
+                console.log("greate");
+                
+               var newFiliereMatiere=new NiveauFiliere_Matiere({
+                    matiere:newMatiere._id,
+                    niveauFiliere:niveaufiliere._id
+                });
+                newFiliereMatiere.save();
+                res.send("insrted");
+            });
+        })
     })
-})*/
 
-//ajouter module manuelement
-router.route('/ajoutOneModule').post((req,res)=>{
-    const {nom,niveauFiliereId}=req.body;
-    let newModule=new Module({
-        nom
-    });
-    newModule.save((err)=>{
-        if(err) throw err;
-        newFiliereModule=new NiveauFiliere_Module({
-            module:newModule._id,
-            niveauFiliere:niveauFiliereId
-        });
-    });
-});
-
-//ajouter element manuelement
-router.route('/ajoutOneElement').post((req,res)=>{
-    const {nom,idProf,idModule}=req.body;
-    let newElement=new Element({
-        nom,
-        prof:idProf,
-        module:idModule
-    });
-    newElement.save();
+   
+    
 });
 
 router.get('/user',auth,(req,res)=>{
@@ -369,6 +433,138 @@ router.route('/ajouterNiveauFiliere').post((req,res)=>{
    res.send("nice");
 });
 
+// -------------------- MATIERE -------------------------
+//ajouter Matiere CSV
+router.route('/ajouterMatiereCSV').post((req,res)=>{
 
+    if(req.body.filiere)
+    {
+        var shit = {niveau:req.body.niveau,filiere:req.body.filiere};
+    }
+    
+    else{
+        var shit = {niveau:req.body.niveau};
+    }
+
+    const busboy = new BusBoy({ headers: req.headers });  
+    
+    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {      
+     file
+      .pipe(csv())
+      .on('data', (data) =>
+      {
+          console.log(data);
+        NiveauFiliere.findOne(shit)
+       .then((niveaufiliere)=>{
+
+        Prof.findOne({nom : data.prof})
+        .then((prof)=>{
+
+            var newMatiere=new Matiere({
+                nom:data.nom,
+                prof:prof._id,
+            });
+            newMatiere.save((err)=>{
+                if(err) throw err;
+                console.log("greate");
+                
+               var newFiliereMatiere=new NiveauFiliere_Matiere({
+                    matiere:newMatiere._id,
+                    niveauFiliere:niveaufiliere._id
+                });
+                newFiliereMatiere.save();
+            });
+            
+        });
+     })
+           });
+          
+        
+      })
+      .on('end', () => {
+        res.send("all data inserterd");
+       
+      });
+      req.pipe(busboy);
+
+    });
+   
+ 
+  
+// DELETE ALL MATIERES
+router.delete('/deleteMatieres', async (req, res) => {
+    Matiere.deleteMany({}).then(
+      () => {
+        res.status(200).json({
+          message: 'Deleted!'
+        });
+      }
+    ).catch(
+      (error) => {
+        res.status(400).json({
+          error: error
+        });
+      }
+    );
+    });
+  
+// Getting all
+router.get('/NiveauFiliere_Matiere', async (req, res) => {
+    try {
+      const matiere = await NiveauFiliere_Matiere.find().populate('matiere','nom -_id').populate('niveauFiliere');
+      res.json(matiere)
+    } catch (err) {
+      res.status(500).json({ message: err.message })
+    }
+   
+  })
+  
+  
+  // Getting all
+  router.get('/matiere', async (req, res) => {
+    try {
+      const matiere = await Matiere.find();
+      res.json(matiere)
+    } catch (err) {
+      res.status(500).json({ message: err.message })
+    }
+   
+  });
+
+  //add Emploie
+router.route('/addEmploie').post((req,res)=>{
+    //manage and save file in folder
+    //database
+    const busboy = new BusBoy({ headers: req.headers });
+    let formData = new Map();
+    let nameFile;
+    busboy.on('field',(fieldname, val) =>{
+        formData.set(fieldname, val);
+    });
+    busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+        nameFile=filename;
+        let appDir = path.dirname(require.main.filename);
+        let path2 = appDir.replace(/\\/g, "/");
+        let filepath = path.join(path2, `/emploie/${filename}`);
+        file.pipe(fs.createWriteStream(filepath));
+    });
+    busboy.on('finish',()=>{
+        let semestre=formData.get("semestre");
+        let niveauFiliere=formData.get("niveauFiliere");
+        let type=formData.get("type");
+        if(!semestre || !niveauFiliere || !type || !nameFile){
+            return res.status(400).json({msg:'Enter all fields'});
+        }
+        const emploie=new Emploie({
+            semestre,
+            filename:nameFile,
+            type,
+            niveauFiliere 
+        });
+        emploie.save();
+        res.json({semestre,filename:nameFile,type,niveauFiliere});
+    });
+    req.pipe(busboy);
+});
 
 module.exports=router;

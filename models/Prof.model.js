@@ -19,6 +19,10 @@ const ProfSchema=new Schema({
     },
     password:{
         type:String
+    },
+    type:{
+        type:String,
+        default:'prof'
     }
 });
 

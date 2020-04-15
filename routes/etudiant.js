@@ -41,7 +41,7 @@ router.route('/login').post((req,res)=>{
     }
     Etudiant.findOne({cne})
     .then(user=>{
-        if(!user){
+        if(!user || user.cin!==cin || user.password!==password){
             res.status.json({msg:'False Credentials'});
         }
         if(user.cin==cin && user.password==password){
@@ -66,6 +66,8 @@ router.route('/login').post((req,res)=>{
                 }
             )
         }
+    }).catch(err=>{
+      return res.status(400).json({msg:'False Credential'})
     })
 });
 
