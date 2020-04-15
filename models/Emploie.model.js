@@ -21,6 +21,6 @@ const EmploieSchema=new Schema({
     }
 });
 
-const EmploieSchema=mongoose.model('EmploieSchema',EmploieSchema);
+const Emploie=mongoose.model('Emploie',EmploieSchema);
 
-module.exports=EmploieSchema;
+module.exports=Emploie;

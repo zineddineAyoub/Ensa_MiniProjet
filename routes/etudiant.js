@@ -1,6 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const Etudiant = require('../models/Etudiant.model')
+const niveauFiliereMatiere= require("../models/NiveauFiliere_Matiere.model")
+const Emploie= require("../models/Emploie.model")
+const Note = require("../models/Note.model")
+
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 
@@ -79,19 +83,20 @@ router.get('/user',auth,(req,res)=>{
     })
 });
 
-//Voir le Profil
+//Voir le Profil et voir les Td  et cours 
 router.get("/:id",async (req,res)=>{
   try{
     const etudiants= await Etudiant.findById(req.params.id).populate("niveauFiliere");
-    res.json({message: etudiants.niveauFiliere})
+   const maat = await niveauFiliereMatiere.find({niveauFiliere:{$gte:etudiants.niveauFiliere._id}} )
     res.json(etudiants)
+
   }catch(err){
     res.json({message : err.message})
   }
 });
 
  //Modifier le profill
- router.patch('/:id',async(req,res)=>{
+ router.put('/:id',async(req,res)=>{
   try{
     const updateEtudiant = await Etudiant.updateOne(
       { _id : req.params.id},
@@ -102,7 +107,38 @@ router.get("/:id",async (req,res)=>{
     res.json({message:err.message})
   }
 });
+//voir les cours /td
+router.get("/Cours/:id",async (req,res)=>{
+  try{
+  const etudiants= await Etudiant.findById(req.params.id).populate("niveauFiliere");
+  const matiere = await niveauFiliereMatiere.find({niveauFiliere:{$gte:etudiants.niveauFiliere._id}}).populate("matiere").populate("niveauFiliere")
+  res.json(matiere)
 
+  }catch(err){
+    res.json({message : err.message})
+  }
+});
+
+//voir L Emploi 
+router.get("/Emploie/:id",async (req,res)=>{
+  try{
+  const etudiants= await Etudiant.findById(req.params.id).populate("niveauFiliere");
+  const emploie = await Emploie.find({niveauFiliere:{$gte:etudiants.niveauFiliere._id}}).populate("niveauFiliere")
+  res.json(emploie)
+
+  }catch(err){
+    res.json({message : err.message})
+  }
+});
+router.get("/Note/:id",async (req,res)=>{
+  try{
+  const note = await Note.find({etudiant:{$gte:req.params.id}}).populate("matiere")
+  res.json(note)
+
+  }catch(err){
+    res.json({message : err.message})
+  }
+});
 
 module.exports=router;
 

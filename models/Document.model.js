@@ -17,8 +17,6 @@ const Document = new mongoose.Schema({
     matiere: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Matiere'}
-
-    
   })
   
   module.exports = mongoose.model('Document', Document)
