@@ -80,7 +80,8 @@ router.get('/user',auth,(req,res)=>{
 //Voir le Profil
 router.get("/:id",async (req,res)=>{
   try{
-    const etudiants= await Etudiant.findById(req.params.id);
+    const etudiants= await Etudiant.findById(req.params.id).populate("niveauFiliere");
+    res.json({message: etudiants.niveauFiliere})
     res.json(etudiants)
   }catch(err){
     res.json({message : err.message})

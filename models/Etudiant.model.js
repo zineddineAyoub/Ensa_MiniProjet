@@ -24,7 +24,7 @@ const EtudiantSchema=new Schema({
         type:String
     },
     niveauFiliere:{
-        type:Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId, 
         ref:'NiveauFiliere'
     }
 });
