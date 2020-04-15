@@ -9,8 +9,6 @@ const NiveauFiliere_Matiere = new mongoose.Schema({
     niveauFiliere: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'NiveauFiliere'}
-
-    
   })
   
   module.exports = mongoose.model('NiveauFiliere_Matiere',NiveauFiliere_Matiere )
