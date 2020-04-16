@@ -1,8 +1,16 @@
 const express = require('express')
 const router = express.Router()
 const Prof = require('../models/Prof.model')
+const Etudiant = require('../models/Etudiant.model')
+const Note = require('../models/Note.model')
+const Matiere = require('../models/Matiere.model')
+const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
+const BusBoy = require('busboy');
+const path = require('path');
+const fs = require('fs');
+ObjectId = require('mongodb').ObjectID;
 
 
 
@@ -77,7 +85,7 @@ router.get('/user',auth,(req,res)=>{
         res.json(user);
     })
 });
-
+/* Profil */
 //Voir Profil
 router.get('/:id', (req, res) => {
   Prof.findOne({
@@ -115,6 +123,41 @@ router.put('/:id', (req, res) => {
   });
 });
 
+//Modifier photo de profil
+router.put('/modifierImage/:idProf',(req,res)=>{
+  const busboy = new BusBoy({ headers: req.headers });
+  let imageFileName;
+  busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+    if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
+      return res.status(400).json({ msg: 'Wrong file type submitted' });
+    }
+    
+    // my.image.png => ['my', 'image', 'png']
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    // 32756238461724837.png
+    imageFileName = req.params.idProf+'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/photosProf/'+imageFileName);
+    file.pipe(fs.createWriteStream(filepath));
+    
+  });
+  busboy.on('finish', () => {
+       Prof.updateOne({_id: req.params.idProf},
+        {
+          $set: {                // update prof
+       
+            image:imageFileName 
+            
+           } 
+        }).then(()=>{
+          res.json("bien modifié");
+      }).catch(err=>{
+          console.log('error')
+     });
+  });
+  req.pipe(busboy);
+});
+
+/* Matieres*/
 //Afficher Modules+Elements
 router.get('/afficherMatieres/:idProf', (req, res) => {
   Matiere.find ({
@@ -133,7 +176,7 @@ router.get('/afficherMatieres/:idProf', (req, res) => {
 
 });
 
-
+/*Notes*/
 //Ajouter note
 router.post('/ajouterNote', (req, res) => {
   const note = new Note({
@@ -196,6 +239,63 @@ router.put('/modifierNote/:matiereId.:etudiantId', (req, res) => {
   ).then(result => {
     res.status(200).json({ message: "Note bien modifié !" });
   });
+});
+
+/*Cours+TD+TP*/
+//ajouter document
+router.post('/ajouterDocument',(req,res)=>{
+  const busboy = new BusBoy({ headers: req.headers });
+  //Array pour recuperer les données
+  let formData = new Map();
+
+  busboy.on('field',(fieldname, val) =>{
+    formData.set(fieldname, val);
+});
+   
+busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+   let documentFileName;
+    if (mimetype !== 'application/pdf') {
+      return res.status(400).json({ msg: 'Wrong file type submitted' });
+    }
+    
+    if (formData.get('type') === 'cours') {
+      
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    documentFileName = formData.get('nom') +'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/documentsProf/cours/'+documentFileName);
+    
+  } 
+  else if (formData.get('type') === 'td'){
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    documentFileName = formData.get('nom') +'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/documentsProf/td/'+documentFileName);
+  } 
+  else {
+    
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    documentFileName = formData.get('nom') +'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/documentsProf/tp/'+documentFileName);
+  }
+  file.pipe(fs.createWriteStream(filepath));
+  });
+
+  busboy.on('finish', () => {
+  
+    const document = new Document({
+      nom: formData.get('nom'),
+      type: formData.get('type'),
+      fichier: formData.get('nom'),
+      matiere: ObjectId(formData.get('matiere'))
+    });
+    document.save().then(()=>{
+          res.json("bien ajouté");
+      }).catch(err=>{
+          console.log('error')
+     });
+  });
+
+ 
+  req.pipe(busboy);
 });
 
 
