@@ -7,7 +7,8 @@ import {
   LIST_STUDENTS_FAIL,
   DELETE_STUDENT,
   GET_STUDENT,
-  GET_STUDENT_FAIL
+  GET_STUDENT_FAIL,
+  CLEAR_SUCCESS
 } from '../../actions/admin/types';
 
 const initialState={
@@ -67,6 +68,11 @@ export default function(state=initialState,action){
           ...state,
           success:null,
           user:{}
+        }
+      case CLEAR_SUCCESS:
+        return{
+          ...state,
+          success:null
         }
       default:
           return state;

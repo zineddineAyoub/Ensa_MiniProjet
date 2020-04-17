@@ -5,6 +5,7 @@ import icon from '../../logo.svg';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {getProf} from '../../actions/admin/adminProfActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class SearchProf extends Component {
     state={
@@ -14,7 +15,9 @@ class SearchProf extends Component {
         user:null,
         userExist:false
     }
-
+    componentWillMount(){
+        this.props.clearSuccess();
+    }
     onChange=(e)=>{
         this.setState({
             [e.target.name]:e.target.value
@@ -114,4 +117,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{getProf})(SearchProf);
+export default connect(mapStateToProps,{getProf,clearSuccess})(SearchProf);

@@ -3,6 +3,7 @@ import {Container,Alert, FormGroup,Form,Input,Button,Row,Col} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addProf} from '../../actions/admin/adminProfActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddProf extends Component {
     state={
@@ -13,7 +14,9 @@ class AddProf extends Component {
         msg:null,
         success:null
     }
-
+    componentWillMount(){
+        this.props.clearSuccess();
+    }
     onChange=(e)=>{
         this.setState({
             [e.target.name]:e.target.value
@@ -97,4 +100,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addProf})(AddProf);
+export default connect(mapStateToProps,{addProf,clearSuccess})(AddProf);

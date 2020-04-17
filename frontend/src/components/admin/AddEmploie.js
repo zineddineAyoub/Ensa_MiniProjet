@@ -4,6 +4,7 @@ import axios from 'axios';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addEmploie} from '../../actions/admin/adminEtudiantActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddStudents extends Component {
     state={
@@ -14,6 +15,9 @@ class AddStudents extends Component {
         file:null,
         semsetre:null,
         listNiveau:[]
+    }
+    componentWillMount(){
+        this.props.clearSuccess();
     }
     componentWillMount(){
         console.log(this.state.listNiveau);
@@ -128,4 +132,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addEmploie})(AddStudents);
+export default connect(mapStateToProps,{addEmploie,clearSuccess})(AddStudents);

@@ -3,6 +3,7 @@ import {Container,Alert, FormGroup,Form,Input,Button,Row,Col} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addProfs} from '../../actions/admin/adminProfActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddProfs extends Component {
     state={
@@ -11,6 +12,9 @@ class AddProfs extends Component {
         file:null
     }
 
+    componentWillMount(){
+        this.props.clearSuccess();
+    }
     onChangeImage=(e)=>{
         this.setState({
             file:e.target.files[0]
@@ -89,4 +93,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addProfs})(AddProfs);
+export default connect(mapStateToProps,{addProfs,clearSuccess})(AddProfs);

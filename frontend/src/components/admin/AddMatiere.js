@@ -4,6 +4,7 @@ import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import {addMatiere} from '../../actions/admin/adminMatiereActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddMatiere extends Component {
     state={
@@ -18,6 +19,7 @@ class AddMatiere extends Component {
     }
 
     componentWillMount(){
+        this.props.clearSuccess();
         axios.get('http://localhost:5000/admin/getNiveauFiliere')
         .then((res)=>{
             this.setState({
@@ -138,4 +140,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addMatiere})(AddMatiere);
+export default connect(mapStateToProps,{addMatiere,clearSuccess})(AddMatiere);
