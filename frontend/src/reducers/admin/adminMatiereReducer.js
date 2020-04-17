@@ -5,7 +5,8 @@ import {
     ADD_MATIERES_FAIL,
     LIST_MATIERES,
     LIST_MATIERES_FAIL,
-    DELETE_MATIERE
+    DELETE_MATIERE,
+    CLEAR_SUCCESS
   } from '../../actions/admin/types';
   
   const initialState={
@@ -53,6 +54,11 @@ import {
               success:null,
               matieres:state.matieres.filter(matiere=>matiere.matiere._id!==action.payload)
             }
+        case CLEAR_SUCCESS:
+          return{
+            ...state,
+            success:null
+          }
         default:
             return state;
     }

@@ -22,6 +22,7 @@ import AddMatieres from './components/admin/AddMatieres';
 import SearchStudent from './components/admin/SearchStudent';
 import SearchProf from './components/admin/SearchProf';
 import ListMatieres from './components/admin/ListMatieres';
+import Statistique from './components/admin/Statistique';
 
 //prof components
 import LoginProf from './components/prof/Login';
@@ -58,6 +59,7 @@ class App extends React.Component{
           <Route path="/admin/SearchStudent" component={adminProtected(SearchStudent)} exact />
           <Route path="/admin/SearchProf" component={adminProtected(SearchProf)} exact />
           <Route path="/admin/listMatieres" component={adminProtected(ListMatieres)} exact />
+          <Route path="/admin/statistiques" component={adminProtected(Statistique)} exact />
       
           <Route path="/prof/login" component={LoginProf} exact />
           <Route path="/prof/home" component={profProtected(HomeProf)} exact />

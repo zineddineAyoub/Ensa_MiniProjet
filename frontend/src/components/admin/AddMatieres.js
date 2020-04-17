@@ -3,6 +3,7 @@ import {Container,Alert, FormGroup,Form,Input,Button,Row,Col} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addMatieres} from '../../actions/admin/adminMatiereActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddMatieres extends Component {
     state={
@@ -10,7 +11,9 @@ class AddMatieres extends Component {
         msg:null,
         file:null
     }
-
+    componentWillMount(){
+        this.props.clearSuccess();
+    }
     onChangeImage=(e)=>{
         this.setState({
             file:e.target.files[0]
@@ -26,7 +29,10 @@ class AddMatieres extends Component {
         const {error,success}=this.props;
         if(error!==prevProps.error){
             if(error.id=='ADD_MATIERES_FAIL'){
-                this.setState({msg:error.msg.msg});
+                this.setState({
+                    msg:error.msg.msg,
+                    success:null
+                });
             }
             else{
                 this.setState({msg:null})
@@ -89,4 +95,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addMatieres})(AddMatieres);
+export default connect(mapStateToProps,{addMatieres,clearSuccess})(AddMatieres);

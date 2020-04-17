@@ -5,6 +5,7 @@ import icon from '../../logo.svg';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {getStudent} from '../../actions/admin/adminEtudiantActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class SearchStudent extends Component {
     state={
@@ -14,7 +15,10 @@ class SearchStudent extends Component {
         user:null,
         userExist:false
     }
-
+    
+    componentWillMount(){
+        this.props.clearSuccess();
+    }
     onChange=(e)=>{
         this.setState({
             [e.target.name]:e.target.value
@@ -114,4 +118,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{getStudent})(SearchStudent);
+export default connect(mapStateToProps,{getStudent,clearSuccess})(SearchStudent);
