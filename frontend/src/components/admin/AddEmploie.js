@@ -77,7 +77,7 @@ class AddStudents extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader les images des emplois du temp des cours ou ds selon le niveau!</div>
                     </Alert>
-                    <Alert color="danger">
+                    <Alert color="warning">
                         <div>Veuillez utilisé un fichier image!</div>
                     </Alert><br/>
                     <Row>

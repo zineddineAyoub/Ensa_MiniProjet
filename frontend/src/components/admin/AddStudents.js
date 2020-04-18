@@ -8,7 +8,7 @@ import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddStudents extends Component {
     state={
-        niveauFiliere:null,
+        niveauFiliere:"erreur",
         success:null,
         msg:null,
         file:null,
@@ -75,7 +75,7 @@ class AddStudents extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader tous les étudiants avec un fichier!</div>
                     </Alert>
-                    <Alert color="danger">
+                    <Alert color="warning">
                         <div>Veuillez utilisé un fichier csv!</div>
                     </Alert><br/>
                     <Row>
@@ -90,7 +90,7 @@ class AddStudents extends Component {
                             <Form onSubmit={this.onSubmit}>
                                 <FormGroup>
                                     <Input type="select" name="niveauFiliere" onChange={this.onChange}>
-                                        <option>---Choisissez le niveau---</option>
+                                        <option value="erreur">---Choisissez le niveau---</option>
                                         {this.state.listNiveau.map((data)=>(
                                             <option value={data._id}>{data.niveau}{"/"+data.filiere}</option>
                                         ))}

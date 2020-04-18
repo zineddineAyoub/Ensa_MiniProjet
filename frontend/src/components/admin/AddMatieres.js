@@ -62,7 +62,7 @@ class AddMatieres extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader tous les matières avec un fichier!</div>
                     </Alert>
-                    <Alert color="danger">
+                    <Alert color="warning">
                         <div>Veuillez utilisé un fichier csv!</div>
                     </Alert><br/>
                     <Row>
