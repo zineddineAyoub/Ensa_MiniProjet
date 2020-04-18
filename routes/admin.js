@@ -18,8 +18,6 @@ const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 const BusBoy = require('busboy');
 const path=require('path');
-const { resolve } = require('path');
-const NiveauFiliere_MatiereModel = require('../models/NiveauFiliere_Matiere.model');
 
 const router=express.Router();
 
@@ -78,7 +76,17 @@ router.route('/login').post((req,res)=>{
 
 
 
- 
+const deleteStudents=(niveauFiliere)=>{
+    return new Promise((resolve,reject)=>{
+        Etudiant.deleteMany({niveauFiliere})
+        .then(()=>{
+            resolve();
+        }).catch(err=>{
+            reject();
+        })
+    });
+} 
+
 // In form-data we send the csv file and key:filiere/value:informatique and key:niveau/value:CI1
 // We should send the two keys first then send the file
 // Cz the on('field') should fire before on('file')
@@ -99,9 +107,23 @@ router.route('/ajouterEtudiant').post((req,res)=>{
         formData.set(fieldname, val);
     });
 
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {    
-     fileName=filename;  
-     niveauFiliere=formData.get("niveauFiliere");
+    busboy.on('file', async(fieldname, file, filename, encoding, mimetype) => {
+    niveauFiliere=formData.get("niveauFiliere");
+    if(niveauFiliere==="erreur"){
+        return res.status(400).json({msg:'Enter all fields'});
+    }
+     if(mimetype!=="application/vnd.ms-excel"){
+        return res.status(400).json({msg:"Enter a excel file!"});
+     }    
+     fileName=filename; 
+     if(file){
+        try{
+            await deleteStudents(niveaufiliere);
+        }
+        catch(err){
+            return res.status(400).json({msg:'Error'});
+        }
+     } 
      file
       .pipe(csv())
       .on('data', (data) =>
@@ -155,15 +177,54 @@ router.route('/ajouterEtudiant').post((req,res)=>{
 });
 
 
-//ajouter profs
-router.route('/ajouterProf').post((req,res)=>{
+const deleteAllMatieres=()=>{
+    return new Promise((resolve,reject)=>{
+        Matiere.deleteMany()
+        .then(()=>{
+            NiveauFiliere_Matiere.deleteMany()
+            .then(()=>{
+                resolve();
+            })
+        }).catch(err=>{
+            reject();
+        })
+    })
+}
+const deleteAllProfs=()=>{
+    return new Promise((resolve,reject)=>{
+        Prof.deleteMany()
+        .then(async()=>{
+            try{
+                await deleteAllMatieres();
+            }
+            catch(err){
+                reject();
+            }
+        }).catch((err)=>{
+            reject();
+        })
+    });
+}
 
+//ajouter profs
+router.route('/ajouterProf').post(async (req,res)=>{
     let transporter = mailConf('tarik.ouhamou@gmail.com','dragonballz123+');
 
     const busboy = new BusBoy({ headers: req.headers });
     let fileName;
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+    busboy.on('file', async (fieldname, file, filename, encoding, mimetype) => {
+     if(mimetype!=="application/vnd.ms-excel"){
+         return res.status(400).json({msg:"Enter a excel file!"});
+     }
      fileName=filename;
+     if(file){
+        try{
+            await deleteAllProfs();
+        }
+        catch(err){
+            return res.status(400).json({msg:'Error'});
+        }
+     }
      file
       .pipe(csv())
       .on('data', (data) =>
@@ -557,11 +618,22 @@ router.route('/getNiveauFiliere').get((req,res)=>{
 // -------------------- MATIERE -------------------------
 //ajouter Matiere CSV
 router.route('/ajouterMatiereCSV').post((req,res)=>{
-    console.log("well");
+
     const busboy = new BusBoy({ headers: req.headers });  
     let fileName;
-    busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {    
-        fileName=filename;  
+    busboy.on('file',async (fieldname, file, filename, encoding, mimetype) => {   
+     if(mimetype!=="application/vnd.ms-excel"){
+        return res.status(400).json({msg:"Enter a excel file!"});
+     }   
+     fileName=filename;
+     if(file){
+         try{
+            await deleteAllMatieres();
+         }
+         catch(err){
+            return res.status(400).json({msg:'Erreur'});
+         }
+     }
      file
       .pipe(csv())
       .on('data', (data) =>

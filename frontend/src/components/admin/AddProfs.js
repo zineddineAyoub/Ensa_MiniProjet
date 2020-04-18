@@ -60,8 +60,8 @@ class AddProfs extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader tous les professeurs avec un fichier!</div>
                     </Alert>
-                    <Alert color="danger">
-                        <div>Veuillez utilisé un fichier csv!</div>
+                    <Alert color="warning">
+                        <div><strong>Important: </strong>Quand vous uploader le csv des profs vous devez reuploader le fichier de matière! </div>
                     </Alert><br/>
                     <Row>
                         <Col xs={3}></Col>
