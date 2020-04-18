@@ -797,4 +797,25 @@ router.route('/deleteOneProf/:id').delete(async(req,res)=>{
 })
 
 
+//test
+
+router.route('/test').get((req,res)=>{
+    const aggregatorOpts = [{
+
+        $group: {
+            _id: "$niveauFiliere",
+            count: { $sum: 1 }
+        }
+    }];
+    /*Etudiant.aggregate(aggregatorOpts)
+    .then(doc=>{
+        res.json(doc);
+    });*/
+    Etudiant.find().populate('niveauFiliere')
+    .then(users=>{
+        res.json(users);
+    })
+});
+
+
 module.exports=router;

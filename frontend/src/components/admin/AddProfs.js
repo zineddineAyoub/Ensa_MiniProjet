@@ -30,7 +30,10 @@ class AddProfs extends Component {
         const {error,success}=this.props;
         if(error!==prevProps.error){
             if(error.id=='ADD_PROFS_FAIL'){
-                this.setState({msg:error.msg.msg});
+                this.setState({
+                    msg:error.msg.msg,
+                    success:null
+                });
             }
             else{
                 this.setState({msg:null})
