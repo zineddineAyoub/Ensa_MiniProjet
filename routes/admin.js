@@ -196,6 +196,7 @@ const deleteAllProfs=()=>{
         .then(async()=>{
             try{
                 await deleteAllMatieres();
+                resolve();
             }
             catch(err){
                 reject();
@@ -207,7 +208,7 @@ const deleteAllProfs=()=>{
 }
 
 //ajouter profs
-router.route('/ajouterProf').post(async (req,res)=>{
+router.route('/ajouterProf').post((req,res)=>{
     let transporter = mailConf('tarik.ouhamou@gmail.com','dragonballz123+');
 
     const busboy = new BusBoy({ headers: req.headers });
