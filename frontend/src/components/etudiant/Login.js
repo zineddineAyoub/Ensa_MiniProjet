@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {Card, CardImg, CardText, CardBody,CardTitle,Button,Form,FormGroup,Input,Alert} from 'reactstrap';
-import icon from '../../logo.svg';
+import icon from '../../ressources/student_icon.png';
 import {Redirect,Link} from 'react-router-dom';
 //actions
 import {login} from '../../actions/etudiant/authActions';
@@ -54,7 +54,7 @@ class Login extends Component {
 
     render() {
         const styling={
-            backgroundColor:"#EEEEEE",
+            backgroundImage: 'linear-gradient(to top, #00c6fb 0%, #005bea 100%)',
             height:'100vh',
             display:'flex',
             alignItems:"center",
@@ -62,10 +62,12 @@ class Login extends Component {
         }
         return (
             <div style={styling}>
-                <Card style={{height:"30rem",width:"28rem"}}>
-                    <CardImg src={icon} style={{height:"100px",width:"100%"}}></CardImg>
+                <Card style={{height:"554px",width:"28rem",borderRadius:"8%"}}>
+                    <div className="text-center"><br />
+                        <CardImg src={icon} style={{height:"150px",width:"150px"}}></CardImg>
+                    </div>
                     <CardBody >
-                        <CardTitle className="text-center"><strong>Login Etudiant</strong></CardTitle><br /><br />
+                        <CardTitle className="text-center"><h5><strong>Login Etudiant</strong></h5></CardTitle><br />
                         {this.state.msg ? <Alert color="danger">
                             {this.state.msg}
                         </Alert>:null}
@@ -87,6 +89,7 @@ class Login extends Component {
                                     <Button type="submit" color="primary" className="btn-block">Submit</Button>
                                 </FormGroup>
                             </Form>
+                            <Link to="/etudiant/forgottenPassword">Forgotten Password?</Link>
                         </CardText>
                     </CardBody>  
                 </Card>

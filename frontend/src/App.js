@@ -27,9 +27,13 @@ import Statistique from './components/admin/Statistique';
 //prof components
 import LoginProf from './components/prof/Login';
 import HomeProf from './components/prof/Home';
+import ForgottenPasswordProf from './components/prof/ForgottenPassword';
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
 import HomeEtudiant from './components/etudiant/Home';
+import ForgottenPasswordEtudiant from './components/etudiant/ForgottenPassword';
+//home component
+import Home from './components/Home';
 //loading user
 import {loadAdmin} from './actions/admin/authActions';
 import {loadProf} from './actions/prof/authActions';
@@ -45,6 +49,8 @@ class App extends React.Component{
     return(
       <Provider store={store}>
         <Router>
+          <Route path="/" component={Home} exact />
+
           <Route path="/admin/login" component={LoginAdmin} exact />
           <Route path="/admin/home" component={adminProtected(HomeAdmin)} exact />
           <Route path="/admin/addStudent" component={adminProtected(AddStudent)} exact />
@@ -63,9 +69,11 @@ class App extends React.Component{
       
           <Route path="/prof/login" component={LoginProf} exact />
           <Route path="/prof/home" component={profProtected(HomeProf)} exact />
+          <Route path="/prof/forgottenPassword" component={ForgottenPasswordProf} exact />
 
           <Route path="/etudiant/login" component={LoginEtudiant} exact />
           <Route path="/etudiant/home" component={etudiantProtected(HomeEtudiant)} exact />
+          <Route path="/etudiant/forgottenPassword" component={ForgottenPasswordEtudiant} exact />
         </Router>
       </Provider>
     )
