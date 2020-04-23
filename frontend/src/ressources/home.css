@@ -1,0 +1,77 @@
+.navigation{
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+}
+.imageContainer{
+    width: 100%;
+    height: 100%;
+    height: 100vh;
+}
+.image{
+    min-width:100%;
+    min-height: 100%;
+    width: 100%;
+    height: auto;
+    filter: brightness(40%);
+    position: absolute;
+    top: 0;
+}
+
+.textContainer{
+    position:absolute;
+    top: 40%;
+    left: 29%;
+    color: white;
+    font-size: 45px;
+}
+
+.footer{
+    background-color: #343a40;
+    padding: 50px;
+    color: white;
+    text-align: center;
+    margin-top: 10%;
+}
+
+.globalTitle{
+    text-align: center;
+}
+.seperator{
+    margin-left: 15px;
+    margin-right: 15px;
+}
+.globalsubTitle{
+    margin-top: 30px;
+    text-align: center;
+}
+
+.authContainer{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.title{
+    margin-top: 40px;
+    margin-bottom: 40px;
+    font-size: 40px;
+}
+
+.cardTitle{
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.links:hover{
+    color:red
+}
+#map{
+    height:400px;
+}
+.contactCard{
+    height:400px;
+}
+.line{
+    margin:30px 60px 15px 60px
+}

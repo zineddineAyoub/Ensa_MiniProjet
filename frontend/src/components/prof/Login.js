@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {Card, CardImg, CardText, CardBody,CardTitle,Button,Form,FormGroup,Input,Alert} from 'reactstrap';
-import icon from '../../ressources/prof_icon.jpg';
+import icon from '../../ressources/teacherIcon.svg';
 import {Redirect,Link} from 'react-router-dom';
 //actions
 import {login} from '../../actions/prof/authActions';
@@ -54,7 +54,7 @@ class Login extends Component {
 
     render() {
         const styling={
-            backgroundImage: 'linear-gradient(to top, #00c6fb 0%, #005bea 100%)',
+            background: 'linear-gradient(to top,#ef8e38 0%,#108dc7 100%)',
             height:'100vh',
             display:'flex',
             alignItems:"center",
@@ -62,7 +62,7 @@ class Login extends Component {
         }
         return (
             <div style={styling}>
-                <Card style={{height:"554px",width:"28rem",borderRadius:"8%"}}>
+                <Card style={{height:"575px",width:"28rem",borderRadius:"8%"}}>
                     <div className="text-center"><br />
                         <CardImg src={icon} style={{height:"150px",width:"150px"}}></CardImg>
                     </div>

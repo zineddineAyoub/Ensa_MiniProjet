@@ -40,4 +40,21 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <script>
+      var map;
+      var cord={lat:32.327488,lng:-9.263687}
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: cord,
+          zoom: 13
+        });
+        var marker = new google.maps.Marker({
+          position: cord,
+          map: map
+        });
+      }
+      initMap();
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOs7hqT8ViRAwXsnZKqJeE-SbPHtsQmEM&callback=initMap"
+  async defer></script>
 </html>
