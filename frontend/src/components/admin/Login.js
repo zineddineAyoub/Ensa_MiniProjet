@@ -51,7 +51,8 @@ class Login extends Component {
 
     render() {
         const styling={
-            backgroundImage: 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)',
+            //backgroundImage: 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)',
+            background: 'linear-gradient(to top,#ef8e38 0%,#108dc7 100%)',
             height:'100vh',
             display:'flex',
             alignItems:"center",
