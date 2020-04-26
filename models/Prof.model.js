@@ -15,7 +15,8 @@ const ProfSchema=new Schema({
         type:String
     },
     image:{
-        type:String
+        type:String,
+        default:'default.jpg'
     },
     password:{
         type:String

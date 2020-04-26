@@ -15,6 +15,8 @@ router.get('/', async (req, res) => {
  
 });
 
+
+
 // DELETE ALL
 router.delete('/', async (req, res) => {
   Etudiant.deleteMany({}).then(
@@ -32,6 +34,7 @@ router.delete('/', async (req, res) => {
   );
   });
 
+  
 
 router.route('/login').post((req,res)=>{
     const {cne,cin,password}=req.body;

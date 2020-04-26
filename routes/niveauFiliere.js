@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const NiveauFiliere = require('../models/NiveauFiliere.model')
+const Note = require('../models/Note.model')
 
 
 // Getting all
@@ -12,6 +13,19 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: err.message })
   }
  
+})
+
+router.delete('/note',async(req,res)=>{
+  try{
+      Note.deleteMany({}).then(()=>{
+        return res.json({msg:"deleted"});
+      });
+     
+  }
+  catch(err)
+  {
+    res.status(500).json({ message: err.message })
+  }
 })
 
 router.route('/ajouter').post((req,res)=>{

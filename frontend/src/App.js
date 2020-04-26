@@ -23,9 +23,16 @@ import SearchStudent from './components/admin/SearchStudent';
 import SearchProf from './components/admin/SearchProf';
 import ListMatieres from './components/admin/ListMatieres';
 
+
 //prof components
 import LoginProf from './components/prof/Login';
 import HomeProf from './components/prof/Home';
+import AddDocument from './components/prof/AddDocument';
+import ProfProfile from './components/prof/AfficherProfile';
+import AjouterNote from './components/prof/AddNote';
+import ListNote from './components/prof/ListNote';
+import listDocument from './components/prof/ListDocument';
+
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
 import HomeEtudiant from './components/etudiant/Home';
@@ -33,6 +40,8 @@ import HomeEtudiant from './components/etudiant/Home';
 import {loadAdmin} from './actions/admin/authActions';
 import {loadProf} from './actions/prof/authActions';
 import {loadEtudiant} from './actions/etudiant/authActions';
+import ProtectedProf from './components/ProtectedProf';
+import ListDocument from './components/prof/ListDocument';
 
 class App extends React.Component{
   componentDidMount(){
@@ -61,6 +70,11 @@ class App extends React.Component{
       
           <Route path="/prof/login" component={LoginProf} exact />
           <Route path="/prof/home" component={profProtected(HomeProf)} exact />
+          <Route path="/prof/AddDocument" component={profProtected(AddDocument)} exact />
+          <Route path="/prof/Afficherprofile" component={ProtectedProf(ProfProfile)} exact />
+          <Route path="/prof/ajouterNote" component={profProtected(AjouterNote)} exact />
+          <Route path="/prof/listNote" component={profProtected(ListNote)} exact />
+          <Route path="/prof/listDocument" component={profProtected(ListDocument)} exact />
 
           <Route path="/etudiant/login" component={LoginEtudiant} exact />
           <Route path="/etudiant/home" component={etudiantProtected(HomeEtudiant)} exact />
