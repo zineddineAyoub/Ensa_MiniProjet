@@ -3,6 +3,7 @@ import {Container,Alert, FormGroup,Form,Input,Button,Row,Col} from 'reactstrap';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addProfs} from '../../actions/admin/adminProfActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddProfs extends Component {
     state={
@@ -11,6 +12,9 @@ class AddProfs extends Component {
         file:null
     }
 
+    componentWillMount(){
+        this.props.clearSuccess();
+    }
     onChangeImage=(e)=>{
         this.setState({
             file:e.target.files[0]
@@ -26,7 +30,10 @@ class AddProfs extends Component {
         const {error,success}=this.props;
         if(error!==prevProps.error){
             if(error.id=='ADD_PROFS_FAIL'){
-                this.setState({msg:error.msg.msg});
+                this.setState({
+                    msg:error.msg.msg,
+                    success:null
+                });
             }
             else{
                 this.setState({msg:null})
@@ -56,8 +63,8 @@ class AddProfs extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader tous les professeurs avec un fichier!</div>
                     </Alert>
-                    <Alert color="danger">
-                        <div>Veuillez utilisé un fichier csv!</div>
+                    <Alert color="warning">
+                        <div><strong>Important: </strong>Quand vous uploader le csv des profs vous devez reuploader le fichier de matière! </div>
                     </Alert><br/>
                     <Row>
                         <Col xs={3}></Col>
@@ -89,4 +96,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addProfs})(AddProfs);
+export default connect(mapStateToProps,{addProfs,clearSuccess})(AddProfs);

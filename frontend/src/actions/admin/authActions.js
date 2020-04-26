@@ -6,6 +6,7 @@ import {
     ADMIN_LOGIN_SUCCESS,
     ADMIN_LOGIN_FAIL,
     ADMIN_LOGOUT_SUCCESS,
+    CLEAR_SUCCESS
   } from './types';
 
 import {returnErrors} from '../errorActions';
@@ -45,6 +46,12 @@ export const login=({username,password})=>dispatch=>{
         type:ADMIN_LOGIN_FAIL
       });
     })
+}
+
+export const clearSuccess=()=>dispatch=>{
+  dispatch({
+    type:CLEAR_SUCCESS
+  });
 }
 
 export const logout=()=>dispatch=>{

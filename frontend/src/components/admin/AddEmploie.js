@@ -4,6 +4,7 @@ import axios from 'axios';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addEmploie} from '../../actions/admin/adminEtudiantActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddStudents extends Component {
     state={
@@ -14,6 +15,9 @@ class AddStudents extends Component {
         file:null,
         semsetre:null,
         listNiveau:[]
+    }
+    componentWillMount(){
+        this.props.clearSuccess();
     }
     componentWillMount(){
         console.log(this.state.listNiveau);
@@ -40,7 +44,10 @@ class AddStudents extends Component {
         const {error,success}=this.props;
         if(error!==prevProps.error){
             if(error.id=='ADD_EMPLOIE_FAIL'){
-                this.setState({msg:error.msg.msg});
+                this.setState({
+                    msg:error.msg.msg,
+                    success:null
+                });
             }
             else{
                 this.setState({msg:null})
@@ -73,7 +80,7 @@ class AddStudents extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader les images des emplois du temp des cours ou ds selon le niveau!</div>
                     </Alert>
-                    <Alert color="danger">
+                    <Alert color="warning">
                         <div>Veuillez utilisé un fichier image!</div>
                     </Alert><br/>
                     <Row>
@@ -128,4 +135,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addEmploie})(AddStudents);
+export default connect(mapStateToProps,{addEmploie,clearSuccess})(AddStudents);

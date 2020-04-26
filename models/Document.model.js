@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 
 const Document = new mongoose.Schema({
-    Nom: {
+    nom: {
       type: String
     },
 
-    Type: {
+    type: {
       type: String
     },
 
-   Fichier : {
+   fichier : {
     type: String
    },
 

@@ -4,6 +4,7 @@ import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import axios from 'axios';
 import {addStudent} from '../../actions/admin/adminEtudiantActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddStudent extends Component {
     state={
@@ -16,6 +17,10 @@ class AddStudent extends Component {
         listNiveau:[],
         msg:null,
         success:null
+    }
+
+    componentWillMount(){
+        this.props.clearSuccess();
     }
     componentWillMount(){
         axios.get('http://localhost:5000/admin/getNiveauFiliere')
@@ -36,7 +41,10 @@ class AddStudent extends Component {
         const {error,success}=this.props;
         if(error!==prevProps.error){
             if(error.id=='ADD_STUDENT_FAIL'){
-                this.setState({msg:error.msg.msg});
+                this.setState({
+                    msg:error.msg.msg,
+                    success:null
+                })
             }
             else{
                 this.setState({msg:null})
@@ -122,4 +130,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addStudent})(AddStudent);
+export default connect(mapStateToProps,{addStudent,clearSuccess})(AddStudent);

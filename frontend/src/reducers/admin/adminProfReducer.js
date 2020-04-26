@@ -7,7 +7,8 @@ import {
     LIST_PROFS_FAIL,
     DELETE_PROF,
     GET_PROF,
-    GET_PROF_FAIL
+    GET_PROF_FAIL,
+    CLEAR_SUCCESS
   } from '../../actions/admin/types';
   
   const initialState={
@@ -67,6 +68,11 @@ import {
             ...state,
             success:null,
             user:{}
+          }
+        case CLEAR_SUCCESS:
+          return{
+            ...state,
+            success:null
           }
         default:
             return state;

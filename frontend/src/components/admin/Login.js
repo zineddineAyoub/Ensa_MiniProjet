@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {Card, CardImg, CardText, CardBody,CardTitle,Button,Form,FormGroup,Input,Alert} from 'reactstrap';
-import icon from '../../logo.svg';
+import icon from '../../ressources/admin_icon.png';
 import {Redirect,Link} from 'react-router-dom';
 //actions
 import {login} from '../../actions/admin/authActions';
@@ -51,7 +51,8 @@ class Login extends Component {
 
     render() {
         const styling={
-            backgroundColor:"#EEEEEE",
+            //backgroundImage: 'linear-gradient(to right, #4facfe 0%, #00f2fe 100%)',
+            background: 'linear-gradient(to top,#ef8e38 0%,#108dc7 100%)',
             height:'100vh',
             display:'flex',
             alignItems:"center",
@@ -59,10 +60,12 @@ class Login extends Component {
         }
         return (
             <div style={styling}>
-                <Card style={{height:"30rem",width:"28rem"}}>
-                    <CardImg src={icon} style={{height:"100px",width:"100%"}}></CardImg>
+                <Card style={{height:"546px",width:"28rem",borderRadius:"8%"}}>
+                    <div className="text-center">
+                        <CardImg src={icon} style={{height:"200px",width:"200px"}}></CardImg>
+                    </div>
                     <CardBody >
-                        <CardTitle className="text-center"><strong>Login Admin</strong></CardTitle><br /><br />
+                        <CardTitle className="text-center"><h5><strong>Login Admin</strong></h5></CardTitle><br />
                         {this.state.msg ? <Alert color="danger">
                             {this.state.msg}
                         </Alert>:null}

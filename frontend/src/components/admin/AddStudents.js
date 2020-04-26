@@ -4,15 +4,19 @@ import axios from 'axios';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {addStudents} from '../../actions/admin/adminEtudiantActions';
+import {clearSuccess} from '../../actions/admin/authActions';
 
 class AddStudents extends Component {
     state={
-        niveauFiliere:null,
+        niveauFiliere:"erreur",
         success:null,
         msg:null,
         file:null,
         listNiveau:[],
-        msg:null
+    }
+
+    componentWillMount(){
+        this.state.clearSuccess();
     }
     componentWillMount(){
         console.log(this.state.listNiveau);
@@ -39,7 +43,10 @@ class AddStudents extends Component {
         const {error,success}=this.props;
         if(error!==prevProps.error){
             if(error.id=='ADD_STUDENTS_FAIL'){
-                this.setState({msg:error.msg.msg});
+                this.setState({
+                    msg:error.msg.msg,
+                    success:null
+                });
             }
             else{
                 this.setState({msg:null})
@@ -71,7 +78,7 @@ class AddStudents extends Component {
                     <Alert color="info">
                         <div>Ici vous pouvez uploader tous les étudiants avec un fichier!</div>
                     </Alert>
-                    <Alert color="danger">
+                    <Alert color="warning">
                         <div>Veuillez utilisé un fichier csv!</div>
                     </Alert><br/>
                     <Row>
@@ -86,7 +93,7 @@ class AddStudents extends Component {
                             <Form onSubmit={this.onSubmit}>
                                 <FormGroup>
                                     <Input type="select" name="niveauFiliere" onChange={this.onChange}>
-                                        <option>---Choisissez le niveau---</option>
+                                        <option value="erreur">---Choisissez le niveau---</option>
                                         {this.state.listNiveau.map((data)=>(
                                             <option value={data._id}>{data.niveau}{"/"+data.filiere}</option>
                                         ))}
@@ -112,4 +119,4 @@ const mapStateToProps=(state)=>({
     error:state.error
 });
 
-export default connect(mapStateToProps,{addStudents})(AddStudents);
+export default connect(mapStateToProps,{addStudents,clearSuccess})(AddStudents);

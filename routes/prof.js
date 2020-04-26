@@ -1,16 +1,21 @@
 const express = require('express')
 const router = express.Router()
 const Prof = require('../models/Prof.model')
+
 const Matiere = require('../models/Matiere.model')
 const NiveauFiliere_Matiere = require('../models/NiveauFiliere_Matiere.model')
 const Etudiant = require('../models/Etudiant.model')
 const Note = require('../models/Note.model')
+
 const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 const BusBoy = require('busboy');
-const path=require('path');
+const path = require('path');
 const fs = require('fs');
+const nodeMailer = require('nodemailer');
+ObjectId = require('mongodb').ObjectID;
+
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -94,7 +99,7 @@ router.get('/user',auth,(req,res)=>{
         res.json(user);
     })
 });
-
+/* Profil */
 //Voir Profil
 router.get('/:id', (req, res) => {
   Prof.findOne({
@@ -149,7 +154,6 @@ router.route('/ModifierProf/:id').put((req,res)=>{
   });
 });
 
-
   //Photo de Profile
   router.route('/EditProfilePicture/:id').put((req,res)=>{
     //manage and save file in folder
@@ -180,6 +184,7 @@ router.route('/ModifierProf/:id').put((req,res)=>{
 });
 
 
+
 //Afficher Modules+Elements
 router.get('/afficherMatieres/:idProf', (req, res) => {
   Matiere.find ({
@@ -198,7 +203,7 @@ router.get('/afficherMatieres/:idProf', (req, res) => {
 
 });
 
-
+/*Notes*/
 //Ajouter note
 router.post('/ajouterNote', (req, res) => {
 
@@ -400,6 +405,103 @@ router.route('/AddDocument').post((req,res)=>{
       
   });
   req.pipe(busboy);
+});
+
+/*Cours+TD+TP*/
+//ajouter document
+router.post('/ajouterDocument',(req,res)=>{
+  const busboy = new BusBoy({ headers: req.headers });
+  //Array pour recuperer les données
+  let formData = new Map();
+
+  busboy.on('field',(fieldname, val) =>{
+    formData.set(fieldname, val);
+});
+   
+busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+   let documentFileName;
+    if (mimetype !== 'application/pdf') {
+      return res.status(400).json({ msg: 'Wrong file type submitted' });
+    }
+    
+    if (formData.get('type') === 'cours') {
+      
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    documentFileName = formData.get('nom') +'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/documentsProf/cours/'+documentFileName);
+    
+  } 
+  else if (formData.get('type') === 'td'){
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    documentFileName = formData.get('nom') +'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/documentsProf/td/'+documentFileName);
+  } 
+  else {
+    
+    let imageExtension = filename.split('.')[filename.split('.').length - 1];
+    documentFileName = formData.get('nom') +'.'+imageExtension;
+    filepath = path.join(__dirname,'../uploads/documentsProf/tp/'+documentFileName);
+  }
+  file.pipe(fs.createWriteStream(filepath));
+  });
+
+  busboy.on('finish', () => {
+  
+    const document = new Document({
+      nom: formData.get('nom'),
+      type: formData.get('type'),
+      fichier: formData.get('nom'),
+      matiere: ObjectId(formData.get('matiere'))
+    });
+    document.save().then(()=>{
+          res.json("bien ajouté");
+      }).catch(err=>{
+          console.log('error')
+     });
+  });
+
+ 
+  req.pipe(busboy);
+});
+
+
+//mail Conf
+const mailConf=(user,pass)=>{
+  let transporter = nodeMailer.createTransport({
+     service:'gmail',
+      auth: {
+          // should be replaced with real sender's account
+          user: user,
+          pass: pass
+      },tls: {
+          rejectUnauthorized: false
+      }
+  });
+  return transporter;
+}
+
+//password recovery
+router.route('/passwordRecovery').post((req,res)=>{
+  const {email}=req.body;
+  if(!email){
+    return res.status(400).json({msg:'Field is required!'});
+  }
+  let password;
+  Prof.find({email})
+  .then(prof=>{
+    if(prof.length===0){
+      return res.status(400).json({msg:'Email professeur non existant!'})
+    }
+    password=prof[0].password
+    let transporter = mailConf('zineddine.ayoub98@gmail.com','ayoubstar');
+    let mailOptions = {
+      to: email,
+      subject: "Site Officiel Ensa",
+      text: 'Login : '+email+'\n Password : '+password
+    };
+    transporter.sendMail(mailOptions);
+    return res.json('success');
+  });
 });
 
 
