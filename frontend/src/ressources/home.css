@@ -12,7 +12,7 @@
     min-width:100%;
     min-height: 100%;
     width: 100%;
-    height: auto;
+    height: 100%;
     filter: brightness(40%);
     position: absolute;
     top: 0;
@@ -36,6 +36,19 @@
 
 .globalTitle{
     text-align: center;
+    position: relative;
+    animation: globalTitle;
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+}
+@keyframes globalTitle{
+    0%{
+        top:-1000px;
+    }
+    100%{
+        top:0px;
+        text-align: center;
+    }
 }
 .seperator{
     margin-left: 15px;
@@ -44,6 +57,20 @@
 .globalsubTitle{
     margin-top: 30px;
     text-align: center;
+    position: relative;
+    animation: globalsubTitle;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+@keyframes globalsubTitle{
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 100%;
+    }
 }
 
 .authContainer{
@@ -63,9 +90,6 @@
     font-size: 24px;
 }
 
-.links:hover{
-    color:red
-}
 #map{
     height:400px;
 }
@@ -74,4 +98,25 @@
 }
 .line{
     margin:30px 60px 15px 60px
+}
+
+.feedBack{
+    width:210px;
+}
+.feedBack:active{
+    transform: scale(.98);
+}
+.nav{
+    background-color: transparent !important;
+}
+.scrolled{
+    background-color: black !important;
+}
+
+.logo{
+    color:white;
+}
+
+.links{
+    color:white;
 }
