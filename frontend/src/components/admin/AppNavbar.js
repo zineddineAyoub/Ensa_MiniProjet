@@ -118,8 +118,11 @@ class AppNavbar extends Component {
                         </UncontrolledDropdown>
                         <NavItem>
                             <Link to="/admin/emploie" style={{textDecoration:'none'}}>
-                                <NavLink>Upload Emploie</NavLink>
+                                <NavLink>Emploie</NavLink>
                             </Link>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink href="/admin/feedbacks">FeedBacks</NavLink>
                         </NavItem>
                         <NavItem>
                             <NavLink href="/admin/statistiques">Statistiques</NavLink>
