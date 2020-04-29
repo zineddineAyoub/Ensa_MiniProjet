@@ -9,6 +9,10 @@ const Note = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Matiere'},
 
+    semestre:{
+      type:Number,
+    },
+
     etudiant: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Etudiant'}  

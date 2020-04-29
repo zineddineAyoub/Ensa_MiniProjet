@@ -5,7 +5,8 @@ import {
     PROF_AUTH_ERROR,
     PROF_LOGIN_SUCCESS,
     PROF_LOGIN_FAIL,
-    PROF_LOGOUT_SUCCESS,
+    PROF_LOGOUT_SUCCESS
+  
   } from './types';
 
 import {returnErrors} from '../errorActions';

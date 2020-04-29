@@ -1,9 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const Prof = require('../models/Prof.model')
+
+const Matiere = require('../models/Matiere.model')
+const NiveauFiliere_Matiere = require('../models/NiveauFiliere_Matiere.model')
 const Etudiant = require('../models/Etudiant.model')
 const Note = require('../models/Note.model')
-const Matiere = require('../models/Matiere.model')
+
 const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
@@ -12,7 +15,6 @@ const path = require('path');
 const fs = require('fs');
 const nodeMailer = require('nodemailer');
 ObjectId = require('mongodb').ObjectID;
-
 
 
 // Getting all
@@ -26,8 +28,18 @@ router.get('/', async (req, res) => {
  
 })
 
+router.get('/document', async (req, res) => {
+  try {
+    const profs= await Document.find()
+    res.json(profs)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+ 
+})
+
 // DELETE ALL
-router.delete('/', async (req, res) => {
+router.delete('/deleteAllProf', async (req, res) => {
   Prof.deleteMany({}).then(
     () => {
       res.status(200).json({
@@ -52,7 +64,7 @@ router.route('/login').post((req,res)=>{
     Prof.findOne({cin})
     .then(user=>{
         if(!user || user.email!==email || user.password!==password){
-            res.status.json({msg:'False Credentials'});
+            res.status(400).json({msg:'False Credentials'});
         }
         if(user.password==password && user.email==email){
             jwt.sign(
@@ -64,11 +76,14 @@ router.route('/login').post((req,res)=>{
                     res.json({
                         token,
                         user:{
+                            _id:user._id,
                             nom:user.nom,
                             prenom:user.prenom,
                             cin:user.cin,
                             email:user.email,
                             image:user.image,
+                            telephone:user.telephone,
+                            adresse:user.adresse,
                             type:user.type,
                             niveauFiliere:user.niveauFiliere
                         }
@@ -106,7 +121,7 @@ router.get('/:id', (req, res) => {
 
 
 //Modifier Profil 
-router.put('/:id', (req, res) => {
+/*router.put('/:id', (req, res) => {
   return Prof.updateOne(
     { _id: req.params.id },  // find prof
     { $set: {                // update prof
@@ -122,47 +137,62 @@ router.put('/:id', (req, res) => {
   ).then(result => {
     res.status(200).json({ message: "Infos du profil bien modifiés!" });
   });
+});*/
+//Modifier Prof
+router.route('/ModifierProf/:id').put((req,res)=>{
+  const {nom,prenom,cin,email,adresse,telephone}=req.body;
+  Prof.findOne({_id:req.params.id})
+  .then(user=>{
+      user.nom =nom,
+      user.prenom = prenom,
+      user.cin= cin,
+      user.email = email,
+      user.adresse=adresse,
+      user.telephone=telephone,
+      user.save();
+
+      res.json({msg:'success'});
+
+  }).catch(err=>{
+      res.status(400).json({msg:err});
+  });
 });
 
-//Modifier photo de profil
-router.put('/modifierImage/:idProf',(req,res)=>{
-  const busboy = new BusBoy({ headers: req.headers });
-  let imageFileName;
-  busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-    if (mimetype !== 'image/jpeg' && mimetype !== 'image/png') {
-      return res.status(400).json({ msg: 'Wrong file type submitted' });
-    }
+  //Photo de Profile
+  router.route('/EditProfilePicture/:id').put((req,res)=>{
+    //manage and save file in folder
+    //database
+    const busboy = new BusBoy({ headers: req.headers });
     
-    // my.image.png => ['my', 'image', 'png']
-    let imageExtension = filename.split('.')[filename.split('.').length - 1];
-    // 32756238461724837.png
-    imageFileName = req.params.idProf+'.'+imageExtension;
-    filepath = path.join(__dirname,'../uploads/photosProf/'+imageFileName);
-    file.pipe(fs.createWriteStream(filepath));
-    
-  });
-  busboy.on('finish', () => {
-       Prof.updateOne({_id: req.params.idProf},
-        {
-          $set: {                // update prof
-       
-            image:imageFileName 
-            
-           } 
-        }).then(()=>{
-          res.json("bien modifié");
-      }).catch(err=>{
-          console.log('error')
-     });
-  });
-  req.pipe(busboy);
+    let nameFile;
+    busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+        nameFile=filename;
+        let appDir = path.dirname(require.main.filename);
+        let path2 = appDir.replace(/\\/g, "/");
+        let filepath = path.join(path2, `/photoProfile/prof/${filename}`);
+        file.pipe(fs.createWriteStream(filepath));
+    });
+    busboy.on('finish',()=>{
+        if(!nameFile){
+            return res.status(400).json({msg:'Please Enter your picture'});
+        }
+        Prof.findById(req.params.id).then(
+          (user)=>{
+            user.image = nameFile;
+            user.save();
+          }
+        )
+        res.json({msg:'success'});
+    });
+    req.pipe(busboy);
 });
 
-/* Matieres*/
+
+
 //Afficher Modules+Elements
 router.get('/afficherMatieres/:idProf', (req, res) => {
   Matiere.find ({
-    prof: ObjectId(req.params.idProf)
+    prof:req.params.idProf
   }).then(
     (matieres) => {
       res.status(200).json(matieres);
@@ -180,30 +210,50 @@ router.get('/afficherMatieres/:idProf', (req, res) => {
 /*Notes*/
 //Ajouter note
 router.post('/ajouterNote', (req, res) => {
-  const note = new Note({
-    note: req.body.note,
-    matiere: ObjectId(req.body.matiere),
-    etudiant: ObjectId(req.body.etudiant)
+
+  req.body.forEach(element => {
+
+    const note = new Note({
+      note: element.note,
+      matiere: element.matiere,
+      etudiant: element.etudiant,
+      semestre:element.semestre
+    });
+    note.save()
+    .catch(
+      (error) => {
+        res.status(400).json({
+          msg: error
+        });
+      }
+    );
+    
+  })
+  res.status(201).json({
+    message: 'Note bien ajouté!'
   });
-  note.save().then(
-    () => {
-      res.status(201).json({
-        message: 'Note bien ajouté!'
-      });
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );
+  
 });
+
+router.post('/noteExam',async(req,res)=>{
+  console.log("hey");
+  
+  try {
+  Note.find().populate('matiere').populate('etudiant').then((note)=>{
+    console.log("haha");
+    
+      res.json(note)
+    })
+    
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
 
 // Afficher Etudiant+Notes d'une matière
 router.get('/afficherNotes/:idMatiere', async (req, res) => {
   Note.aggregate ([
-    {$match: { matiere: ObjectId(req.params.idMatiere) }},
+    {$match: { matiere: req.params.idMatiere }},
     {
       $lookup: {
         from:'etudiants',
@@ -219,27 +269,146 @@ router.get('/afficherNotes/:idMatiere', async (req, res) => {
   ).catch(
     (error) => {
       res.status(404).json({
-        error: error
+        msg: error
       });
     }
   );
  
 });
 
+// afficher note des etudiants
+
+  router.route('/afficherNote').post((req,res)=>{
+  // NiveauFiliere Matiere semestre 
+  const {niveauFiliere,matiere,semestre} = req.body;
+  Note.find({matiere,semestre}).populate({
+    path: 'etudiant',
+    match: { niveauFiliere: {$eq:niveauFiliere}},
+    // Explicitly exclude `_id`, see http://bit.ly/2aEfTdB
+    select: 'nom prenom niveauFiliere -_id'
+  })
+  .exec().then((data)=>{
+    res.json(data);
+  }).catch(
+    (error) => {
+      res.status(404).json({
+        msg: error
+      });
+    }
+  );
+  });
+
+
 
 //Modifier Note 
-router.put('/modifierNote/:matiereId.:etudiantId', (req, res) => {
-  return Note.updateOne(
-    { "matiere": ObjectId(req.params.matiereId),"etudiant": ObjectId(req.params.etudiantId) },  // find note
-    { $set: {                // update note
-       
-       note: req.body.note   
-       
-      } 
-    }   
-  ).then(result => {
-    res.status(200).json({ message: "Note bien modifié !" });
+router.put('/modifierNote', (req, res) => {
+ Note.findOne({_id:req.body._id})
+ .then((note)=>{
+   note.note = req.body.note
+   note.save().then(()=>{
+     res.json("Note Updated");
+   }).catch(err=>res.status(400).json({msg:err}));
+ })
+ .catch(err=>res.status(400).json({msg:err}));
+});
+
+
+// affiche niveau filiere selon matiere
+router.get('/NiveauFiliereByMatiere/:idMatiere', (req, res) => {
+  NiveauFiliere_Matiere.find ({
+    matiere:req.params.idMatiere
+  }).populate('niveauFiliere').then(
+    (matieres) => {
+      res.status(200).json(matieres);
+    }
+  ).catch(
+    (error) => {
+      res.status(404).json({
+        msg: error
+      });
+    }
+  );
+
+});
+
+// afficher etudiant selon NiveauFiliere
+router.get('/EtudiantByNiveauFiliere/:id', (req, res) => {
+
+  Etudiant.find ({
+   niveauFiliere:req.params.id
+  }).then(
+    (etudiants) => {
+      return res.status(200).json(etudiants);
+    }
+  ).catch(
+    (error) => {
+    return  res.status(404).json({
+        msg: error
+      });
+    }
+  );
+  
+ 
+});
+
+
+
+//Photo de Profile
+router.route('/AddDocument').post((req,res)=>{
+  //manage and save file in folder
+  //database
+  const busboy = new BusBoy({ headers: req.headers });
+
+  let formData = new Map();
+  //nom //fichier // type // matiere
+  busboy.on('field',(fieldname, val) =>{
+    formData.set(fieldname, val);
+});
+  var nameOfFile;
+  busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+    console.log(formData.get("type")+"hahah"+formData.get("nom"));
+    console.log(encoding);
+    console.log(mimetype);
+    
+    
+    if(!mimetype || mimetype!="application/pdf")
+    {
+      return res.status(400).json({msg:"Please choose a pdf file"});
+    }
+    
+      let appDir = path.dirname(require.main.filename);
+      let path2 = appDir.replace(/\\/g, "/");
+      let filepath = path.join(path2, `public/Document/${formData.get("type")}/${filename}`);
+      file.pipe(fs.createWriteStream(filepath));
+      nameOfFile=filename;
+
   });
+  busboy.on('finish',()=>{
+      if(!nameOfFile){
+          return res.status(400).json({msg:'Please Enter your file'});
+      }
+      /////////// 
+      const document = new Document({
+        Nom: formData.get("nom"),
+        Type: formData.get("type"),
+        Fichier: nameOfFile,
+        matiere:formData.get("matiere")
+
+       
+      });
+      document.save()
+      .then(res.json({msg:'success'}))
+      .catch(
+        (error) => {
+          res.status(400).json({
+            msg: error
+          });
+        }
+      );
+
+      
+  });
+  req.pipe(busboy);
 });
 
 /*Cours+TD+TP*/
@@ -338,6 +507,106 @@ router.route('/passwordRecovery').post((req,res)=>{
     return res.json('success');
   });
 });
+
+
+
+// afficher Document selon
+router.post('/Listdocument/:id', (req, res) => {
+
+  Document.find({
+    matiere:req.params.id
+  }).then(
+    (documents) => {   
+      return res.status(200).json(documents);
+    }
+  ).catch(
+    (error) => {
+    return  res.status(404).json({
+        msg: error
+      });
+    }
+  );
+});
+
+// DELETE DOCUMENT
+router.delete('/deleteDocument/:id', async (req, res) => {
+  console.log(req.params.id+"haha");
+  
+  Document.deleteOne({
+    _id:req.params.id
+  }).then(
+    () => {
+      res.status(200).json({
+        message: 'Deleted!'
+      });
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        msg: error
+      });
+    }
+  );
+  });
+
+//Photo de Profile
+router.route('/ModifierDocument').put((req,res)=>{
+  //manage and save file in folder
+  //database
+  const busboy = new BusBoy({ headers: req.headers });
+
+  let formData = new Map();
+  //nom //fichier // type // matiere
+  busboy.on('field',(fieldname, val) =>{
+    formData.set(fieldname, val);
+});
+  var nameOfFile;
+  busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+    console.log(formData.get("type")+"hahah"+formData.get("nom"));
+    console.log(encoding);
+    console.log(mimetype);
+    
+    
+    if(mimetype && mimetype!="application/pdf")
+    {
+      return res.status(400).json({msg:"Please choose a pdf file"});
+    }
+    
+    if(mimetype=="application/pdf")
+    {
+      let appDir = path.dirname(require.main.filename);
+      let path2 = appDir.replace(/\\/g, "/");
+      let filepath = path.join(path2, `public/Document/${formData.get("type")}/${filename}`);
+      file.pipe(fs.createWriteStream(filepath));
+      nameOfFile=filename;
+    }
+     
+
+  });
+  busboy.on('finish',()=>{
+
+      if(!nameOfFile){
+         Document.findOne({_id:formData.get("_id")})
+         .then((document)=>{
+             nameOfFile=document.Fichier;
+          })
+      }
+
+      Document.findOne({_id:formData.get("_id")})
+    .then((document)=>{
+        document.Nom = formData.get("nom"),
+        document.Type = formData.get("type"),
+        document.Fichier = nameOfFile,
+        document.save().then(()=>{
+     res.status(200).json("Document Updated");
+   }).catch(err=>res.status(400).json({msg:err}));
+ })
+ .catch(err=>res.status(400).json({msg:err}));
+ 
+  });
+  req.pipe(busboy);
+});
+
 
 
 module.exports=router;

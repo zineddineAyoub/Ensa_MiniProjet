@@ -25,10 +25,18 @@ import ListMatieres from './components/admin/ListMatieres';
 import FeedBacks from './components/admin/FeedBacks';
 import Statistique from './components/admin/Statistique';
 
+
 //prof components
 import LoginProf from './components/prof/Login';
 import HomeProf from './components/prof/Home';
+
+import AddDocument from './components/prof/AddDocument';
+import ProfProfile from './components/prof/AfficherProfile';
+import AjouterNote from './components/prof/AddNote';
+import ListNote from './components/prof/ListNote';
+import listDocument from './components/prof/ListDocument';
 import ForgottenPasswordProf from './components/prof/ForgottenPassword';
+
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
 import HomeEtudiant from './components/etudiant/Home';
@@ -40,6 +48,8 @@ import PageNotFound from './components/PageNotFound';
 import {loadAdmin} from './actions/admin/authActions';
 import {loadProf} from './actions/prof/authActions';
 import {loadEtudiant} from './actions/etudiant/authActions';
+import ProtectedProf from './components/ProtectedProf';
+import ListDocument from './components/prof/ListDocument';
 
 class App extends React.Component{
   componentDidMount(){
@@ -51,8 +61,19 @@ class App extends React.Component{
     return(
       <Provider store={store}>
         <Router>
-          <Switch>
+        <Switch>
+        
+          <Route path="/prof/login" component={LoginProf} exact />
+          <Route path="/prof/home" component={profProtected(HomeProf)} exact />
+          <Route path="/prof/AddDocument" component={profProtected(AddDocument)} exact />
+          <Route path="/prof/Afficherprofile" component={ProtectedProf(ProfProfile)} exact />
+          <Route path="/prof/ajouterNote" component={profProtected(AjouterNote)} exact />
+          <Route path="/prof/listNote" component={profProtected(ListNote)} exact />
+          <Route path="/prof/listDocument" component={profProtected(ListDocument)} exact />
+
+          
             <Route path="/" component={Home} exact />
+
 
             <Route path="/admin/login" component={LoginAdmin} exact />
             <Route path="/admin/home" component={adminProtected(HomeAdmin)} exact />
@@ -71,10 +92,7 @@ class App extends React.Component{
             <Route path="/admin/statistiques" component={adminProtected(Statistique)} exact />
             <Route path="/admin/feedbacks" component={adminProtected(FeedBacks)} exact />
 
-            <Route path="/prof/login" component={LoginProf} exact />
-            <Route path="/prof/home" component={profProtected(HomeProf)} exact />
-            <Route path="/prof/forgottenPassword" component={ForgottenPasswordProf} exact />
-
+           
             <Route path="/etudiant/login" component={LoginEtudiant} exact />
             <Route path="/etudiant/home" component={etudiantProtected(HomeEtudiant)} exact />
             <Route path="/etudiant/forgottenPassword" component={ForgottenPasswordEtudiant} exact />
