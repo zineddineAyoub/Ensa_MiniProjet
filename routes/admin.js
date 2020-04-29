@@ -6,6 +6,7 @@ const Prof=require('../models/Prof.model');
 const Emploie=require('../models/Emploie.model');
 //const Element=require('../models/Element.model');
 const Matiere = require('../models/Matiere.model');
+const FeedBack = require('../models/FeedBack.model');
 const NiveauFiliere_Matiere=require('../models/NiveauFiliere_Matiere.model');
 const NiveauFiliere = require('../models/NiveauFiliere.model');
 //const Mod = require('../models/Module.model');
@@ -817,6 +818,40 @@ router.route('/test').get((req,res)=>{
         res.json(users);
     })
 });
+
+//send email to admin
+router.route('/sendFeedBack').post((req,res)=>{
+    let transporter = mailConf('tarik.ouhamou@gmail.com','dragonballz123+');
+    const {email,description}=req.body;
+    console.log(email);
+    console.log(description);
+    if(!email || !description){
+        return res.status(400).json({msg:'Entrer les fields!'});
+    }
+    let newFeed=new FeedBack({
+        email,
+        description
+    });
+    newFeed.save(()=>{
+        let mailOptions = {
+            to: 'tarik.ouhamou@gmail.com',
+            subject: "FeedBack",
+            text: 'Email : '+email+'\n description : '+description
+        };
+
+        transporter.sendMail(mailOptions);
+        return res.json({success:'Email envoyé avec succés!'});
+    });
+});
+
+router.route('/getFeedBacks').get((req,res)=>{
+    FeedBack.find()
+    .then(data=>{
+        return res.json(data);
+    }).catch(err=>{
+        return res.status(400).json(err);
+    })
+})
 
 
 module.exports=router;
