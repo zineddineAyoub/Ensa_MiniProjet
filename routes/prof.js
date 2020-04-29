@@ -39,7 +39,7 @@ router.get('/document', async (req, res) => {
 })
 
 // DELETE ALL
-router.delete('/', async (req, res) => {
+router.delete('/deleteAllProf', async (req, res) => {
   Prof.deleteMany({}).then(
     () => {
       res.status(200).json({
@@ -82,6 +82,8 @@ router.route('/login').post((req,res)=>{
                             cin:user.cin,
                             email:user.email,
                             image:user.image,
+                            telephone:user.telephone,
+                            adresse:user.adresse,
                             type:user.type,
                             niveauFiliere:user.niveauFiliere
                         }
@@ -138,19 +140,21 @@ router.get('/:id', (req, res) => {
 });*/
 //Modifier Prof
 router.route('/ModifierProf/:id').put((req,res)=>{
-  const {nom,prenom,cin,email}=req.body;
+  const {nom,prenom,cin,email,adresse,telephone}=req.body;
   Prof.findOne({_id:req.params.id})
   .then(user=>{
       user.nom =nom,
       user.prenom = prenom,
       user.cin= cin,
       user.email = email,
+      user.adresse=adresse,
+      user.telephone=telephone,
       user.save();
 
       res.json({msg:'success'});
 
   }).catch(err=>{
-      res.status(400).json({msg:'Enter all fields!'});
+      res.status(400).json({msg:err});
   });
 });
 
@@ -374,7 +378,7 @@ router.route('/AddDocument').post((req,res)=>{
     
       let appDir = path.dirname(require.main.filename);
       let path2 = appDir.replace(/\\/g, "/");
-      let filepath = path.join(path2, `/Document/${formData.get("type")}/${filename}`);
+      let filepath = path.join(path2, `public/Document/${formData.get("type")}/${filename}`);
       file.pipe(fs.createWriteStream(filepath));
       nameOfFile=filename;
 
@@ -506,7 +510,7 @@ router.route('/passwordRecovery').post((req,res)=>{
 
 
 
-// afficher etudiant selon NiveauFiliere
+// afficher Document selon
 router.post('/Listdocument/:id', (req, res) => {
 
   Document.find({
@@ -522,9 +526,88 @@ router.post('/Listdocument/:id', (req, res) => {
       });
     }
   );
-  
- 
 });
+
+// DELETE DOCUMENT
+router.delete('/deleteDocument/:id', async (req, res) => {
+  console.log(req.params.id+"haha");
+  
+  Document.deleteOne({
+    _id:req.params.id
+  }).then(
+    () => {
+      res.status(200).json({
+        message: 'Deleted!'
+      });
+    }
+  ).catch(
+    (error) => {
+      res.status(400).json({
+        msg: error
+      });
+    }
+  );
+  });
+
+//Photo de Profile
+router.route('/ModifierDocument').put((req,res)=>{
+  //manage and save file in folder
+  //database
+  const busboy = new BusBoy({ headers: req.headers });
+
+  let formData = new Map();
+  //nom //fichier // type // matiere
+  busboy.on('field',(fieldname, val) =>{
+    formData.set(fieldname, val);
+});
+  var nameOfFile;
+  busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+    console.log(formData.get("type")+"hahah"+formData.get("nom"));
+    console.log(encoding);
+    console.log(mimetype);
+    
+    
+    if(mimetype && mimetype!="application/pdf")
+    {
+      return res.status(400).json({msg:"Please choose a pdf file"});
+    }
+    
+    if(mimetype=="application/pdf")
+    {
+      let appDir = path.dirname(require.main.filename);
+      let path2 = appDir.replace(/\\/g, "/");
+      let filepath = path.join(path2, `public/Document/${formData.get("type")}/${filename}`);
+      file.pipe(fs.createWriteStream(filepath));
+      nameOfFile=filename;
+    }
+     
+
+  });
+  busboy.on('finish',()=>{
+
+      if(!nameOfFile){
+         Document.findOne({_id:formData.get("_id")})
+         .then((document)=>{
+             nameOfFile=document.Fichier;
+          })
+      }
+
+      Document.findOne({_id:formData.get("_id")})
+    .then((document)=>{
+        document.Nom = formData.get("nom"),
+        document.Type = formData.get("type"),
+        document.Fichier = nameOfFile,
+        document.save().then(()=>{
+     res.status(200).json("Document Updated");
+   }).catch(err=>res.status(400).json({msg:err}));
+ })
+ .catch(err=>res.status(400).json({msg:err}));
+ 
+  });
+  req.pipe(busboy);
+});
+
+
 
 module.exports=router;
 

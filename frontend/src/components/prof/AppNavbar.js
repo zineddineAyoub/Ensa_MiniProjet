@@ -105,14 +105,7 @@ class AppNavbar extends Component {
                                   
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                            <NavItem>
-                                <Link to="/admin/emploie" style={{textDecoration:'none'}}>
-                                    <NavLink>Upload Emploie</NavLink>
-                                </Link>
-                            </NavItem>
-                            <NavItem>
-                                <NavLink href="/admin/statistiques">Statistiques</NavLink>
-                            </NavItem>
+                          
                         </Nav>
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
@@ -122,7 +115,7 @@ class AppNavbar extends Component {
                                 imageWidth="40"
                                 imageHeight="40"
                                 roundedSize="2"
-                                image={ require(`../../../../photoProfile/prof/${this.state.user.image}`)} />
+                                image={ require(`../../../../public/photoProfile/prof/${this.state.user.image}`)} />
                                 </DropdownToggle>
 
 

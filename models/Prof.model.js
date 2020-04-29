@@ -21,6 +21,12 @@ const ProfSchema=new Schema({
     password:{
         type:String
     },
+    adresse:{
+        type:String,
+    },
+    telephone:{
+        type:String,
+    },
     type:{
         type:String,
         default:'prof'

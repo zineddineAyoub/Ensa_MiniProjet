@@ -16,17 +16,22 @@ import {
     ADD_DOCUMENT_FAIL,
     LIST_DOCUMENT,
     LIST_DOCUMENT_FAIL,
+    MODIFIER_DOCUMENT,
+    MODIFIER_DOCUMENT_FAIL,
+    DELETE_DOCUMENT
   } from './types';
 
 import {returnErrors} from '../errorActions';
 
-export const ProfEditProfile=({nom,prenom,cin,email},id)=>dispatch=>{
+export const ProfEditProfile=({nom,prenom,cin,email,adresse,telephone},id)=>dispatch=>{
+  console.log("data -- "+adresse+" "+telephone+" "+nom);
+  
     const config={
       headers:{
           'Content-type':'application/json'
       }
     }
-    const body=JSON.stringify({nom,prenom,cin,email});
+    const body=JSON.stringify({nom,prenom,cin,email,adresse,telephone});
     axios.put(`http://localhost:5000/prof/ModifierProf/${id}`,body,config)
     .then(user=>{
       dispatch({
@@ -195,6 +200,32 @@ export const ListDocument=(id)=>dispatch=>{
     dispatch(returnErrors(err.response.data,err.response.status,'LIST_DOCUMENT_FAIL'));
     dispatch({
       type:LIST_DOCUMENT_FAIL
+    });
+  });
+}
+
+export const ModifierDocument=(formData)=>dispatch=>{
+  axios.put('http://localhost:5000/prof/ModifierDocument',formData)
+  .then(user=>{
+    dispatch({
+      type:MODIFIER_DOCUMENT,
+      payload:user.data
+    });
+  }).catch(err=>{
+    dispatch(returnErrors(err.response.data,err.response.status,'MODIFIER_DOCUMENT_FAIL'));
+    dispatch({
+      type:MODIFIER_DOCUMENT_FAIL
+    });
+  });
+}
+
+export const deleteDocument=(id)=>dispatch=>{
+  axios.delete(`http://localhost:5000/prof/deleteDocument/${id}`)
+  .then(user=>{
+    console.log(user);
+    dispatch({
+      type:DELETE_DOCUMENT,
+      payload:id
     });
   });
 }

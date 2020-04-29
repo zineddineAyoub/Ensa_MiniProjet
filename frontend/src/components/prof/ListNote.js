@@ -82,12 +82,13 @@ class ListNotes extends Component {
         }
 
         if(users!==prevProps.users  && Object.keys(users).length !==0 ){
-            this.state.emptylist=false
+           // this.state.emptylist=false
             console.log("USER CHANGED ===>"+this.props.users);
-
+            
             users.map((user)=>{
                 if(user.etudiant!=null)
                 {
+                    
                     this.state.usersFiltered.push(user);
                 }
             })
@@ -97,6 +98,11 @@ class ListNotes extends Component {
                 // array exists and is not empty
                 console.log("empty arahhaay");
                 this.state.emptylist=true;
+            }
+
+            else if(Array.isArray(this.state.usersFiltered) && this.state.usersFiltered.length)
+            {
+                this.state.emptylist=false;
             }
             
             
@@ -245,8 +251,8 @@ class ListNotes extends Component {
                              <div>Ici vous pouvez Consulter, Modifier la note des étudiants </div>
                          </Alert><br />
                          <Row>
-                             <Col xs={3}></Col>
-                             <Col xs={5}>
+                             
+                             <Col xs={4}>
                                  <FormGroup>
                                      <Input type="select" name="matiere" onChange={this.onChange}>
                                          <option value="">---Choisissez la matiere---</option>
@@ -285,10 +291,10 @@ class ListNotes extends Component {
                                      
                                  </FormGroup>
                              </Col>
-                         </Row>
+                        
                          
-                         <Row>
-                             <Col xs={2}></Col>
+                         
+                             <Col xs={1}></Col>
                              <Col xs={7}>
                              {this.state.emptylist ? (
                              <Alert color="warning">
@@ -304,6 +310,7 @@ class ListNotes extends Component {
                                          <th>Nom</th>
                                          <th>Prenom</th>
                                          <th>Note</th>
+                                         <th>Modifier</th>
                                         
                                      </tr>
                                  </thead>
@@ -319,9 +326,9 @@ class ListNotes extends Component {
                                             <td>{user.etudiant.prenom} </td>
                                           
                                             <td>{user.note}</td>
-                                                
+                                                <td>
                                                  <Button color="warning" onClick={()=>this.toggleEdit(user)} >Modifier</Button>
-                                                 
+                                                 </td>
                                                      </tr>  
                                                      
                                               ))}

@@ -14,7 +14,11 @@ import {
     ADD_DOCUMENT,
     ADD_DOCUMENT_FAIL,
     LIST_DOCUMENT,
-    LIST_DOCUMENT_FAIL
+    LIST_DOCUMENT_FAIL,
+    MODIFIER_DOCUMENT,
+    MODIFIER_DOCUMENT_FAIL,
+    DELETE_DOCUMENT,
+    DELETE_DOCUMENT_FAIL,
     
   } from '../../actions/prof/types';
 
@@ -131,7 +135,26 @@ import {
                               success:null
                             }
 
-          default:
+                     case MODIFIER_DOCUMENT:
+                      return{
+                        ...state,
+                        success:'MODIFIER_DOCUMENT'
+                      }
+
+                      case MODIFIER_DOCUMENT_FAIL:
+                        return {
+                          ...state,
+                          success:null
+                        }
+                         
+                        case DELETE_DOCUMENT:
+                         return{
+                           ...state,
+                           success:null,
+                           users:state.users.filter(user=>user._id!==action.payload)
+                           }
+
+            default:
             return state;
     }
   }

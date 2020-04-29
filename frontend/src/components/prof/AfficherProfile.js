@@ -9,6 +9,7 @@ import {Redirect,Link} from 'react-router-dom';
 import {ProfEditProfile,ProfEditProfilePicure} from '../../actions/prof/profActions';
 import ExampleComponent from "react-rounded-image";
 import {AiFillEdit} from 'react-icons/ai';
+import './AfficherProfile.css';
 
 
 // DOWN WE IMPORT THE PICTURES FROM FOLDER 
@@ -23,6 +24,7 @@ class ProfileProf extends Component {
         user:{},
         isOpenEdit : false,
         loaded:false,
+        listMatiere:[]
       
         
     }
@@ -47,9 +49,13 @@ class ProfileProf extends Component {
             nom:this.state.user.nom,
             prenom:this.state.user.prenom,
             cin:this.state.user.cin,
-            email:this.state.user.email
+            email:this.state.user.email,
+            adresse:this.state.user.adresse,
+            telephone:this.state.user.telephone
         }
 
+        
+        
         this.props.ProfEditProfile(body,this.state.user._id);
     }
 
@@ -75,8 +81,14 @@ class ProfileProf extends Component {
     {
         if(this.props.user)
         {
-              this.state.user = this.props.user;
-              this.state.loaded = true;
+            axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
+            .then((res)=>{
+                this.setState({
+                    listMatiere:res.data,
+                    loaded:true,
+                    user:this.props.user
+                });
+            });
         }
     }
 
@@ -102,13 +114,19 @@ class ProfileProf extends Component {
         }
        
         if(user!==prevProps.user && Object.keys(user).length !==0){
-            this.setState({
-                user:user,
-                loaded:true
-            });   
+            axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
+            .then((res)=>{
+                this.setState({
+                    listMatiere:res.data,
+                    loaded:true,
+                    user:user
+                });
+            });  
+        }
+             
         }
         
-    }
+    
 /*
     onSubmit=(e)=>{
         e.preventDefault();
@@ -124,11 +142,13 @@ class ProfileProf extends Component {
             <div>
                 <AppNavbar />
                 <Container className="mt-5">
-                    <h4 className="text-center">Profile</h4><br/>
+                   
+                  
+                
                
                     <Row>
-                    <Col xs={3}></Col>
-                    <Col xs={5}>
+                    <Col xs={1}></Col>
+                    <Col xs={10}>
                     {this.state.msg ? <Alert color="danger">
                                 {this.state.msg}
                             </Alert>:null}
@@ -137,53 +157,147 @@ class ProfileProf extends Component {
                             </Alert>:null}
 
                             {this.state.loaded ? (
-                                <Col xs={10}>
-                                    
-                                <Card className="mb-5">
-                                <div className="d-flex justify-content-center">
-                         <ExampleComponent 
+
+                                <div>
+<Card style={{boxShadow:"10px 10px 8px 10px #888888"}}>
+
+<div>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+  <div className="container bootstrap snippets">
+    <div className="row" id="user-profile">
+      <div className="col-lg-3 col-md-4 col-sm-4">
+        <div classame="main-box clearfix">
+          <h2>{this.state.user.nom} {this.state.user.prenom} </h2>
+         
+
+          <div className="d-flex justify-content-center">
+                                 <ExampleComponent 
                             roundedColor="#66A5CC"
                             imageWidth="140"
                             imageHeight="140"
                             roundedSize="8"
-                            image={ require(`../../../../photoProfile/prof/${this.state.user.image}`)} />
+                            image={require(`../../../../public/photoProfile/prof/${this.state.user.image}`)}
+                      />
+                     
                            
-                           
-                          
-                          <div>
-                            <label htmlFor="myInput"><AiFillEdit size="30" color="#66A5CC" /></label>
+                        </div> <br/>
+                        
+                        <div class="d-flex justify-content-center">
+                        <label class="btn btn-dark" htmlFor="myInput"> <i className="logo fa fa-pencil-square fa-lg" /> 
+                          Modifier Photo
+                         </label> 
                              <input id="myInput" style={{display:'none'}} type={"file"} onChange={this.onChangeImage}/>
                         </div>
+          
+         
+        </div>
+      </div>
+      <div className="col-lg-9 col-md-8 col-sm-8">
+        <div className="main-box clearfix">
+          <div className="profile-header">
+            <h3><span>Professeur Profile</span></h3>
+            
+            
+              
+              <Button color="dark" className="edit-profile" onClick={()=>this.toggleEdit()}>
+              <i className="fa fa-pencil-square fa-lg" /> Modifier profile
+                 </Button>
+           
+          </div>
+          <div className="row profile-user-info">
+            <div className="col-sm-8">
+              <div className="profile-user-details clearfix">
+                <div className="profile-user-details-label">
+                  Prenom
+                </div>
+                <div className="profile-user-details-value">
+                  {this.state.user.prenom}
+                </div>
+              </div>
+              <div className="profile-user-details clearfix">
+                <div className="profile-user-details-label">
+                  Nom
+                </div>
+                <div className="profile-user-details-value">
+                {this.state.user.nom}
+                </div>
+              </div>
+              <div className="profile-user-details clearfix">
+                <div className="profile-user-details-label">
+                  CIN
+                </div>
+                <div className="profile-user-details-value">
+                  {this.state.user.cin}
+                </div>
+              </div>
+              
+              <div className="profile-user-details clearfix">
+                <div className="profile-user-details-label">
+                  Email
+                </div>
+                <div className="profile-user-details-value">
+                {this.state.user.email} 
+                </div>
+              </div>
 
-                                </div>
-                                
-                                    <CardBody d-flex justify-content-center >
-                                          <CardText className="text-center">
-                                           <strong> Nom :  </strong> {this.state.user.nom}
-                                        </CardText>
-                                        <CardText className="text-center">
-                                           <strong >  Prenom :  </strong> {this.state.user.prenom}
-                                        </CardText>
-                                        <CardText className="text-center">
-                                           <strong> Email :  </strong> {this.state.user.email}
-                                        </CardText>
-                                        <CardText className="text-center">
-                                           <strong> CIN :  </strong> {this.state.user.cin}
-                                        </CardText>
-                                      
-                                    </CardBody>  
-                                </Card>
-                                <Row>
-                                    <div className="text-center">
-                   <Button color="danger" onClick={()=>this.toggleEdit()}>Edit Profile</Button>
-                   </div>
-                    </Row>
+              <div className="profile-user-details clearfix">
+                <div className="profile-user-details-label">
+                  Address
+                </div>
+                <div className="profile-user-details-value">
+                    {this.state.user.adresse ? (
+                        this.state.user.adresse
+                    ): 
+                            "( Non Disponible)"
+                    }
+                   
+                </div>
+              </div>
+
+              <div className="profile-user-details clearfix">
+                <div className="profile-user-details-label">
+                  Telephone
+                </div>
+                <div className="profile-user-details-value">
+                {this.state.user.telephone ? (
+                        this.state.user.telephone
+                    ): 
+                            "( Non Disponible)"
+                    }
+                </div>
+              </div>
+            </div>
+            <div className="col-sm-4 profile-social">
+            <div className="list-group">
+  <a href="#" className="list-group-item list-group-item-action active">
+    List Matiere
+  </a>
+  {this.state.listMatiere.map((data)=>(
+                     <a href="#" className="list-group-item list-group-item-action">{data.nom}</a>
+                                          ))}
+</div>
+
+              </div>
+          </div>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</Card>
+
+
                            
-                        </Col>
+                           
+                    </div>
                             ):
-                            <Spinner animation="border" role="status">
+                            <div className="d-flex justify-content-center">
+                                <Spinner  animation="border" role="status">
                              <span className="sr-only">Loading...</span>
-                            </Spinner>}
+                            </Spinner>
+                            </div>
+                            }
                         
                         </Col>
                     </Row>
@@ -205,6 +319,12 @@ class ProfileProf extends Component {
                                 </FormGroup>
                                 <FormGroup>
                                     <Input type="text" name="email" defaultValue={this.state.user.email} placeholder="Entrer Email" onChange={this.onChange} />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Input type="text" name="adresse" defaultValue={this.state.user.adresse} placeholder="Entrer Adresse" onChange={this.onChange} />
+                                </FormGroup>
+                                <FormGroup>
+                                    <Input type="text" name="telephone" defaultValue={this.state.user.telephone} placeholder="Entrer Numero Telephone" onChange={this.onChange} />
                                 </FormGroup>
                                 
                             </Form>

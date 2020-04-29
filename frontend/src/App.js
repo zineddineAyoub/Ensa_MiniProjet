@@ -60,7 +60,7 @@ class App extends React.Component{
     return(
       <Provider store={store}>
         <Router>
-
+        <Switch>
         
           <Route path="/prof/login" component={LoginProf} exact />
           <Route path="/prof/home" component={profProtected(HomeProf)} exact />
@@ -70,7 +70,7 @@ class App extends React.Component{
           <Route path="/prof/listNote" component={profProtected(ListNote)} exact />
           <Route path="/prof/listDocument" component={profProtected(ListDocument)} exact />
 
-          <Switch>
+          
             <Route path="/" component={Home} exact />
 
 
