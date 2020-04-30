@@ -32,7 +32,7 @@ class FeedBacks extends Component {
                     {this.state.isLoading ? <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><Spinner color="primary" /></div> : null}
                     <Row>
                         {this.state.feedbacks.map((feed)=>(
-                            <Col xs={4}>
+                            <Col xs={4} className="mt-3 mb-3">
                                 <Card>
                                     <CardBody>
                                         <CardText><strong>Email : </strong>{feed.email}</CardText>

@@ -15,7 +15,6 @@ import {
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {logout} from '../../actions/prof/authActions';
-import {FaUserAlt} from 'react-icons/fa';
 import ExampleComponent from "react-rounded-image";
 
 class AppNavbar extends Component {

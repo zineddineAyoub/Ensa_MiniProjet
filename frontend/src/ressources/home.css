@@ -113,10 +113,13 @@
     background-color: black !important;
 }
 
-.logo{
+.logo,.links{
     color:white;
 }
 
-.links{
-    color:white;
+.logo:hover{
+    color:#6f7983;
+}
+.links:hover{
+    color:#6f7983;
 }

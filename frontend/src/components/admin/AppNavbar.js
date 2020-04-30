@@ -122,10 +122,14 @@ class AppNavbar extends Component {
                             </Link>
                         </NavItem>
                         <NavItem>
-                            <NavLink href="/admin/feedbacks">FeedBacks</NavLink>
+                            <Link to="/admin/feedbacks" style={{textDecoration:'none'}}>
+                                <NavLink>Feedbacks</NavLink>
+                            </Link>
                         </NavItem>
                         <NavItem>
-                            <NavLink href="/admin/statistiques">Statistiques</NavLink>
+                            <Link to="/admin/statistiques" style={{textDecoration:'none'}}>
+                                <NavLink>Statistiques</NavLink>
+                            </Link>
                         </NavItem>
                     </Nav>
                     <Nav navbar>

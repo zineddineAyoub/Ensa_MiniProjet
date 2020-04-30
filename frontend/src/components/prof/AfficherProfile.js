@@ -8,7 +8,6 @@ import {getProf} from '../../actions/admin/adminProfActions';
 import {Redirect,Link} from 'react-router-dom';
 import {ProfEditProfile,ProfEditProfilePicure} from '../../actions/prof/profActions';
 import ExampleComponent from "react-rounded-image";
-import {AiFillEdit} from 'react-icons/ai';
 import './AfficherProfile.css';
 
 
