@@ -6,6 +6,8 @@ const Matiere = require('../models/Matiere.model')
 const NiveauFiliere_Matiere = require('../models/NiveauFiliere_Matiere.model')
 const Etudiant = require('../models/Etudiant.model')
 const Note = require('../models/Note.model')
+const Commentaire=require('../models/Commentaire.model')
+const Notification=require('../models/Notification.model')
 
 const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
@@ -511,7 +513,7 @@ router.route('/passwordRecovery').post((req,res)=>{
 
 
 // afficher Document selon
-router.post('/Listdocument/:id', (req, res) => {
+router.get('/Listdocument/:id', (req, res) => {
 
   Document.find({
     matiere:req.params.id
@@ -607,7 +609,79 @@ router.route('/ModifierDocument').put((req,res)=>{
   req.pipe(busboy);
 });
 
+//post comment
+router.route('/postComment').post((req,res)=>{
+  const {message,type,document,idSender}=req.body;
+  let status;
+  if(!message || !idSender){
+    return res.status(400).json({msg:'Entrer les fields!'});
+  }
+  let newComment=new Commentaire({
+    message,
+    document
+  });
+  if(type==="etudiant"){
+    newComment.etudiant=idSender;
+    newComment.prof=null;
+    status=0;
+  }
+  if(type==="prof"){
+    newComment.prof=idSender;
+    newComment.etudiant=null;
+    status=1;
+  }
+  newComment.save((err,doc)=>{
+    if(err){
+      return res.status(400).json({msg:'erreur'});
+    }
+    doc.populate('prof',(err,doc)=>{
+      return res.json(doc);
+    })
+  });
+});
 
+
+//get all comments by id of a document
+router.route('/comments/:id').get((req,res)=>{
+  const id=req.params.id;
+  Commentaire.find({document:id}).sort({date:'asc'}).populate('etudiant').populate('prof')
+  .then((docs)=>{
+    return res.json(docs)
+  }).catch(err=>{
+    return res.json({msg:'Error'});
+  })
+});
+
+//get all prof notif
+router.route('/getAllNotif/:id').get((req,res)=>{
+  const id=req.params.id;
+  Notification.find({receiver:id}).populate('senderEtudiant')
+  .then((docs)=>{
+    return res.json(docs);
+  }).catch(err=>{
+    return res.json(err);
+  })
+});
+
+//get all prof notif not read
+router.route('/getNotifNotViewed/:id').get((req,res)=>{
+  const id=req.params.id;
+  Notification.find({receiver:id,read:false}).populate('senderEtudiant')
+  .then((docs)=>{
+    return res.json(docs);
+  }).catch(err=>{
+    return res.json(err);
+  })
+});
+
+//modify prof notif
+router.route('/modifNotif/:id').put((req,res)=>{
+  const id=req.params.id;
+  Notification.update({receiver:id},{read:true},{multi:true})
+  .then(notifs=>{
+    return res.json('success');
+  });
+});
 
 module.exports=router;
 

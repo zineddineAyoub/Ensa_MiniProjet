@@ -11,17 +11,22 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
+    Row
   } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
 import {logout} from '../../actions/prof/authActions';
 import ExampleComponent from "react-rounded-image";
+import axios from 'axios';
 
 class AppNavbar extends Component {
     state={
         isOpen:false,
-        user:{},
+        user:null,
         loaded:false,
+        color:"white",
+        notifs:[],
+        counter:1
     }
 
     toggle=()=>{
@@ -37,9 +42,28 @@ class AppNavbar extends Component {
     {
         if(this.props.user)
         {
-            this.state.user = this.props.user;
-            this.state.loaded = true;
+            axios.get(`http://localhost:5000/prof/getNotifNotViewed/${this.props.user._id}`)
+                .then((notifs)=>{
+                    console.log(notifs.data.length);
+                    if(notifs.data.length!==0){
+                        this.setState({
+                            color:'red',
+                            notifs:notifs.data,
+                            user:this.props.user,
+                            loaded:true,
+                        })
+                    }
+                    else{
+                        this.setState({
+                            user:this.props.user,
+                            loaded:true
+                        })
+                    }
+                }).catch(err=>{
+                    console.log(err);
+                })
         }
+
     }
 
 
@@ -47,12 +71,50 @@ class AppNavbar extends Component {
         const {user}=this.props;
      
         if(user!==prevProps.user && Object.keys(user).length !==0){
-            this.setState({
-                user:user,
-                loaded:true
-            });   
+            if(user!==prevProps.user){
+                console.log(user._id);
+                axios.get(`http://localhost:5000/prof/getNotifNotViewed/${user._id}`)
+                .then((notifs)=>{
+                    console.log(notifs.data.length);
+                    if(notifs.data.length!==0){
+                        this.setState({
+                            color:'red',
+                            notifs:notifs.data,
+                            user:this.props.user,
+                            loaded:true,
+                        })
+                    }
+                    else{
+                        this.setState({
+                            user:this.props.user,
+                            loaded:true
+                        })
+                    }
+                }).catch(err=>{
+                    console.log(err);
+                })
+                
+            } 
         }
         
+    }
+
+    onClick=()=>{
+        if(this.state.counter%2===0){
+            axios.put(`http://localhost:5000/prof/modifNotif/${this.state.user._id}`)
+            .then(()=>{
+                this.setState({
+                    color:"white",
+                    notifs:[],
+                    counter:this.state.counter+1
+                })
+            })
+        }
+        else{
+            this.setState({
+                counter:this.state.counter+1
+            })
+        }
     }
 
     render() {
@@ -104,7 +166,31 @@ class AppNavbar extends Component {
                                   
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                          
+                        </Nav>
+                        <Nav navbar>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav >
+                                    <span onClick={this.onClick}><i className="fa fa-bell fa-lg" style={{color:this.state.color}}></i></span>
+                                </DropdownToggle>
+                                <DropdownMenu right style={{width:'400px',height:'500px',overflow:'scroll'}}>
+                                    {this.state.notifs.map(notif=>(
+                                        <DropdownItem>
+                                            <Row>
+                                                    <p style={{width:'100%'}}><img style={{float:'left',height:'40px',width:'40px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/etudiant/${notif.senderEtudiant.image}`} />
+                                                        <p>
+                                                            <b>{notif.senderEtudiant.nom +' '+notif.senderEtudiant.prenom}</b>{'    '}
+                                                            <i>{notif.postDate}</i>
+                                                            <br/>
+                                                            <p>
+                                                            <i class="fas fa-bell"></i>{notif.content}
+                                                            </p>
+                                                        </p>
+                                                    </p>
+                                                </Row>
+                                        </DropdownItem>
+                                    ))}
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
                         </Nav>
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
@@ -120,7 +206,7 @@ class AppNavbar extends Component {
 
                                 <DropdownMenu right>
                                 
-                                <Link to="/prof/AfficherProfile"  style={{textDecoration:'none'}}>
+                                    <Link to="/prof/AfficherProfile"  style={{textDecoration:'none'}}>
                                         <DropdownItem>
                                             Profile
                                         </DropdownItem>
@@ -149,9 +235,7 @@ class AppNavbar extends Component {
 }
 
 const mapStateToProps=(state)=>({
-
     user:state.profAuth.user
-
 });
 
 export default connect(mapStateToProps,{logout})(AppNavbar);

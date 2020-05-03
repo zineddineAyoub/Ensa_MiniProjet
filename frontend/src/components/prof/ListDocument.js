@@ -1,34 +1,39 @@
 import React, { Component, Fragment } from 'react';
-import {Container,Alert,Spinner,FormGroup,Form,Input,Button,Row,Col,Table,Modal,ModalHeader,ModalBody,ModalFooter, Label} from 'reactstrap';
+import {Container,Alert,Spinner,FormGroup,Form,Input,Button,Row,Col,Table,Modal,ModalHeader,ModalBody,ModalFooter, Label,Card,CardBody} from 'reactstrap';
 import axios from 'axios';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {ListDocument,ModifierDocument,deleteDocument} from '../../actions/prof/profActions';
+import {getComments,postComment} from '../../actions/commentActions';
 import {Link} from 'react-router-dom';
-class ListNotes extends Component {
+import ExampleComponent from "react-rounded-image";
+class ListDocuments extends Component {
     state={
         editedUser:{},
         isOpenEdit:false,
         matiere:null,
         success:null,
         currentDelete:null,
+        currentCommentaire:null,
         listMatiere:[],
         users:[],
         msg:null,
         isOpenDelete:false,
+        isOpenCommentaire:false,
         loaded:false,    
         filiereSelected:false,
         exist:false,
         documents:[],
         document:{},
+        comments:[],
+        comment:null,
+        test:'lol'
     }
    
     componentWillMount(){
-        console.log("hahah "+this.props.user);
         
         if(this.props.user)
         {
-            console.log("it exist"+this.props.user._id);
             axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
             .then((res)=>{
                 this.setState({
@@ -41,7 +46,7 @@ class ListNotes extends Component {
     }
     componentDidUpdate(prevProps){
      
-        const {users,user,success,error}=this.props;
+        const {users,user,success,error,comments}=this.props;
 
         if(error!==prevProps.error){
             if(error.id==='LIST_DOCUMENT_FAIL'){
@@ -83,6 +88,15 @@ class ListNotes extends Component {
                 });
             });  
         }
+        console.log(Object.keys(comments).length)
+        console.log("9dima "+Object.keys(prevProps.comments).length)
+        if(comments!==prevProps.comments && Object.keys(comments).length !==0){
+            console.log(comments);
+            this.setState({
+                comments
+            })
+        }
+
     }
 
     toggleEdit=(document)=>{
@@ -101,6 +115,16 @@ class ListNotes extends Component {
         
     }
 
+    toggleCommentaire=(id)=>{
+        this.setState({
+            isOpenCommentaire:!this.state.isOpenCommentaire,
+            currentCommentaire:id,
+            comments:[]
+        },()=>{
+            this.props.getComments(this.state.currentCommentaire);
+        })
+    }
+
     validerSuppression=(id=>{
         this.props.deleteDocument(id);
         this.setState({
@@ -111,7 +135,6 @@ class ListNotes extends Component {
     onChangeModel=(e)=>
     {
         const currentDocument = this.state.document;
-        console.log("old one" + currentDocument);
         const {name,value} = e.target;
       
         if(name=="Fichier")
@@ -125,7 +148,6 @@ class ListNotes extends Component {
         
 
         this.setState({document:currentDocument});
-        console.log("new one"+currentDocument);
 
     }
 
@@ -157,6 +179,31 @@ class ListNotes extends Component {
         });
     }
 
+    onChangeComment=(e)=>{
+        console.log(e.target.value)
+        this.setState({
+            comment:e.target.value
+        });
+    }
+
+    onSubmit=(e)=>{
+        e.preventDefault();
+        const message=this.state.comment;
+        const document=this.state.currentCommentaire;
+        const type="prof";
+        const idSender=this.props.user._id;
+        const body={
+            message,
+            type,
+            document,
+            idSender
+        }
+        this.props.postComment(body);
+        this.setState({
+            comment:''
+        })
+    }
+
   
     render() {
         return (
@@ -175,7 +222,7 @@ class ListNotes extends Component {
                              <Col xs={4}>
                                  <FormGroup>
                                      <Input type="select" name="matiere" onChange={this.onChange}>
-                                         <option value="">---Choisissez la matiere---</option>
+                                         <option value="0">---Choisissez la matiere---</option>
                                          {this.state.listMatiere.map((data)=>(
                                              <option value={data._id}>{data.nom}</option>
                                          ))}
@@ -196,18 +243,14 @@ class ListNotes extends Component {
                                          <th>Fichier</th>
                                          <th>Modifier</th>
                                          <th>Supprimer</th>
+                                         <th>Commentaire</th>
                                       </tr>
                                  </thead>
                                  <tbody id="tbody">
                                        
                                             
                                             <Fragment>
-                                            
-                                              
                                                  {this.state.documents.map((document)=>(
-                                              console.log(document),
-                                              
-                                              
                                             <tr>
                                             <td>{document.Nom} </td>
                                             <td>{document.Type} </td>
@@ -215,11 +258,14 @@ class ListNotes extends Component {
                                             <td> <a style={{display: "table-cell"}}  target="_blank" href={"http://localhost:5000/Document/"+document.Type+"/"+document.Fichier} class="text-primary" download>Click to download</a>
                                             </td>
                                                 <td>
-                                                 <Button color="warning" onClick={()=>this.toggleEdit(document)} >Modifier</Button>
+                                                    <Button color="warning" onClick={()=>this.toggleEdit(document)} >Modifier</Button>
                                                  </td>
 
                                                  <td>
-                                                 <Button color="danger" onClick={()=>this.toggleDelete(document._id)} >Supprimer</Button>
+                                                    <Button color="danger" onClick={()=>this.toggleDelete(document._id)} >Supprimer</Button>
+                                                 </td>
+                                                 <td>
+                                                    <Button color="primary" onClick={()=>this.toggleCommentaire(document._id)} >Commentaire</Button>
                                                  </td>
                                                      </tr>  
                                                      
@@ -297,7 +343,41 @@ class ListNotes extends Component {
                         </Modal>
                        ) : null}
 
-                               
+                        {this.state.isOpenCommentaire ? (
+                            <Modal isOpen={this.state.isOpenCommentaire} toggle={()=>this.toggleCommentaire(this.state.currentCommentaire)} >
+                                    
+                                <ModalHeader toggle={()=>this.toggleCommentaire(null)}>Liste de commentaire</ModalHeader>
+                                <ModalBody style={{height:'400px',overflow:'scroll'}}>
+                                    {this.state.comments.map(comment=>(
+                                        
+                                                <Row>
+                                                    <p style={{width:'100%'}}><img style={{float:'left',height:'50px',width:'50px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/prof/${comment.prof.image}`} />
+                                                        <p>
+                                                            <b>{comment.prof.nom +' '+comment.prof.prenom}</b>{'    '}
+                                                            <i>{comment.postDate}</i>
+                                                            <br/>
+                                                            <p>
+                                                            {comment.message}
+                                                            </p>
+                                                        </p>
+                                                    </p>
+                                                </Row>
+                                    ))}
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Form onSubmit={this.onSubmit}>
+                                        <Row>
+                                            <Col xs={10} style={{marginLeft:'-15px'}}>
+                                                <Input type="text" placeholder="Commenter ici!" name="comment" value={this.state.comment} onChange={this.onChangeComment} />
+                                            </Col>
+                                            <Col xs={1} style={{marginLeft:'-27px'}}>
+                                                <Button color="primary">Send</Button>
+                                            </Col>
+                                        </Row>
+                                    </Form>
+                                </ModalFooter>
+                            </Modal>
+                       ) : null}              
                 </Container>
             </div>
         )
@@ -309,6 +389,7 @@ const mapStateToProps=(state)=>({
     users:state.profReducer.users,
     error:state.error,
     user:state.profAuth.user,
+    comments:state.comment.comments
 });
 
-export default connect(mapStateToProps,{ListDocument,ModifierDocument,deleteDocument})(ListNotes);
+export default connect(mapStateToProps,{ListDocument,ModifierDocument,deleteDocument,getComments,postComment})(ListDocuments);

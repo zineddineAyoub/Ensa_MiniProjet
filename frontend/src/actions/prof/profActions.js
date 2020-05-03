@@ -190,7 +190,7 @@ export const addDocument=(formData)=>dispatch=>{
 
 export const ListDocument=(id)=>dispatch=>{
   
-  axios.post(`http://localhost:5000/prof/Listdocument/${id}`)
+  axios.get(`http://localhost:5000/prof/Listdocument/${id}`)
   .then(users=>{
     dispatch({
       type:LIST_DOCUMENT,

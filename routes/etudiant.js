@@ -4,6 +4,7 @@ const Etudiant = require('../models/Etudiant.model')
 const jwt=require('jsonwebtoken');
 const nodeMailer = require('nodemailer');
 const auth=require('../middleware/auth');
+const Notification=require('../models/Notification.model');
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -119,6 +120,19 @@ router.route('/passwordRecovery').post((req,res)=>{
     };
     transporter.sendMail(mailOptions);
     return res.json('succes');
+  });
+});
+
+
+router.route('/sendNotification').post((req,res)=>{
+  const {senderEtudiant,receiver,content}=req.body;
+  let newNotif=new Notification({
+    senderEtudiant,
+    receiver,
+    content
+  });
+  newNotif.save((err,doc)=>{
+    return res.json(doc);
   });
 });
 

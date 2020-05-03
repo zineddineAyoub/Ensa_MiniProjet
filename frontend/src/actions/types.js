@@ -1,2 +1,7 @@
 export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
+
+export const POST_COMMENT='POST_COMMENT';
+export const POST_COMMENT_FAIL='POST_COMMENT_FAIL';
+export const GET_COMMENTS='GET_COMMENTS';
+export const GET_COMMENTS_FAIL='GET_COMMENTS_FAIL';
