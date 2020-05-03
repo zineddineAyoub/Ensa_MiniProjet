@@ -8,7 +8,6 @@ import {getProf} from '../../actions/admin/adminProfActions';
 import {Redirect,Link} from 'react-router-dom';
 import {ProfEditProfile,ProfEditProfilePicure} from '../../actions/prof/profActions';
 import ExampleComponent from "react-rounded-image";
-import './AfficherProfile.css';
 
 
 // DOWN WE IMPORT THE PICTURES FROM FOLDER 
@@ -141,10 +140,6 @@ class ProfileProf extends Component {
             <div>
                 <AppNavbar />
                 <Container className="mt-5">
-                   
-                  
-                
-               
                     <Row>
                     <Col xs={1}></Col>
                     <Col xs={10}>
@@ -161,7 +156,6 @@ class ProfileProf extends Component {
 <Card style={{boxShadow:"10px 10px 8px 10px #888888"}}>
 
 <div>
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
   <div className="container bootstrap snippets">
     <div className="row" id="user-profile">
       <div className="col-lg-3 col-md-4 col-sm-4">

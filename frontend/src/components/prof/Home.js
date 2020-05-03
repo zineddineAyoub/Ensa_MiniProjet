@@ -7,6 +7,7 @@ import {logout} from '../../actions/prof/authActions';
 import {Redirect,Link} from 'react-router-dom';
 
 
+
 class Home extends Component {
     onLogout=()=>{
         this.props.logout();

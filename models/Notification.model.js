@@ -1,32 +1,32 @@
 const mongoose = require('mongoose')
-
+const today=new Date();
 const Notification = new mongoose.Schema({
 
-   sender : {
-    type: String
+   senderEtudiant : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Etudiant'
    },
-
-   receiver1 : {
-    type: String
-     },
-
-   receiver2 : {
-       type:String
-      
+   senderProf:{
+       type:mongoose.Schema.Types.ObjectId,
+       ref:'prof'
    },
+   receiver : {
+    type: String
+    },
    
    content : {
        type : String  
    },
 
    read:{
-       type:Boolean
+       type:Boolean,
+       default:false
    },
    
-   date : {
-       type: Date, 
-       default: Date.now 
-   }
+   postDate:{
+    type:String,
+    default:today.getDate()+'-'+(today.getMonth()+1)+'-'+today.getFullYear()
+}
 
   })
   

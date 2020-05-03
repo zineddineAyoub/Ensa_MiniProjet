@@ -21,7 +21,8 @@ const EtudiantSchema=new Schema({
         type:String
     },
     image:{
-        type:String
+        type:String,
+        default:'default.jpg'
     },
     niveauFiliere:{
         type:Schema.Types.ObjectId,
