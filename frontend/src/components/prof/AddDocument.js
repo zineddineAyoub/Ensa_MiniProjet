@@ -91,13 +91,32 @@ class AddDocument extends Component {
         this.props.addDocument(formData);
     }
     render() {
+        
+        const styling={
+            background: 'linear-gradient(to top, #97aba4, #003973)',
+            height:'100vh',
+            display:'flex',
+            color:"#FFFFFF",
+            
+        }
+
+        const fontColor={
+           
+        }
+
+        const btn_back={
+            background:'#E5E5BE',
+            color:'#003973',
+            
+        }
         return (
             <div>
                 <AppNavbar />
+                <div style={styling}>
                 <Container className="mt-5">
                    {this.state.loaded ? (
                          <div>
-                             <h2 className="text-center">Ajouter Document</h2><br/>
+                             <h2 className="text-center" style={fontColor}>Ajouter Document</h2><br/>
                          <Alert color="info">
                              <div>Ici vous pouvez uploader les cours/td/tp de vos matieres</div>
                          </Alert>
@@ -115,7 +134,7 @@ class AddDocument extends Component {
                                  </Alert>:null}
                                  <Form onSubmit={this.onSubmit}>
                                      <FormGroup>
-                                         <Input type="select" name="matiere" onChange={this.onChange}>
+                                         <Input type="select"  style={btn_back} name="matiere" onChange={this.onChange}>
                                              <option>---Choisissez le niveau---</option>
                                              {this.state.listMatiere.map((data)=>(
                                                  <option value={data._id}>{data.nom}</option>
@@ -123,7 +142,7 @@ class AddDocument extends Component {
                                          </Input>
                                      </FormGroup>
                                      <FormGroup>
-                                         <Input type="select" name="type" onChange={this.onChange}>
+                                         <Input type="select" style={btn_back} name="type" onChange={this.onChange}>
                                              <option>---Type de document---</option>
                                             
                                                  <option value="Cours">Cours</option>
@@ -133,13 +152,13 @@ class AddDocument extends Component {
                                          </Input>
                                      </FormGroup>
                                      <FormGroup>
-                                         <Input type="text" name="nom" placeholder="Nom du docuement" onChange={this.onChange}/>
+                                         <Input type="text" style={btn_back} name="nom" placeholder="Nom du docuement" onChange={this.onChange}/>
                                       </FormGroup>
                                      <FormGroup>
-                                         <input type="file" name="file" className="form-control" onChange={this.onChangeFile} />
+                                         <input type="file" style={btn_back} name="file" className="form-control" onChange={this.onChangeFile} />
                                      </FormGroup>
                                      <FormGroup>
-                                         <Button type="submit" color="primary" block>Upload</Button>
+                                         <Button type="submit"  style={btn_back} block>Upload</Button>
                                      </FormGroup>
                                  </Form>
                              </Col>
@@ -149,6 +168,7 @@ class AddDocument extends Component {
                    <span className="sr-only">Loading...</span>
                   </Spinner>} 
                 </Container>
+                </div>
             </div>
         )
     }

@@ -239,14 +239,36 @@ class ListNotes extends Component {
 
   
     render() {
+      
+
+        const styling={
+            background: 'linear-gradient(to top, #97aba4, #003973)',
+            height:'100vh',
+            display:'flex',
+            color:'#FFFFFF'
+            
+        }
+
+        const color={
+            color:'#FFFFFF'
+        }
+      
+        const spinning={
+           
+            display:'flex',
+            alignItems:"center",
+            justifyContent:"center"
+        }
+
         return (
-            <div>
+            <div >
                 <AppNavbar />
+                <div style={styling}>
                 <Container className="mt-5">
                    
                        {this.state.loaded ? (
                            <div>
-                         <h2 className="text-center">Affichage des notes des étudiants </h2><br/>
+                         <h2 className="text-center" >Affichage des notes des étudiants </h2><br/>
                          <Alert color="info">
                              <div>Ici vous pouvez Consulter, Modifier la note des étudiants </div>
                          </Alert><br />
@@ -347,7 +369,7 @@ class ListNotes extends Component {
                          
                          </div>
                        ) : 
-                       <Spinner animation="border" role="status">
+                       <Spinner animation="border" role="status" style={spinning}>
                        <span className="sr-only">Loading...</span>
                       </Spinner>
                       
@@ -369,6 +391,7 @@ class ListNotes extends Component {
 
                                
                 </Container>
+                </div>
             </div>
         )
     }

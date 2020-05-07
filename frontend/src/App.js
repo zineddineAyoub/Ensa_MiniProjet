@@ -34,13 +34,17 @@ import AddDocument from './components/prof/AddDocument';
 import ProfProfile from './components/prof/AfficherProfile';
 import AjouterNote from './components/prof/AddNote';
 import ListNote from './components/prof/ListNote';
-import listDocument from './components/prof/ListDocument';
+import ListDocument from './components/prof/ListDocument';
 import ForgottenPasswordProf from './components/prof/ForgottenPassword';
 
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
 import HomeEtudiant from './components/etudiant/Home';
 import ForgottenPasswordEtudiant from './components/etudiant/ForgottenPassword';
+import ListNoteE from './components/etudiant/ListNote';
+import ListDocumentE from './components/etudiant/ListDocument';
+import EtudiantProfile from './components/etudiant/AfficherProfile';
+
 //home component
 import Home from './components/Home';
 import PageNotFound from './components/PageNotFound';
@@ -49,7 +53,7 @@ import {loadAdmin} from './actions/admin/authActions';
 import {loadProf} from './actions/prof/authActions';
 import {loadEtudiant} from './actions/etudiant/authActions';
 import ProtectedProf from './components/ProtectedProf';
-import ListDocument from './components/prof/ListDocument';
+
 
 class App extends React.Component{
   componentDidMount(){
@@ -70,6 +74,7 @@ class App extends React.Component{
           <Route path="/prof/ajouterNote" component={profProtected(AjouterNote)} exact />
           <Route path="/prof/listNote" component={profProtected(ListNote)} exact />
           <Route path="/prof/listDocument" component={profProtected(ListDocument)} exact />
+          <Route path="/prof/forgottenPassword" component={ForgottenPasswordProf} exact />
 
           
             <Route path="/" component={Home} exact />
@@ -96,6 +101,10 @@ class App extends React.Component{
             <Route path="/etudiant/login" component={LoginEtudiant} exact />
             <Route path="/etudiant/home" component={etudiantProtected(HomeEtudiant)} exact />
             <Route path="/etudiant/forgottenPassword" component={ForgottenPasswordEtudiant} exact />
+            <Route path="/etudiant/Afficherprofile" component={etudiantProtected(EtudiantProfile)} exact />
+            <Route path="/etudiant/listNote" component={etudiantProtected(ListNoteE)} exact />
+            <Route path="/etudiant/listDocument" component={etudiantProtected(ListDocumentE)} exact />
+
 
             <Route component={PageNotFound} />
           </Switch>
