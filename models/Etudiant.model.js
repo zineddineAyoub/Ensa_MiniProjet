@@ -31,7 +31,13 @@ const EtudiantSchema=new Schema({
     type:{
         type:String,
         default:'etudiant'
-    }
+    },
+    adresse:{
+        type:String,
+    },
+    telephone:{
+        type:String,
+    },
 });
 
 const Etudiant=mongoose.model('Etudiant',EtudiantSchema);

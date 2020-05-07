@@ -146,45 +146,17 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav className="mr-auto" navbar>
                             <NavItem>
-                                <Link to="/prof/home" style={{textDecoration:'none'}}><NavLink>Home</NavLink></Link>
+                                <Link to="/etudiant/home" style={{textDecoration:'none'}}><NavLink>Home</NavLink></Link>
                             </NavItem>
-                            <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav caret>
-                                    Gestion Document
-                                </DropdownToggle>
-                                <DropdownMenu right>
-                                    <Link style={{textDecoration:'none'}} to="/prof/AddDocument">
-                                        <DropdownItem>
-                                            Ajouter Document
-                                        </DropdownItem>
-                                    </Link>
-                                    <Link style={{textDecoration:'none'}} to="/prof/listDocument">
-                                        <DropdownItem>
-                                            List Document
-                                        </DropdownItem>
-                                    </Link>
-                                   
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                               
-                            <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav caret>
-                                    Gestion Note
-                                </DropdownToggle>
-                                <DropdownMenu right>
-                                    <Link style={{textDecoration:'none'}} to="/prof/ajouterNote">
-                                        <DropdownItem>
-                                            Ajouter Note
-                                        </DropdownItem>
-                                    </Link>
-                                    <Link style={{textDecoration:'none'}} to="/prof/listNote">
-                                        <DropdownItem>
-                                            List Note
-                                        </DropdownItem>
-                                    </Link>
-                                  
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
+                            
+                            <NavItem>
+                                <Link to="/etudiant/listDocument" style={{textDecoration:'none'}}><NavLink>Mes Documents</NavLink></Link>
+                            </NavItem>
+
+                            <NavItem>
+                                <Link to="/etudiant/listNote" style={{textDecoration:'none'}}><NavLink>Mes Notes</NavLink></Link>
+                            </NavItem>
+                           
                         </Nav>
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
@@ -213,24 +185,24 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                         </Nav>
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav >
+                                <DropdownToggle nav  >
                                 <ExampleComponent 
                                 roundedColor="#FFFFFF"
                                 imageWidth="40"
                                 imageHeight="40"
                                 roundedSize="2"
-                                image={ require(`../../../../public/photoProfile/prof/${this.state.user.image}`)} />
+                                image={ require(`../../../../public/photoProfile/etudiant/${this.state.user.image}`)} />
                                 </DropdownToggle>
 
 
                                 <DropdownMenu right>
                                 
-                                    <Link to="/prof/AfficherProfile"  style={{textDecoration:'none'}}>
+                                    <Link to="/etudiant/AfficherProfile"  style={{textDecoration:'none'}}>
                                         <DropdownItem>
                                             Profile
                                         </DropdownItem>
                                     </Link>
-                                    <Link to="/prof/login" onClick={this.onLogout} style={{textDecoration:'none'}}>
+                                    <Link to="/etudiant/login" onClick={this.onLogout} style={{textDecoration:'none'}}>
                                         <DropdownItem>
                                         Logout
                                         </DropdownItem>
@@ -254,7 +226,7 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
 }
 
 const mapStateToProps=(state)=>({
-    user:state.profAuth.user
+    user:state.etudiantAuth.user
 });
 
 export default connect(mapStateToProps,{logout})(AppNavbar);

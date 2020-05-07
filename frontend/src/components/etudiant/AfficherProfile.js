@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {getProf} from '../../actions/admin/adminProfActions';
 import {Redirect,Link} from 'react-router-dom';
 import {ProfEditProfile,ProfEditProfilePicure} from '../../actions/prof/profActions';
+import {EtudiantEditProfile,EtudiantEditProfilePicure} from '../../actions/etudiant/etudiantActions';
 import ExampleComponent from "react-rounded-image";
 
 
@@ -54,7 +55,7 @@ class ProfileProf extends Component {
 
         
         
-        this.props.ProfEditProfile(body,this.state.user._id);
+        this.props.EtudiantEditProfile(body,this.state.user._id);
     }
 
 
@@ -71,7 +72,7 @@ class ProfileProf extends Component {
         
         let formData=new FormData();
         formData.append("image",e.target.files[0]);
-        this.props.ProfEditProfilePicure(formData,this.state.user._id);
+        this.props.EtudiantEditProfilePicure(formData,this.state.user._id);
     }
 
     
@@ -79,7 +80,7 @@ class ProfileProf extends Component {
     {
         if(this.props.user)
         {
-            axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
+            axios.get(`http://localhost:5000/etudiant/getMatiere/${this.props.user.niveauFiliere}`)
             .then((res)=>{
                 this.setState({
                     listMatiere:res.data,
@@ -112,7 +113,7 @@ class ProfileProf extends Component {
         }
        
         if(user!==prevProps.user && Object.keys(user).length !==0){
-            axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
+            axios.get(`http://localhost:5000/etudiant/getMatiere/${this.props.user.niveauFiliere}`)
             .then((res)=>{
                 this.setState({
                     listMatiere:res.data,
@@ -177,7 +178,7 @@ class ProfileProf extends Component {
                             imageWidth="140"
                             imageHeight="140"
                             roundedSize="8"
-                            image={require(`../../../../public/photoProfile/prof/${this.state.user.image}`)}
+                            image={require(`../../../../public/photoProfile/etudiant/${this.state.user.image}`)}
                       />
                      
                            
@@ -286,7 +287,7 @@ class ProfileProf extends Component {
     List Matiere
   </a>
   {this.state.listMatiere.map((data)=>(
-                     <a href="#" className="list-group-item list-group-item-action">{data.nom}</a>
+                     <a href="#" className="list-group-item list-group-item-action">{data.matiere.nom}</a>
                                           ))}
 </div>
 
@@ -357,9 +358,9 @@ class ProfileProf extends Component {
 
 const mapStateToProps=(state)=>({
     error:state.error,
-    success:state.profReducer.success,
-    user:state.profAuth.user,
+    success:state.etudiantReducer.success,
+    user:state.etudiantAuth.user,
     
 });
 
-export default connect(mapStateToProps,{ProfEditProfile,ProfEditProfilePicure})(ProfileProf);
+export default connect(mapStateToProps,{EtudiantEditProfile,EtudiantEditProfilePicure})(ProfileProf);

@@ -139,20 +139,38 @@ class AddNote extends Component {
     }
 
     render() {
+        const styling={
+            background: 'linear-gradient(to top, #97aba4, #003973)',
+            height:'100vh',
+            display:'flex',
+            color:'#FFFFFF'
+            
+        }
+
+        const color={
+            color:'#FFFFFF'
+        }
+        
+        const btn_back={
+            background:'#E5E5BE',
+            color:'#003973',
+            
+        }
         return (
             <div>
                 <AppNavbar />
+                <div style={styling}>
                 <Container className="mt-5">
                    
                        {this.state.loaded ? (
                            <div>
-                         <h2 className="text-center">Ajouter les notes d'un module </h2><br/>
+                         <h2 className="text-center" >Ajouter les notes d'un module </h2><br/>
                          <Alert color="info">
                              <div>Ici vous pouvez Affecter à chaque étudiant sa propre note ! </div>
                          </Alert><br />
                          <Row>
-                             <Col xs={3}></Col>
-                             <Col xs={7}>
+                             
+                             <Col xs={4}>
                                  <FormGroup>
                                      <Input type="select" name="matiere" onChange={this.onChange}>
                                          <option value="">---Choisissez la matiere---</option>
@@ -191,10 +209,9 @@ class AddNote extends Component {
                                      
                                  </FormGroup>
                              </Col>
-                         </Row>
-                         <Row>
-                             <Col xs={2}></Col>
-                             <Col xs={8}>
+                         
+                             <Col xs={1}></Col>
+                             <Col xs={7}>
                              <Table bordered id="table">
                                  <thead>
                                      <tr>
@@ -218,9 +235,10 @@ class AddNote extends Component {
                                      ))}
                                    
                                  </tbody>
-                                 <Button color="info" onClick={()=>this.onSubmitNote()}>Edit</Button>
+                                
                           
                              </Table>
+                             <Button style={btn_back}  onClick={()=>this.onSubmitNote()}>Edit</Button>
                              </Col>
                          </Row>
                          </div>
@@ -231,6 +249,7 @@ class AddNote extends Component {
                        }
                    
                 </Container>
+                </div>
             </div>
         )
     }

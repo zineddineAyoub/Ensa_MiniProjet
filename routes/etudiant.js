@@ -1,10 +1,18 @@
 const express = require('express')
 const router = express.Router()
 const Etudiant = require('../models/Etudiant.model')
+const Matiere = require('../models/Matiere.model')
+const NiveauFiliere = require('../models/NiveauFiliere.model')
+const Note = require('../models/Note.model')
+const NiveauFiliereMatiere = require('../models/NiveauFiliere_Matiere.model')
+const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
 const nodeMailer = require('nodemailer');
 const auth=require('../middleware/auth');
 const Notification=require('../models/Notification.model');
+const BusBoy = require('busboy');
+const path = require('path');
+const fs = require('fs');
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -43,7 +51,7 @@ router.route('/login').post((req,res)=>{
     if(!cne || !cin || !password){
         res.status(400).json({msg:'Enter Al fields'});
     }
-    Etudiant.findOne({cne})
+    Etudiant.findOne({cne,cin,password})
     .then(user=>{
         if(!user || user.cin!==cin || user.password!==password){
             res.status.json({msg:'False Credentials'});
@@ -64,7 +72,10 @@ router.route('/login').post((req,res)=>{
                             cin:user.cin,
                             email:user.email,
                             image:user.image,
-                            niveauFiliere:user.niveauFiliere
+                            niveauFiliere:user.niveauFiliere,
+                            _id:user.id,
+                            type:user.type,
+                            
                         }
                     })
                 }
@@ -135,6 +146,110 @@ router.route('/sendNotification').post((req,res)=>{
     return res.json(doc);
   });
 });
+
+router.route('/ModifierEtudiant/:id').put((req,res)=>{
+  const {nom,prenom,cin,email,adresse,telephone}=req.body;
+  Etudiant.findOne({_id:req.params.id})
+  .then(user=>{
+      user.nom =nom,
+      user.prenom = prenom,
+      user.cin= cin,
+      user.email = email,
+      user.adresse=adresse,
+      user.telephone=telephone,
+      user.save();
+      res.json({msg:'success'});
+
+  }).catch(err=>{
+      res.status(400).json({msg:err});
+  });
+});
+
+router.route('/getMatiere/:id').get((req,res)=>{
+  const niveauFiliere=req.params.id;
+  NiveauFiliereMatiere.find({niveauFiliere}).populate('matiere').populate('niveauFiliere')
+  .then(docs=>{
+    return res.json(docs);
+  }).catch(err=>{
+    return res.status(400).json({msg:err});
+  })
+})
+
+
+  //Photo de Profile
+  router.route('/EditProfilePicture/:id').put((req,res)=>{
+    //manage and save file in folder
+    //database
+    const busboy = new BusBoy({ headers: req.headers });
+    
+    let nameFile;
+    busboy.on('file',(fieldname, file, filename, encoding, mimetype)=>{
+        nameFile=filename;
+        let appDir = path.dirname(require.main.filename);
+        let path2 = appDir.replace(/\\/g, "/");
+        let filepath = path.join(path2, `/public/photoProfile/etudiant/${filename}`);
+        file.pipe(fs.createWriteStream(filepath));
+    });
+    busboy.on('finish',()=>{
+        if(!nameFile){
+            return res.status(400).json({msg:'Please Enter your picture'});
+        }
+        Etudiant.findById(req.params.id).then(
+          (user)=>{
+            user.image = nameFile;
+            user.save();
+          }
+        )
+        res.json({msg:'success'});
+    });
+    req.pipe(busboy);
+});
+
+// afficher Document selon
+router.get('/Listdocument/:id', (req, res) => {
+
+  Document.find({
+    matiere:req.params.id
+  }).then(
+    (documents) => {   
+      return res.status(200).json(documents);
+    }
+  ).catch(
+    (error) => {
+    return  res.status(404).json({
+        msg: error
+      });
+    }
+  );
+});
+
+
+
+router.get('/note',(req,res)=>{
+  Note.find({}).populate('matiere').then((docs)=>{
+    return res.status(200).json(docs);
+  }).catch((err)=>{
+    return res.status(404).json({
+      msg:error
+    });
+  })
+})
+
+router.get('/ListNote/:etudiant/:matiere',(req,res)=>{
+  
+  Note.find({
+    etudiant:req.params.etudiant,
+    matiere:req.params.matiere
+  })
+  .populate('matiere')
+  .then((docs)=>{
+    return res.status(200).json(docs);
+  }).catch((err)=>{
+    return res.status(404).json({
+      msg:error
+    });
+  })
+})
 
 module.exports=router;
 
