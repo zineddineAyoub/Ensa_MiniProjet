@@ -16,6 +16,7 @@ const BusBoy = require('busboy');
 const path = require('path');
 const fs = require('fs');
 const nodeMailer = require('nodemailer');
+const { resolve } = require('path')
 ObjectId = require('mongodb').ObjectID;
 
 
@@ -609,7 +610,7 @@ router.route('/ModifierDocument').put((req,res)=>{
   req.pipe(busboy);
 });
 
-//post comment
+//post comment general for prof and for student
 router.route('/postComment').post((req,res)=>{
   const {message,type,document,idSender}=req.body;
   let status;
@@ -635,13 +636,15 @@ router.route('/postComment').post((req,res)=>{
       return res.status(400).json({msg:'erreur'});
     }
     doc.populate('prof',(err,doc)=>{
-      return res.json(doc);
+      doc.populate('etudiant',(err1,doc1)=>{
+        return res.json(doc1);
+      })
     })
   });
 });
 
 
-//get all comments by id of a document
+//get all comments by id of a document general for prof and student
 router.route('/comments/:id').get((req,res)=>{
   const id=req.params.id;
   Commentaire.find({document:id}).sort({date:'asc'}).populate('etudiant').populate('prof')
@@ -681,6 +684,53 @@ router.route('/modifNotif/:id').put((req,res)=>{
   .then(notifs=>{
     return res.json('success');
   });
+});
+
+const getStudentsToNotify=(niveauFiliere)=>{
+  return new Promise((resolve,reject)=>{
+    Etudiant.find({niveauFiliere})
+    .then((docs)=>{
+      resolve(docs);
+    }).catch(err=>{
+      reject(err);
+    })
+  });
+}
+const sendNotifToStudent=(senderProf,receiver,content)=>{
+  return new Promise((resolve,reject)=>{
+    let newNotif=new Notification({
+      senderProf,
+      receiver,
+      content
+    });
+    newNotif.save((err,doc)=>{
+      if(err) reject('failed');
+      resolve('success');
+    });
+  })
+}
+
+//send notif
+router.route('/sendNotification/:id').post(async(req,res)=>{
+  let response;
+  const {senderProf,content}=req.body;
+  try{
+    let data=await getStudentsToNotify(req.params.id);
+    data.forEach(async(doc)=>{
+      try{
+        response=await sendNotifToStudent(senderProf,doc._id,content);
+      }
+      catch(err){
+        console.log(err);
+      }
+    })
+
+    return res.json('success');
+  }
+  catch(err){
+    console.log(err);
+    return res.json(err);
+  }
 });
 
 module.exports=router;

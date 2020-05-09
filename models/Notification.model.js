@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const today=new Date();
-const Notification = new mongoose.Schema({
+const NotificationSchema = new mongoose.Schema({
 
    senderEtudiant : {
     type: mongoose.Schema.Types.ObjectId,
@@ -8,7 +8,7 @@ const Notification = new mongoose.Schema({
    },
    senderProf:{
        type:mongoose.Schema.Types.ObjectId,
-       ref:'prof'
+       ref:'Prof'
    },
    receiver : {
     type: String
@@ -29,5 +29,7 @@ const Notification = new mongoose.Schema({
 }
 
   })
+
+  const Notification=mongoose.model('Notification',NotificationSchema);
   
-  module.exports = mongoose.model('Notification', Notification)
+  module.exports = Notification;

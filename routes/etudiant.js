@@ -1,15 +1,13 @@
 const express = require('express')
 const router = express.Router()
 const Etudiant = require('../models/Etudiant.model')
-const Matiere = require('../models/Matiere.model')
-const NiveauFiliere = require('../models/NiveauFiliere.model')
 const Note = require('../models/Note.model')
 const NiveauFiliereMatiere = require('../models/NiveauFiliere_Matiere.model')
 const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
 const nodeMailer = require('nodemailer');
 const auth=require('../middleware/auth');
-const Notification=require('../models/Notification.model');
+const Notification=require('../models/Notification.model')
 const BusBoy = require('busboy');
 const path = require('path');
 const fs = require('fs');
@@ -135,18 +133,6 @@ router.route('/passwordRecovery').post((req,res)=>{
 });
 
 
-router.route('/sendNotification').post((req,res)=>{
-  const {senderEtudiant,receiver,content}=req.body;
-  let newNotif=new Notification({
-    senderEtudiant,
-    receiver,
-    content
-  });
-  newNotif.save((err,doc)=>{
-    return res.json(doc);
-  });
-});
-
 router.route('/ModifierEtudiant/:id').put((req,res)=>{
   const {nom,prenom,cin,email,adresse,telephone}=req.body;
   Etudiant.findOne({_id:req.params.id})
@@ -249,7 +235,56 @@ router.get('/ListNote/:etudiant/:matiere',(req,res)=>{
       msg:error
     });
   })
-})
+});
+
+//send notif if he comments for example or upload the td and homework
+router.route('/sendNotification').post((req,res)=>{
+  const {senderEtudiant,receiver,content}=req.body;
+  let newNotif=new Notification({
+    senderEtudiant,
+    receiver,
+    content
+  });
+  newNotif.save((err,doc)=>{
+    return res.json(doc);
+  });
+});
+
+//get all student notif
+router.route('/getAllNotif/:id').get((req,res)=>{
+  const id=req.params.id;
+  Notification.find({receiver:id}).populate('senderProf')
+  .then((docs)=>{
+    return res.json(docs);
+  }).catch(err=>{
+    return res.json(err);
+  })
+});
+
+//get all student notif not read
+router.route('/getNotifNotViewed/:id').get((req,res)=>{
+  const id=req.params.id;
+  Notification.find({receiver:id,read:false}).populate('senderProf')
+  .then((docs)=>{
+    return res.json(docs);
+  }).catch(err=>{
+    return res.json(err);
+  })
+});
+
+//modify student notif
+router.route('/modifNotif/:id').put((req,res)=>{
+  const id=req.params.id;
+  Notification.update({receiver:id},{read:true},{multi:true})
+  .then(notifs=>{
+    return res.json('success');
+  });
+});
+
+
+
+
+
 
 module.exports=router;
 
