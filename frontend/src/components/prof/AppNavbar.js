@@ -18,6 +18,7 @@ import {connect} from 'react-redux';
 import {logout} from '../../actions/prof/authActions';
 import ExampleComponent from "react-rounded-image";
 import axios from 'axios';
+import '../../ressources/etudiant.css';
 
 
 class AppNavbar extends Component {
@@ -123,13 +124,13 @@ class AppNavbar extends Component {
         const styling={
            
             background: '#1A2980',  /* fallback for old browsers */
-background: '-webkit-linear-gradient(to right, #1A2980 , #26D0CE )',  /* Chrome 10-25, Safari 5.1-6 */
-background: 'linear-gradient(to right, #1A2980 , #26D0CE )', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: '-webkit-linear-gradient(to right, #1A2980 , #26D0CE )',  /* Chrome 10-25, Safari 5.1-6 */
+            background: 'linear-gradient(to right, #1A2980 , #26D0CE )', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 
             background: '#003973',  /* fallback for old browsers */
-background: '-webkit-linear-gradient(to top, #003973,#003973)',  /* Chrome 10-25, Safari 5.1-6 */
-background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: '-webkit-linear-gradient(to top, #003973,#003973)',  /* Chrome 10-25, Safari 5.1-6 */
+            background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
             color:'#E5E5BE',
 
@@ -139,7 +140,6 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
 
         return (
             <div>
-                {this.state.loaded ? ( 
                     <Navbar color="primary" dark light expand="sm" style={styling}>
                     <NavbarBrand href="/prof/home">Professeur</NavbarBrand>
                     <NavbarToggler onClick={this.toggle} />
@@ -186,6 +186,7 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                                 </DropdownMenu>
                             </UncontrolledDropdown>
                         </Nav>
+                        {this.state.loaded ? ( 
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav >
@@ -201,16 +202,21 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                                                             <i>{notif.postDate}</i>
                                                             <br/>
                                                             <p>
-                                                            <i class="fas fa-bell"></i>{notif.content}
+                                                            {notif.content}
                                                             </p>
                                                         </p>
                                                     </p>
                                                 </Row>
                                         </DropdownItem>
                                     ))}
+                                    <DropdownItem style={{marginTop:"300px"}} className="hoverBack">
+                                        <hr />
+                                        <div className="text-center"><Link to="/prof/notifications">All Notifications</Link></div>
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                        </Nav>
+                        </Nav>):null}
+                        {this.state.loaded ? ( 
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav >
@@ -237,17 +243,9 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                                     </Link>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                        </Nav>
+                        </Nav>):null}
                     </Collapse>
-                </Navbar>
-    
-                 
-                             
-                ): 
-                
-                null
-                
-                }   
+                </Navbar>   
             </div>
         )
     }

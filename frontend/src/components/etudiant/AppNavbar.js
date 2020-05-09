@@ -11,13 +11,15 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
-    Row
+    Row,
+    Button
   } from 'reactstrap';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import {logout} from '../../actions/prof/authActions';
+import {logout} from '../../actions/etudiant/authActions';
 import ExampleComponent from "react-rounded-image";
 import axios from 'axios';
+import '../../ressources/etudiant.css';
 
 
 class AppNavbar extends Component {
@@ -43,9 +45,9 @@ class AppNavbar extends Component {
     {
         if(this.props.user)
         {
-            axios.get(`http://localhost:5000/prof/getNotifNotViewed/${this.props.user._id}`)
+            axios.get(`http://localhost:5000/etudiant/getNotifNotViewed/${this.props.user._id}`)
                 .then((notifs)=>{
-                    console.log(notifs.data.length);
+                    console.log("this is the length :"+notifs.data.length);
                     if(notifs.data.length!==0){
                         this.setState({
                             color:'red',
@@ -74,9 +76,9 @@ class AppNavbar extends Component {
         if(user!==prevProps.user && Object.keys(user).length !==0){
             if(user!==prevProps.user){
                 console.log(user._id);
-                axios.get(`http://localhost:5000/prof/getNotifNotViewed/${user._id}`)
+                axios.get(`http://localhost:5000/etudiant/getNotifNotViewed/${user._id}`)
                 .then((notifs)=>{
-                    console.log(notifs.data.length);
+                    console.log("this is the length :"+notifs.data.length);
                     if(notifs.data.length!==0){
                         this.setState({
                             color:'red',
@@ -102,7 +104,7 @@ class AppNavbar extends Component {
 
     onClick=()=>{
         if(this.state.counter%2===0){
-            axios.put(`http://localhost:5000/prof/modifNotif/${this.state.user._id}`)
+            axios.put(`http://localhost:5000/etudiant/modifNotif/${this.state.user._id}`)
             .then(()=>{
                 this.setState({
                     color:"white",
@@ -123,13 +125,13 @@ class AppNavbar extends Component {
         const styling={
            
             background: '#1A2980',  /* fallback for old browsers */
-background: '-webkit-linear-gradient(to right, #1A2980 , #26D0CE )',  /* Chrome 10-25, Safari 5.1-6 */
-background: 'linear-gradient(to right, #1A2980 , #26D0CE )', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: '-webkit-linear-gradient(to right, #1A2980 , #26D0CE )',  /* Chrome 10-25, Safari 5.1-6 */
+            background: 'linear-gradient(to right, #1A2980 , #26D0CE )', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 
             background: '#003973',  /* fallback for old browsers */
-background: '-webkit-linear-gradient(to top, #003973,#003973)',  /* Chrome 10-25, Safari 5.1-6 */
-background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: '-webkit-linear-gradient(to top, #003973,#003973)',  /* Chrome 10-25, Safari 5.1-6 */
+            background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
             color:'#E5E5BE',
 
@@ -139,7 +141,6 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
 
         return (
             <div>
-                {this.state.loaded ? ( 
                     <Navbar color="primary" dark light expand="sm" style={styling}>
                     <NavbarBrand href="/prof/home">Professeur</NavbarBrand>
                     <NavbarToggler onClick={this.toggle} />
@@ -158,31 +159,37 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                             </NavItem>
                            
                         </Nav>
+                        {this.state.loaded ? ( 
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav >
                                     <span onClick={this.onClick}><i className="fa fa-bell fa-lg" style={{color:this.state.color}}></i></span>
                                 </DropdownToggle>
-                                <DropdownMenu right style={{width:'400px',height:'500px',overflow:'scroll'}}>
+                                <DropdownMenu right style={{width:'400px',height:'500px',overflowY:'scroll'}}>
                                     {this.state.notifs.map(notif=>(
                                         <DropdownItem>
                                             <Row>
-                                                    <p style={{width:'100%'}}><img style={{float:'left',height:'40px',width:'40px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/etudiant/${notif.senderEtudiant.image}`} />
+                                                    <p style={{width:'100%',paddingTop:'10px'}}><img style={{float:'left',height:'40px',width:'40px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/prof/${notif.senderProf.image}`} />
                                                         <p>
-                                                            <b>{notif.senderEtudiant.nom +' '+notif.senderEtudiant.prenom}</b>{'    '}
+                                                            <b>{notif.senderProf.nom +' '+notif.senderProf.prenom}</b>{'    '}
                                                             <i>{notif.postDate}</i>
                                                             <br/>
                                                             <p>
-                                                            <i class="fas fa-bell"></i>{notif.content}
+                                                            {notif.content}
                                                             </p>
                                                         </p>
                                                     </p>
-                                                </Row>
+                                            </Row>
                                         </DropdownItem>
                                     ))}
+                                    <DropdownItem style={{marginTop:"300px"}} className="hoverBack">
+                                        <hr />
+                                        <div className="text-center"><Link to="/etudiant/notifications">All Notifications</Link></div>
+                                    </DropdownItem>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                        </Nav>
+                        </Nav>):null}
+                        {this.state.loaded ? ( 
                         <Nav navbar>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav  >
@@ -209,17 +216,9 @@ background: 'linear-gradient(to top, #003973,#003973)', /* W3C, IE 10+/ Edge, Fi
                                     </Link>
                                 </DropdownMenu>
                             </UncontrolledDropdown>
-                        </Nav>
+                        </Nav>):null}
                     </Collapse>
-                </Navbar>
-    
-                 
-                             
-                ): 
-                
-                null
-                
-                }   
+                </Navbar>  
             </div>
         )
     }

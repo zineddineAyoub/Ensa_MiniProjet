@@ -29,13 +29,13 @@ import Statistique from './components/admin/Statistique';
 //prof components
 import LoginProf from './components/prof/Login';
 import HomeProf from './components/prof/Home';
-
 import AddDocument from './components/prof/AddDocument';
 import ProfProfile from './components/prof/AfficherProfile';
 import AjouterNote from './components/prof/AddNote';
 import ListNote from './components/prof/ListNote';
 import ListDocument from './components/prof/ListDocument';
 import ForgottenPasswordProf from './components/prof/ForgottenPassword';
+import NotificationsProf from './components/prof/Notifications';
 
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
@@ -44,6 +44,7 @@ import ForgottenPasswordEtudiant from './components/etudiant/ForgottenPassword';
 import ListNoteE from './components/etudiant/ListNote';
 import ListDocumentE from './components/etudiant/ListDocument';
 import EtudiantProfile from './components/etudiant/AfficherProfile';
+import NotificationsEtudiant from './components/etudiant/Notifications';
 
 //home component
 import Home from './components/Home';
@@ -75,6 +76,7 @@ class App extends React.Component{
           <Route path="/prof/listNote" component={profProtected(ListNote)} exact />
           <Route path="/prof/listDocument" component={profProtected(ListDocument)} exact />
           <Route path="/prof/forgottenPassword" component={ForgottenPasswordProf} exact />
+          <Route path="/prof/notifications" component={profProtected(NotificationsProf)} exact />
 
           
             <Route path="/" component={Home} exact />
@@ -104,6 +106,7 @@ class App extends React.Component{
             <Route path="/etudiant/Afficherprofile" component={etudiantProtected(EtudiantProfile)} exact />
             <Route path="/etudiant/listNote" component={etudiantProtected(ListNoteE)} exact />
             <Route path="/etudiant/listDocument" component={etudiantProtected(ListDocumentE)} exact />
+            <Route path="/etudiant/notifications" component={etudiantProtected(NotificationsEtudiant)} exact />
 
 
             <Route component={PageNotFound} />

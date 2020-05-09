@@ -154,7 +154,7 @@ class ListDocuments extends Component {
         e.preventDefault();
         const message=this.state.comment;
         const document=this.state.currentCommentaire;
-        const type="prof";
+        const type="etudiant";
         const idSender=this.props.user._id;
         const body={
             message,
@@ -265,20 +265,34 @@ class ListDocuments extends Component {
                             <Modal isOpen={this.state.isOpenCommentaire} toggle={()=>this.toggleCommentaire(this.state.currentCommentaire)} >
                                     
                                 <ModalHeader toggle={()=>this.toggleCommentaire(null)}>Liste de commentaire</ModalHeader>
-                                <ModalBody style={{height:'400px',overflow:'scroll'}}>
+                                <ModalBody style={{height:'400px',overflowY:'scroll'}}>
                                     {this.state.comments.map(comment=>(
                                         
                                                 <Row>
-                                                    <p style={{width:'100%'}}><img style={{float:'left',height:'50px',width:'50px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/prof/${comment.prof.image}`} />
-                                                        <p>
-                                                            <b>{comment.prof.nom +' '+comment.prof.prenom}</b>{'    '}
-                                                            <i>{comment.postDate}</i>
-                                                            <br/>
+                                                    {comment.prof ? (
+                                                        <p style={{width:'100%'}}><img style={{float:'left',height:'50px',width:'50px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/prof/${comment.prof.image}`} />
                                                             <p>
-                                                            {comment.message}
+                                                                <b>{comment.prof.nom +' '+comment.prof.prenom}</b>{'    '}
+                                                                <i>{comment.postDate}</i>
+                                                                <br/>
+                                                                <p>
+                                                                {comment.message}
+                                                                </p>
                                                             </p>
                                                         </p>
-                                                    </p>
+                                                    ):null}
+                                                    {comment.etudiant ? (
+                                                        <p style={{width:'100%'}}><img style={{float:'left',height:'50px',width:'50px',borderRadius:'50%',margin: '0 20px 20px 15px'}} src={`http://localhost:5000/photoProfile/etudiant/${comment.etudiant.image}`} />
+                                                            <p>
+                                                                <b>{comment.etudiant.nom +' '+comment.etudiant.prenom}</b>{'    '}
+                                                                <i>{comment.postDate}</i>
+                                                                <br/>
+                                                                <p>
+                                                                {comment.message}
+                                                                </p>
+                                                            </p>
+                                                        </p>
+                                                    ):null}
                                                 </Row>
                                     ))}
                                 </ModalBody>
