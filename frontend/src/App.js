@@ -36,6 +36,7 @@ import ListNote from './components/prof/ListNote';
 import ListDocument from './components/prof/ListDocument';
 import ForgottenPasswordProf from './components/prof/ForgottenPassword';
 import NotificationsProf from './components/prof/Notifications';
+import ChangePassword from './components/prof/ChangePassword';
 
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
@@ -77,7 +78,7 @@ class App extends React.Component{
           <Route path="/prof/listDocument" component={profProtected(ListDocument)} exact />
           <Route path="/prof/forgottenPassword" component={ForgottenPasswordProf} exact />
           <Route path="/prof/notifications" component={profProtected(NotificationsProf)} exact />
-
+          <Route path="/prof/ChangePassword" component={profProtected(ChangePassword)} exact />
           
             <Route path="/" component={Home} exact />
 

@@ -236,6 +236,13 @@ class AppNavbar extends Component {
                                             Profile
                                         </DropdownItem>
                                     </Link>
+                                    
+                                    <Link to="/prof/ChangePassword"  style={{textDecoration:'none'}}>
+                                        <DropdownItem>
+                                        Changer password
+                                        </DropdownItem>
+                                    </Link>
+
                                     <Link to="/prof/login" onClick={this.onLogout} style={{textDecoration:'none'}}>
                                         <DropdownItem>
                                         Logout

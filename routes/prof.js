@@ -161,6 +161,22 @@ router.route('/ModifierProf/:id').put((req,res)=>{
   });
 });
 
+//Modifier pass
+router.route('/ModifierPass/:id').put((req,res)=>{
+  const {password}=req.body;
+  Prof.findOne({_id:req.params.id})
+  .then(user=>{
+      user.password =password,
+      
+      user.save();
+
+      res.json({msg:'success'});
+
+  }).catch(err=>{
+      res.status(400).json({msg:err});
+  });
+});
+
   //Photo de Profile
   router.route('/EditProfilePicture/:id').put((req,res)=>{
     //manage and save file in folder
