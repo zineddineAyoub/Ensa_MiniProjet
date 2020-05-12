@@ -4,6 +4,8 @@ import {
     PROF_EDIT_PROFILE_FAIL,
     PROF_EDIT_PROFILE_PICTURE,
     PROF_EDIT_PROFILE_PICTURE_FAIL,
+    PROF_EDIT_PASS,
+    PROF_EDIT_PASS_FAIL,
     ETUDIANT_BY_NIVEAU_FILIERE,
     ETUDIANT_BY_NIVEAU_FILIERE_FAIL,
     AJOUTER_NOTE,
@@ -42,6 +44,28 @@ export const ProfEditProfile=({nom,prenom,cin,email,adresse,telephone},id)=>disp
       dispatch(returnErrors(err.response.data,err.response.status,'PROF_EDIT_PROFILE_FAIL'));
       dispatch({
           type:PROF_EDIT_PROFILE_FAIL
+      })
+    });
+}
+
+//dispache changePass
+export const EditPass=({password},id)=>dispatch=>{
+  const config={
+    headers:{
+        'Content-type':'application/json'
+    }
+  }
+  const body=JSON.stringify({password});
+    axios.put(`http://localhost:5000/prof/ModifierPass/${id}`,body,config)
+    .then(user=>{
+      dispatch({
+        type:PROF_EDIT_PASS,
+        payload:user.data
+      });
+    }).catch(err=>{
+      dispatch(returnErrors(err.response.data,err.response.status,'PROF_EDIT_PASS_FAIL'));
+      dispatch({
+          type:PROF_EDIT_PASS_FAIL
       })
     });
 }

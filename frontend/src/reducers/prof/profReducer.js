@@ -3,6 +3,8 @@ import {
     PROF_EDIT_PROFILE_FAIL,
     PROF_EDIT_PROFILE_PICTURE,
     PROF_EDIT_PROFILE_PICTURE_FAIL,
+    PROF_EDIT_PASS,
+    PROF_EDIT_PASS_FAIL,
     ETUDIANT_BY_NIVEAU_FILIERE,
     ETUDIANT_BY_NIVEAU_FILIERE_FAIL,
     AJOUTER_NOTE,
@@ -52,6 +54,17 @@ import {
             success:null
           }
           
+          case PROF_EDIT_PASS:
+            return {
+              ...state,
+              success:'PROF_EDIT_PASS'
+            }
+            case  PROF_EDIT_PASS_FAIL:
+              return{
+                ...state,
+                success:null
+              }
+
           case  ETUDIANT_BY_NIVEAU_FILIERE:
           return{
             ...state,
