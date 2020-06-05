@@ -37,6 +37,7 @@ import ListDocument from './components/prof/ListDocument';
 import ForgottenPasswordProf from './components/prof/ForgottenPassword';
 import NotificationsProf from './components/prof/Notifications';
 import ChangePassword from './components/prof/ChangePassword';
+import EmploieProf from './components/prof/Emploie';
 
 //etudiant components
 import LoginEtudiant from './components/etudiant/Login';
@@ -46,6 +47,7 @@ import ListNoteE from './components/etudiant/ListNote';
 import ListDocumentE from './components/etudiant/ListDocument';
 import EtudiantProfile from './components/etudiant/AfficherProfile';
 import NotificationsEtudiant from './components/etudiant/Notifications';
+import EmploieEtudiant from './components/etudiant/Emploie';
 
 //home component
 import Home from './components/Home';
@@ -79,6 +81,7 @@ class App extends React.Component{
           <Route path="/prof/forgottenPassword" component={ForgottenPasswordProf} exact />
           <Route path="/prof/notifications" component={profProtected(NotificationsProf)} exact />
           <Route path="/prof/ChangePassword" component={profProtected(ChangePassword)} exact />
+          <Route path="/prof/emploie" component={profProtected(EmploieProf)} exact />
           
             <Route path="/" component={Home} exact />
 
@@ -108,6 +111,7 @@ class App extends React.Component{
             <Route path="/etudiant/listNote" component={etudiantProtected(ListNoteE)} exact />
             <Route path="/etudiant/listDocument" component={etudiantProtected(ListDocumentE)} exact />
             <Route path="/etudiant/notifications" component={etudiantProtected(NotificationsEtudiant)} exact />
+            <Route path="/etudiant/emploie" component={etudiantProtected(EmploieEtudiant)} exact />
 
 
             <Route component={PageNotFound} />

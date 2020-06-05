@@ -8,6 +8,7 @@ const Etudiant = require('../models/Etudiant.model')
 const Note = require('../models/Note.model')
 const Commentaire=require('../models/Commentaire.model')
 const Notification=require('../models/Notification.model')
+const Emploie=require('../models/Emploie.model');
 
 const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
@@ -712,6 +713,7 @@ const getStudentsToNotify=(niveauFiliere)=>{
     })
   });
 }
+
 const sendNotifToStudent=(senderProf,receiver,content)=>{
   return new Promise((resolve,reject)=>{
     let newNotif=new Notification({
@@ -747,6 +749,17 @@ router.route('/sendNotification/:id').post(async(req,res)=>{
     console.log(err);
     return res.json(err);
   }
+});
+
+
+//get niveau filiere pour prof
+router.route('/getNiveau').post((req,res)=>{
+  NiveauFiliere_Matiere.find({}).populate('matiere').populate('niveauFiliere')
+  .then((docs)=>{
+    res.json(docs);
+  }).catch(err=>{
+    res.json(err);
+  });
 });
 
 module.exports=router;
