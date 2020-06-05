@@ -185,6 +185,9 @@ class AppNavbar extends Component {
                                   
                                 </DropdownMenu>
                             </UncontrolledDropdown>
+                            <NavItem>
+                                <Link to="/prof/emploie" style={{textDecoration:'none'}}><NavLink>Emploie</NavLink></Link>
+                            </NavItem>
                         </Nav>
                         {this.state.loaded ? ( 
                         <Nav navbar>

@@ -7,7 +7,8 @@ const Document = require('../models/Document.model')
 const jwt=require('jsonwebtoken');
 const nodeMailer = require('nodemailer');
 const auth=require('../middleware/auth');
-const Notification=require('../models/Notification.model')
+const Notification=require('../models/Notification.model');
+const Emploie=require('../models/Emploie.model');
 const BusBoy = require('busboy');
 const path = require('path');
 const fs = require('fs');
@@ -280,6 +281,16 @@ router.route('/modifNotif/:id').put((req,res)=>{
     return res.json('success');
   });
 });
+
+router.route('/getEmploie').post((req,res)=>{
+  const {niveauFiliere, semestre, type}=req.body;
+  Emploie.find({niveauFiliere,semestre,type})
+  .then(doc=>{
+    return res.json(doc)
+  }).catch(err=>{
+    return res.json(err);
+  })
+})
 
 
 

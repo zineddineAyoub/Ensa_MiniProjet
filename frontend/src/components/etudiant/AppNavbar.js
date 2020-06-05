@@ -157,6 +157,9 @@ class AppNavbar extends Component {
                             <NavItem>
                                 <Link to="/etudiant/listNote" style={{textDecoration:'none'}}><NavLink>Mes Notes</NavLink></Link>
                             </NavItem>
+                            <NavItem>
+                                <Link to="/etudiant/emploie" style={{textDecoration:'none'}}><NavLink>Emploie</NavLink></Link>
+                            </NavItem>
                            
                         </Nav>
                         {this.state.loaded ? ( 

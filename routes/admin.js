@@ -551,7 +551,7 @@ router.route('/addEmploie').post((req,res)=>{
         nameFile=filename;
         let appDir = path.dirname(require.main.filename);
         let path2 = appDir.replace(/\\/g, "/");
-        let filepath = path.join(path2, `/emploie/${filename}`);
+        let filepath = path.join(path2, `/public/emploie/${filename}`);
         file.pipe(fs.createWriteStream(filepath));
     });
     busboy.on('finish',()=>{
