@@ -9,6 +9,10 @@ const Matiere = require('../models/Matiere.model');
 const FeedBack = require('../models/FeedBack.model');
 const NiveauFiliere_Matiere=require('../models/NiveauFiliere_Matiere.model');
 const NiveauFiliere = require('../models/NiveauFiliere.model');
+const Commentaire=require('../models/Commentaire.model');
+const Notification=require('../models/Notification.model');
+const Note=require('../models/Note.model');
+const Document=require('../models/Document.model');
 //const Mod = require('../models/Module.model');
 //import packages
 const csv = require('csv-parser');
@@ -19,6 +23,7 @@ const jwt=require('jsonwebtoken');
 const auth=require('../middleware/auth');
 const BusBoy = require('busboy');
 const path=require('path');
+const { resolve } = require('path');
 
 const router=express.Router();
 
@@ -277,8 +282,16 @@ router.route('/ajouterProf').post((req,res)=>{
 router.route('/deleteEtudiant/:id').delete((req,res)=>{
     const _id=req.params.id;
     Etudiant.findByIdAndRemove({_id},(err,user)=>{
-        if(err) throw err;
-        res.json(user);
+        Commentaire.deleteMany({etudiant:_id},(err1,doc1)=>{
+            if(err1) throw err1;
+            Notification.deleteMany({senderEtudiant:_id},(err2,doc2)=>{
+                if(err2) throw err2;
+                Note.deleteMany({etudiant:_id},(err3,doc3)=>{
+                    if(err3) throw err3;
+                    res.json(user);
+                });
+            });
+        });
     });
 });
 
@@ -761,7 +774,10 @@ router.route('/deleteMatiere/:id').delete((req,res)=>{
         if(err) throw err
         NiveauFiliere_Matiere.deleteMany({matiere:_id},(err,docs)=>{
             if(err) throw err;
-            res.json(doc);
+            Document.deleteMany({matiere:_id},(err1,doc1)=>{
+                if(err1) throw err1;
+                res.json(doc);
+            })
         });
     });
 });
@@ -787,7 +803,13 @@ router.route('/deleteOneProf/:id').delete(async(req,res)=>{
                     .then(()=>{
                         NiveauFiliere_Matiere.deleteMany({matiere:docs._id})
                         .then(()=>{
-                            res.json(prof);
+                            Commentaire.deleteMany({prof:_id})
+                            .then(()=>{
+                                Notification.deleteMany({senderProf:_id})
+                                .then(()=>{
+                                    res.json(prof);
+                                })
+                            })
                         })
                     })
                 }) 
@@ -853,5 +875,57 @@ router.route('/getFeedBacks').get((req,res)=>{
     })
 })
 
+//array for filiere stats
+const statsFiliere=(niveauFiliere,user)=>{
+    return new Promise((resolve,reject)=>{
+        if(user=="etudiant"){
+            Etudiant.countDocuments({niveauFiliere},(err,doc)=>{
+                if(err) reject();
+                resolve(doc);
+            });
+        }
+        else if(user=="professeur"){
+            NiveauFiliere_Matiere.countDocuments({niveauFiliere},(err,doc)=>{
+                if(err) reject()
+                resolve(doc);
+            });
+        }
+    });
+}
+
+const getAllFiliere=()=>{
+    return new Promise((resolve,reject)=>{
+        NiveauFiliere.find({})
+        .then(doc=>{
+            resolve(doc);
+        }).catch(err=>{
+            reject(err);
+        })
+    })
+}
+
+router.route('/FiliereStats/:user').get(async(req,res)=>{
+    const user=req.params.user;
+    console.log(user);
+    let filieres=await getAllFiliere();
+    let stats=[];
+    let info={
+        labels:[],
+        data:[]
+    }
+    filieres.forEach(async(filiere)=>{
+        try{
+            let counter=await statsFiliere(filiere._id,user);
+            info.data.push(counter);
+            info.labels.push(filiere.filiere+" "+filiere.niveau);
+            if(info.labels.length==10){
+                stats.push(info);
+                res.send(stats);
+            }
+        }catch(err){
+            console.log(err);
+        }
+    });
+});
 
 module.exports=router;
