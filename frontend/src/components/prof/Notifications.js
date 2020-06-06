@@ -10,12 +10,30 @@ class Notifications extends Component {
         loading:true
     }
 
+    componentWillMount(){
+        if(this.props.user)
+        {
+            axios.get(`http://localhost:5000/prof/getAllNotif/${this.props.user._id}`)
+                .then(docs=>{
+                    console.log(docs);
+                    console.log(docs.data);
+                    this.setState({
+                        notifs:docs.data,
+                        loading:false
+                    })
+                }).catch(err=>{
+
+                })
+        }
+    }
+
     componentDidUpdate(prevProps){
         const {user}=this.props;
         if(user!==prevProps.user && Object.keys(user).length !==0){
             if(user!==prevProps.user){
                 axios.get(`http://localhost:5000/prof/getAllNotif/${user._id}`)
                 .then(docs=>{
+                    console.log(docs);
                     console.log(docs.data);
                     this.setState({
                         notifs:docs.data,
