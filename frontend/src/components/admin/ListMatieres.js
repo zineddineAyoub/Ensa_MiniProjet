@@ -97,7 +97,6 @@ class ListMatieres extends Component {
                                     <th>Filiere</th>
                                     <th>Nom Professeur</th>
                                     <th>Prenom Professeur</th>
-                                    <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
@@ -109,7 +108,6 @@ class ListMatieres extends Component {
                                             <td>{matiere.niveauFiliere.filiere}</td>
                                             <td>{matiere.matiere.prof.nom}</td>
                                             <td>{matiere.matiere.prof.prenom}</td>
-                                            <td><Button color="secondary">Edit</Button></td>
                                             <td><Button color="danger" onClick={()=>this.toggleDelete(matiere.matiere._id)}>Delete</Button></td>
                                         </tr>                                
                                 ))}

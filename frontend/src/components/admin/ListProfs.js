@@ -88,7 +88,6 @@ class ListProfs extends Component {
                                     <th>CIN</th>
                                     <th>Niveau</th>
                                     <th>Filiere</th>
-                                    <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
@@ -101,7 +100,6 @@ class ListProfs extends Component {
                                             <td>{user.matiere.prof.cin}</td>
                                             <td>{user.niveauFiliere.niveau}</td>
                                             <td>{user.niveauFiliere.filiere}</td>
-                                            <td><Button color="secondary">Edit</Button></td>
                                             <td><Button color="danger" onClick={()=>this.toggleDelete(user.matiere.prof._id)}>Delete</Button></td>
                                         </tr>                                
                                 ))}
