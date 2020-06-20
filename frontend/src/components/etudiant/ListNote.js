@@ -20,7 +20,7 @@ class ListNotes extends Component {
         niveauFiliere:null,
         notes:[],
         counter:0,
-        filiereSelected:false,
+        matiereSelected:false,
         semestre:0,
         exist:false,
         usersFiltered:[],
@@ -42,6 +42,9 @@ class ListNotes extends Component {
                     listMatiere:res.data,
                     loaded:true,   
                 });
+
+                console.log("myy matieres"+this.state.listMatiere);
+                
             });
         }
        
@@ -81,14 +84,24 @@ class ListNotes extends Component {
         }
 
         if(users!==prevProps.users  && Object.keys(users).length !==0 ){
-           // this.state.emptylist=false
-            console.log("USER CHANGED ===>"+this.props.users);            
-            this.setState({
-                users,
-                exist:true,
-                
-            });   
-        }
+            // this.state.emptylist=false
+             console.log("USER CHANGED ===>"+this.props.users);
+                 this.setState({
+                     users,//:this.state.usersFiltered,
+                     exist:true,
+                     emptylist:false  
+                 });  
+         }
+ 
+         else if(users!==prevProps.users && Object.keys(users).length ==0)
+         {
+             console.log("USER CHANGED ===>"+this.props.users);
+                 this.setState({
+                     users,//:this.state.usersFiltered,
+                     exist:true,
+                     emptylist:true    
+                 });  
+         }
         if(user!==prevProps.user && Object.keys(user).length !==0){
             axios.get(`http://localhost:5000/etudiant/getMatiere/${this.props.user.niveauFiliere}`)
             .then((res)=>{
@@ -102,16 +115,27 @@ class ListNotes extends Component {
         }
     }
 
+    onChange=(e)=>{
+        this.state.users=[];
+        this.setState({
+            [e.target.name]:e.target.value,
+            matiereSelected:true
+        });
+    }
+
 
 
     onChange3=(e)=>{
         this.state.users=[];
         this.setState({
             semestre:e.target.value,
+            niveauFiliere:this.props.user.niveauFiliere,
+            emptylist:false
         },()=>{   
             const body={
-                etudiant:this.state.user._id,
-                semestre:this.state.semestre
+               niveauFiliere:this.state.niveauFiliere,
+               matiere:this.state.matiere,
+             semestre:this.state.semestre
             }
             this.props.ListNote(body);
         });
@@ -133,12 +157,17 @@ class ListNotes extends Component {
             color:'#FFFFFF'
         }
       
-        const spinning={
-           
-            display:'flex',
-            alignItems:"center",
-            justifyContent:"center"
-        }
+        const spinner={ position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        color:'#FFFFFF'
+    }
+
+        
+        const table={
+            background : '#FFFFFF'
+        } 
 
         return (
             <div >
@@ -155,18 +184,31 @@ class ListNotes extends Component {
                          <Row>
                              
                              <Col xs={4}>
-                                 
                                  <FormGroup>
-                                     <Input type="select" name="semestre"  id="select3">
+                                     <Input type="select" name="matiere" onChange={this.onChange}>
+                                         <option value="">---Choisissez la matiere---</option>
+                                         {this.state.listMatiere.map((data)=>(
+                                             <option value={data.matiere._id}>{data.matiere.nom}</option>
+                                         ))}
+                                     </Input>
+                                     
+                                 </FormGroup>
+                                 <FormGroup>
+                                     <Input type="select" name="niveauFiliere" onChange={this.onChange3} id="select3">
                                          
                                          <option value="">---Choisissez le Numero DS---</option>
-                                        
+                                        {this.state.matiereSelected ?(
                                             <Fragment>
                                             <option value="1"> DS 1</option>
                                             <option value="2"> DS 2</option>
                                             <option value="3"> TP </option>
                                             </Fragment>
                                             
+                                        ): 
+                                        <span></span>
+                                        }
+                                        
+                                        
                                      </Input>
                                      
                                  </FormGroup>
@@ -176,35 +218,42 @@ class ListNotes extends Component {
                          
                              <Col xs={1}></Col>
                              <Col xs={7}>
-                                                                                
+                             {this.state.emptylist ? (
+                             <Alert color="warning">
+                             <div>Cette liste des notes n'existe pas !  </div>
+                         </Alert>
+                         ) :
+                         null
+                         }                                                   
 
-                             <Table bordered id="table">
+                             <Table bordered id="table" style={table} className="text-center">
                                  <thead>
                                      <tr>
-                                         <th>Matiere</th>
-                                         <th>DS1</th>
-                                         <th>DS2</th>
-                                         <th></th>
-                                      
-                                        
-                                     </tr>
+                                         <th>Nom</th>
+                                         <th>Prenom</th>
+                                         <th>Note</th>
+                                       </tr>
                                  </thead>
                                  <tbody id="tbody">
-                                               
+                                        {!this.state.emptylist ? (
+                                            
                                             <Fragment>
                                               
-                                                 {this.state.listMatiere.map((matiere)=>(
-                                            
+                                                 {this.state.users.map((user)=>(
+                                              
                                             <tr>
-                                            <td>{matiere.matiere.nom} </td>
-                                         
-                                               
+                                            <td>{user.etudiant.nom} </td>
+                                            <td>{user.etudiant.prenom} </td>
+                                          
+                                            <td>{user.note}</td>
                                                      </tr>  
                                                      
                                               ))}
                                               
                                             </Fragment>
-                                       
+                                        ) : 
+                                        null
+                                        }
                                  </tbody>
                                 
                              </Table>
@@ -215,12 +264,25 @@ class ListNotes extends Component {
                          
                          </div>
                        ) : 
-                       <Spinner animation="border" role="status" style={spinning}>
-                       <span className="sr-only">Loading...</span>
-                      </Spinner>
+                       <div style={spinner}><Spinner /></div>
                       
                        }
-          
+
+                       {this.state.isOpenEdit ? (
+                            <Modal isOpen={this.state.isOpenEdit} >
+                                    
+                            <ModalHeader toggle={()=>this.toggleEdit(null)}>{this.state.editedUser.etudiant.nom} {this.state.editedUser.etudiant.prenom}</ModalHeader>
+                                <ModalBody>
+                                  <input type="Number" placeholder="note" defaultValue={this.state.editedUser.note} onChange={this.editNote} name="note"/>
+                                </ModalBody>
+                            <ModalFooter>
+                                <Button color="success" onClick={()=>this.validerModification()}>Valider</Button>{' '}
+                                <Button color="secondary" onClick={()=>this.toggleEdit(null)}>Cancel</Button>
+                            </ModalFooter>
+                        </Modal>
+                       ) : null}
+
+                               
                 </Container>
                 </div>
             </div>

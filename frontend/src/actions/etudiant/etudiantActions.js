@@ -56,27 +56,30 @@ export const EtudiantEditProfilePicure=(formData,id)=>dispatch=>{
 
 
 
-export const ListNote=({etudiant,semestre})=>dispatch=>{
+export const ListNote=({niveauFiliere,matiere,semestre})=>dispatch=>{
   const config={
     headers:{
         'Content-type':'application/json'
     }
   }
+  const body=JSON.stringify({niveauFiliere,matiere,semestre});
+  console.log("action dody data "+niveauFiliere+" "+matiere+" "+semestre);
   
-  axios.get(`http://localhost:5000/etudiant/ListNote/${etudiant}/${semestre}`)
+  axios.post(`http://localhost:5000/etudiant/afficherNote`,body,config)
   .then(users=>{
-    
+
     dispatch({
       type:LIST_NOTE,
       payload:users.data
     });
   }).catch(err=>{
-    dispatch(returnErrors(err.response.data,err.response.status,'LIST_NOTE_FAIL'));
+   /// dispatch(returnErrors(err.response.data,err.response.status,'LIST_NOTE_FAIL'));
     dispatch({
       type:LIST_NOTE_FAIL
     });
   });
 }
+
 
 
 export const ListDocument=(id)=>dispatch=>{

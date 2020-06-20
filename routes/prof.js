@@ -21,16 +21,6 @@ const { resolve } = require('path')
 ObjectId = require('mongodb').ObjectID;
 
 
-// Getting all
-router.get('/', async (req, res) => {
-  try {
-    const profs= await Prof.find()
-    res.json(profs)
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
- 
-})
 
 router.get('/document', async (req, res) => {
   try {
@@ -227,26 +217,61 @@ router.get('/afficherMatieres/:idProf', (req, res) => {
 
 });
 
+// Check if note already exists
+const checkNoteExist=(matiere,etudiant,semestre)=>{
+  let k=0;
+  return new Promise((resolve,reject)=>{
+    Note.find({matiere,etudiant,semestre})
+    .then(doc=>{
+      if(Object.keys(doc).length === 0){
+        resolve(0);
+      }
+      resolve(1);
+    }).catch(err=>{
+      reject(err);
+    })
+  })
+}
+
+
 /*Notes*/
 //Ajouter note
 router.post('/ajouterNote', (req, res) => {
 
-  req.body.forEach(element => {
+  req.body.forEach(async(element) => {
+    console.log(element);
+    
+    let exists=await checkNoteExist(element.matiere,element.etudiant,element.semestre);
+    if(exists===0){
+      // n'existe pas
+      const note = new Note({
+        note: element.note,
+        matiere: element.matiere,
+        etudiant: element.etudiant,
+        semestre:element.semestre
+      });
+      note.save()
+      .catch(
+        (error) => {
+          res.status(400).json({
+            msg: error
+          });
+        }
+      );
+    }
+    else{
 
-    const note = new Note({
-      note: element.note,
-      matiere: element.matiere,
-      etudiant: element.etudiant,
-      semestre:element.semestre
-    });
-    note.save()
-    .catch(
-      (error) => {
-        res.status(400).json({
-          msg: error
-        });
-      }
-    );
+      //exist
+      Note.findOne({matiere:element.matiere,etudiant:element.etudiant,semestre:element.semestre})
+      .then((note)=>{
+        note.note = element.note;
+        note.save().then(()=>{
+          res.json("Note Updated");
+        }).catch(err=>res.status(400).json({msg:err}));
+      })
+      .catch(err=>res.status(400).json({msg:err}));
+    }
+   
     
   })
   res.status(201).json({
@@ -259,7 +284,9 @@ router.post('/noteExam',async(req,res)=>{
   console.log("hey");
   
   try {
-  Note.find().populate('matiere').populate('etudiant').then((note)=>{
+  Note.find().populate('matiere')
+  .populate('etudiant')
+  .then((note)=>{
     console.log("haha");
     
       res.json(note)
@@ -271,44 +298,64 @@ router.post('/noteExam',async(req,res)=>{
 })
 
 // Afficher Etudiant+Notes d'une matière
-router.get('/afficherNotes/:idMatiere', async (req, res) => {
-  Note.aggregate ([
-    {$match: { matiere: req.params.idMatiere }},
-    {
-      $lookup: {
-        from:'etudiants',
-        localField: 'etudiant',
-        foreignField: '_id',
-        as: 'etudiant'
-      }
-    }
-  ]).then(
-    (listeNotes) => {
-      res.status(200).json(listeNotes);
-    }
-  ).catch(
-    (error) => {
-      res.status(404).json({
-        msg: error
-      });
-    }
-  );
+
+
+
+
+// Getting all Notes
+router.post('/getNotes', async (req, res) => {
+  try {
+    const profs= await Note.find()
+    res.json(profs)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
  
-});
+})
+
+
+// Getting all
+router.get('/', async (req, res) => {
+  try {
+    const profs= await Prof.find()
+    /*.populate({
+      path:'etudiant',
+
+    })*/
+    res.json(profs)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+ 
+})
+
+const eleminateNull=(data)=>{
+  return new Promise((resolve,reject)=>{
+    newData=[];
+    data.forEach(doc=>{
+      if(doc.etudiant!=null){
+        newData.push(doc);
+      }
+    })
+    resolve(newData);
+  });
+}
+
+
 
 // afficher note des etudiants
 
-  router.route('/afficherNote').post((req,res)=>{
+router.route('/afficherNote').post((req,res)=>{
   // NiveauFiliere Matiere semestre 
   const {niveauFiliere,matiere,semestre} = req.body;
   Note.find({matiere,semestre}).populate({
     path: 'etudiant',
     match: { niveauFiliere: {$eq:niveauFiliere}},
-    // Explicitly exclude `_id`, see http://bit.ly/2aEfTdB
+    // Explicitly exclude _id, see http://bit.ly/2aEfTdB
     select: 'nom prenom niveauFiliere -_id'
   })
-  .exec().then((data)=>{
-    res.json(data);
+  .exec().then(async(data)=>{
+    res.json(await eleminateNull(data));
   }).catch(
     (error) => {
       res.status(404).json({

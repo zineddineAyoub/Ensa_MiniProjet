@@ -84,34 +84,23 @@ class ListNotes extends Component {
         if(users!==prevProps.users  && Object.keys(users).length !==0 ){
            // this.state.emptylist=false
             console.log("USER CHANGED ===>"+this.props.users);
-            
-            users.map((user)=>{
-                if(user.etudiant!=null)
-                {
-                    
-                    this.state.usersFiltered.push(user);
-                }
-            })
-
-           
-            if (Array.isArray(this.state.usersFiltered) && !this.state.usersFiltered.length) {
-                // array exists and is not empty
-                console.log("empty arahhaay");
-                this.state.emptylist=true;
-            }
-
-            else if(Array.isArray(this.state.usersFiltered) && this.state.usersFiltered.length)
-            {
-                this.state.emptylist=false;
-            }
-            
-            
-            this.setState({
-                users:this.state.usersFiltered,
-                exist:true,
-                
-            });   
+                this.setState({
+                    users,//:this.state.usersFiltered,
+                    exist:true,
+                    emptylist:false  
+                });  
         }
+
+        else if(users!==prevProps.users && Object.keys(users).length ==0)
+        {
+            console.log("USER CHANGED ===>"+this.props.users);
+                this.setState({
+                    users,//:this.state.usersFiltered,
+                    exist:true,
+                    emptylist:true    
+                });  
+        }
+
         if(user!==prevProps.user && Object.keys(user).length !==0){
             axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
             .then((res)=>{
@@ -224,7 +213,8 @@ class ListNotes extends Component {
         this.state.exist=false;
         this.setState({
             semestre:e.target.value,
-            target:false
+            target:false,
+            emptylist:false
           
         },()=>{
              
@@ -249,17 +239,18 @@ class ListNotes extends Component {
             
         }
 
-        const color={
-            color:'#FFFFFF'
+        const table={
+            background : '#FFFFFF'
         }
+        
       
-        const spinning={
-           
-            display:'flex',
-            alignItems:"center",
-            justifyContent:"center"
-        }
-
+        const spinner={ position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        color:'#FFFFFF'
+    }
+  
         return (
             <div >
                 <AppNavbar />
@@ -320,13 +311,13 @@ class ListNotes extends Component {
                              <Col xs={7}>
                              {this.state.emptylist ? (
                              <Alert color="warning">
-                             <div>La liste des notes n'existe pas !  </div>
+                             <div>Cette liste des notes n'existe pas !  </div>
                          </Alert>
                          ) :
                          null
                          }                                                   
 
-                             <Table bordered id="table">
+                             <Table bordered id="table" style={table}>
                                  <thead>
                                      <tr>
                                          <th>Nom</th>
@@ -369,9 +360,7 @@ class ListNotes extends Component {
                          
                          </div>
                        ) : 
-                       <Spinner animation="border" role="status" style={spinning}>
-                       <span className="sr-only">Loading...</span>
-                      </Spinner>
+                       <div style={spinner}><Spinner /></div>
                       
                        }
 

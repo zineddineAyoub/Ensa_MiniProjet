@@ -135,7 +135,6 @@ class ProfileProf extends Component {
         this.props.getProf(body);
     }*/
     render() {
-        const itemStyle={textDecoration:'line-through',width:400 }
         const styling={
           background: 'linear-gradient(to top, #97aba4, #003973)',
           height:'100vh',
@@ -143,6 +142,14 @@ class ProfileProf extends Component {
           
           
       }
+
+      const spinner={ position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      color:'#FFFFFF'
+  }
+
         return (
             <div className="whole">
                 <AppNavbar />
@@ -306,9 +313,7 @@ class ProfileProf extends Component {
                     </div>
                             ):
                             <div className="d-flex justify-content-center">
-                                <Spinner  animation="border" role="status">
-                             <span className="sr-only">Loading...</span>
-                            </Spinner>
+                               <div style={spinner}><Spinner /></div>
                             </div>
                             }
                         

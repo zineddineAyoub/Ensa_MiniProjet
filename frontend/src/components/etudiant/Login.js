@@ -55,6 +55,7 @@ class Login extends Component {
     render() {
         const styling={
             background: 'linear-gradient(to top,#ef8e38 0%,#108dc7 100%)',
+            background: 'linear-gradient(to top, #97aba4, #003973)',
             height:'100vh',
             display:'flex',
             alignItems:"center",
