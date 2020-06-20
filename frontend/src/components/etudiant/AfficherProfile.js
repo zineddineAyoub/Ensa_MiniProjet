@@ -1,12 +1,8 @@
 import React, { Component } from 'react';
-import {Container,Alert, Spinner,FormGroup,Form,Input,Button,Row,Col,Card,CardBody,CardImg,CardTitle,CardText, Modal, ModalHeader, ModalFooter, ModalBody} from 'reactstrap';
+import {Container,Alert, Spinner,FormGroup,Form,Input,Button,Row,Col,Card,Modal, ModalHeader, ModalFooter, ModalBody} from 'reactstrap';
 import axios from 'axios';
-import icon from '../../logo.svg';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
-import {getProf} from '../../actions/admin/adminProfActions';
-import {Redirect,Link} from 'react-router-dom';
-import {ProfEditProfile,ProfEditProfilePicure} from '../../actions/prof/profActions';
 import {EtudiantEditProfile,EtudiantEditProfilePicure} from '../../actions/etudiant/etudiantActions';
 import ExampleComponent from "react-rounded-image";
 
@@ -140,10 +136,24 @@ class ProfileProf extends Component {
         const styling={
           background: 'linear-gradient(to top, #97aba4, #003973)',
           height:'100vh',
-          display:'flex',
-          
-          
+          display:'flex',  
       }
+
+      const scrolling = {
+       overflow : "auto",
+       height:"200px",
+       width:"200px"
+      }
+
+      const spinner={ position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      color:'#FFFFFF'
+  }
+
+
+
         return (
             <div className="whole">
                 <AppNavbar />
@@ -197,7 +207,7 @@ class ProfileProf extends Component {
       <div className="col-lg-9 col-md-8 col-sm-8">
         <div className="main-box clearfix">
           <div className="profile-header">
-            <h3><span>Professeur Profile</span></h3>
+            <h3><span>Etudiant Profile</span></h3>
             
             
               
@@ -300,17 +310,10 @@ class ProfileProf extends Component {
   </div>
 </div>
 </Card>
-
-
-                           
-                           
+                        
                     </div>
                             ):
-                            <div className="d-flex justify-content-center">
-                                <Spinner  animation="border" role="status">
-                             <span className="sr-only">Loading...</span>
-                            </Spinner>
-                            </div>
+                            <div style={spinner}><Spinner /></div>
                             }
                         
                         </Col>

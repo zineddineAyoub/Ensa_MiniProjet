@@ -41,13 +41,20 @@ class AddNote extends Component {
     }
     componentDidUpdate(prevProps){
         console.log("hola");
-       
+        const {error,success}=this.props;
         {this.props.users.map((data)=>(
             console.log("user"),
             
             console.log(data.nom)
             
         ))}
+
+        if(success!==prevProps.success && success==='AJOUTER_NOTE'){
+            this.setState({
+                success:'Note Ajouter Avec Succées',
+                msg:null
+            });
+        }
 
         const {users,user}=this.props;
         if(users!==prevProps.users){
@@ -82,6 +89,7 @@ class AddNote extends Component {
         });
 
         document.getElementById("select2").value = "";
+        document.getElementById("select3").value = "";
         
     }
 
@@ -115,12 +123,20 @@ class AddNote extends Component {
         console.log(this.state.notes);
 
         this.props.AjouterNote(this.state.notes)
+
+        document.getElementById("select1").value = "";
+        document.getElementById("select2").value = "";
+        document.getElementById("select3").value = "";
+        this.state.users=[];
+        this.state.counter = 0;
     }
 
     onChange2=(e)=>{
         this.state.users=[];
         console.log([e.target.name]+" "+e.target.value);
         this.setState({filiereSelected:true,[e.target.name]:e.target.value});
+
+        document.getElementById("select3").value = "";
        
     }
 
@@ -136,6 +152,7 @@ class AddNote extends Component {
             this.props.EtudiantByNiveauFiliere(this.state.niveauFiliere)
            
         });
+      
     }
 
     render() {
@@ -143,19 +160,31 @@ class AddNote extends Component {
             background: 'linear-gradient(to top, #97aba4, #003973)',
             height:'100vh',
             display:'flex',
-            color:'#FFFFFF'
-            
+            color:'#FFFFFF',
+           
         }
 
         const color={
-            color:'#FFFFFF'
+            fullwidth:"false"   
+        }
+
+        const table={
+            background : '#FFFFFF'
         }
         
         const btn_back={
-            background:'#E5E5BE',
+            background:'#FFFFFF',
             color:'#003973',
             
         }
+
+        const spinner={ position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      color:'#FFFFFF'
+  }
+
         return (
             <div>
                 <AppNavbar />
@@ -171,8 +200,9 @@ class AddNote extends Component {
                          <Row>
                              
                              <Col xs={4}>
+                             
                                  <FormGroup>
-                                     <Input type="select" name="matiere" onChange={this.onChange}>
+                                     <Input type="select" name="matiere" onChange={this.onChange} id="select1">
                                          <option value="">---Choisissez la matiere---</option>
                                          {this.state.listMatiere.map((data)=>(
                                              <option value={data._id}>{data.nom}</option>
@@ -190,7 +220,7 @@ class AddNote extends Component {
                                      
                                  </FormGroup>
                                  <FormGroup>
-                                     <Input type="select" name="niveauFiliere" onChange={this.onChange3}>
+                                     <Input type="select" name="niveauFiliere" onChange={this.onChange3} id="select3">
                                          
                                          <option value="">---Choisissez le  Numero DS---</option>
                                         {this.state.filiereSelected ?(
@@ -212,12 +242,15 @@ class AddNote extends Component {
                          
                              <Col xs={1}></Col>
                              <Col xs={7}>
-                             <Table bordered id="table">
+                             {this.state.success ? <Alert color="success">
+                                {this.state.success}
+                            </Alert>:null}
+                             <Table bordered id="table" style={table} className="text-center">
                                  <thead>
                                      <tr>
-                                         <th>Nom</th>
+                                         <th >Nom</th>
                                          <th>Prenom</th>
-                                         <th>Note</th>
+                                         <th >Note</th>
                                      </tr>
                                  </thead>
                                  <tbody id="tbody">
@@ -227,9 +260,9 @@ class AddNote extends Component {
                                          (user)=>(
                                             this.state.counter=this.state.counter+1,
                                              <tr>
-                                                 <td>{user.nom}</td>
+                                                 <td className="fas fa-weight">{user.nom}</td>
                                                  <td>{user.prenom}</td>
-                                                 <td><Input type="number" name={user._id} id={this.state.counter}  placeholder="Note"   /></td>
+                                                 <td><Input type="number" name={user._id} id={this.state.counter} placeholder="Note"   /></td>
                                                  
                                              </tr>                                
                                      ))}
@@ -238,14 +271,12 @@ class AddNote extends Component {
                                 
                           
                              </Table>
-                             <Button style={btn_back}  onClick={()=>this.onSubmitNote()}>Edit</Button>
+                             <Button style={btn_back}  onClick={()=>this.onSubmitNote()}>Ajouter</Button>
                              </Col>
                          </Row>
                          </div>
                        ) : 
-                       <Spinner animation="border" role="status">
-                       <span className="sr-only">Loading...</span>
-                      </Spinner>
+                       <div style={spinner}><Spinner /></div>
                        }
                    
                 </Container>

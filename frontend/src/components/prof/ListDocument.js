@@ -209,16 +209,23 @@ class ListDocuments extends Component {
 
         const styling={
             background: 'linear-gradient(to top, #97aba4, #003973)',
-          
+            color:"#FFFFFF",
             height:'100vh',
             display:'flex'
             
         }
 
-        const fontColor={
-            color:'#97aba4',
-            color:"#FFFFFF",
+        const table={
+            background : '#FFFFFF'
         }
+        
+        const spinner={ position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      color:'#FFFFFF'
+  }
+
 
         return (
             <div>
@@ -250,7 +257,7 @@ class ListDocuments extends Component {
                              <Col xs={7}>
                                                                              
 
-                             <Table bordered id="table">
+                             <Table bordered id="table" style={table}>
                                  <thead>
                                      <tr>
                                          <th>Nom</th>
@@ -298,9 +305,7 @@ class ListDocuments extends Component {
                          
                          </div>
                        ) : 
-                       <Spinner animation="border" role="status">
-                       <span className="sr-only">Loading...</span>
-                      </Spinner>
+                       <div style={spinner}><Spinner /></div>
                       
                        }
 

@@ -213,7 +213,7 @@ router.get('/Listdocument/:id', (req, res) => {
 
 
 router.get('/note',(req,res)=>{
-  Note.find({}).populate('matiere').then((docs)=>{
+  Note.find({}).populate('etudiant').populate('matiere').then((docs)=>{
     return res.status(200).json(docs);
   }).catch((err)=>{
     return res.status(404).json({
@@ -222,21 +222,38 @@ router.get('/note',(req,res)=>{
   })
 })
 
-router.get('/ListNote/:etudiant/:matiere',(req,res)=>{
-  
-  Note.find({
-    etudiant:req.params.etudiant,
-    matiere:req.params.matiere
+
+const eleminateNull=(data)=>{
+  return new Promise((resolve,reject)=>{
+    newData=[];
+    data.forEach(doc=>{
+      if(doc.etudiant!=null){
+        newData.push(doc);
+      }
+    })
+    resolve(newData);
+  });
+}
+
+router.route('/afficherNote').post((req,res)=>{
+  // NiveauFiliere Matiere semestre 
+  const {niveauFiliere,matiere,semestre} = req.body;
+  Note.find({matiere,semestre}).populate({
+    path: 'etudiant',
+    match: { niveauFiliere: {$eq:niveauFiliere}},
+    // Explicitly exclude _id, see http://bit.ly/2aEfTdB
+    select: 'nom prenom niveauFiliere -_id'
   })
-  .populate('matiere')
-  .then((docs)=>{
-    return res.status(200).json(docs);
-  }).catch((err)=>{
-    return res.status(404).json({
-      msg:error
-    });
-  })
-});
+  .exec().then(async(data)=>{
+    res.json(await eleminateNull(data));
+  }).catch(
+    (error) => {
+      res.status(404).json({
+        msg: error
+      });
+    }
+  );
+  });
 
 //send notif if he comments for example or upload the td and homework
 router.route('/sendNotification').post((req,res)=>{

@@ -78,16 +78,13 @@ class Emploie extends Component {
             
         }
 
-        const color={
-            color:'#FFFFFF'
-        }
-      
-        const spinning={
-           
-            display:'flex',
-            alignItems:"center",
-            justifyContent:"center"
-        }
+        
+        const spinner={ position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        color:'#FFFFFF'
+    }
 
         return (
             <div>
@@ -127,8 +124,9 @@ class Emploie extends Component {
                                                 </FormGroup>
                                             </Col>
                                         </Row>
-                                    </Form>):<Spinner color="primary" style={spinning}>
-                                        </Spinner>}
+                                    </Form>):
+                                    <div style={spinner}><Spinner /></div>
+                                    }
                                 </Col>
                                 
                                 <Col xs={6}>

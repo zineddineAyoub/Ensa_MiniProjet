@@ -100,14 +100,21 @@ class AddDocument extends Component {
             
         }
 
+        const spinner={ position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      color:'#FFFFFF'
+  }
+
+
         const fontColor={
            
         }
 
         const btn_back={
-            background:'#E5E5BE',
-            color:'#003973',
-            
+            background:'#FFFFFF',
+            color:'#000000',       
         }
         return (
             <div>
@@ -164,9 +171,7 @@ class AddDocument extends Component {
                              </Col>
                          </Row>
                          </div>
-                   ) : <Spinner animation="border" role="status">
-                   <span className="sr-only">Loading...</span>
-                  </Spinner>} 
+                   ) :  <div style={spinner}><Spinner /></div>} 
                 </Container>
                 </div>
             </div>

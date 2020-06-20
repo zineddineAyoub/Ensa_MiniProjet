@@ -184,6 +184,17 @@ class ListDocuments extends Component {
             color:'97aba4',
         }
 
+        const table={
+            background : '#FFFFFF'
+        }
+
+        const spinner={ position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+        color:'#FFFFFF'
+    }
+
         return (
             <div>
                 <AppNavbar />
@@ -214,7 +225,7 @@ class ListDocuments extends Component {
                              <Col xs={7}>
                                                                              
 
-                             <Table bordered id="table">
+                             <Table bordered id="table" style={table} className="text-center">
                                  <thead>
                                      <tr>
                                          <th>Nom</th>
@@ -254,9 +265,7 @@ class ListDocuments extends Component {
                          
                          </div>
                        ) : 
-                       <Spinner animation="border" role="status">
-                       <span className="sr-only">Loading...</span>
-                      </Spinner>
+                       <div style={spinner}><Spinner /></div>
                       
                        }
 
