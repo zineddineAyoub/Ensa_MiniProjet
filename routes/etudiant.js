@@ -12,6 +12,7 @@ const Emploie=require('../models/Emploie.model');
 const BusBoy = require('busboy');
 const path = require('path');
 const fs = require('fs');
+const Matiere = require('../models/Matiere.model')
 
 // Getting all
 router.get('/', async (req, res) => {
@@ -310,9 +311,38 @@ router.route('/getEmploie').post((req,res)=>{
 })
 
 
+//get Prof of student
+router.route('/getProfs/:id').get((req,res)=>{
+  const _id=req.params.id;
+  Etudiant.find({_id})
+  .then((docs)=>{
+    const niveauFiliere=docs[0].niveauFiliere;
+    NiveauFiliereMatiere.find({niveauFiliere}).populate('matiere').populate({
+      path:'matiere',
+      populate:'prof'
+    })
+    .then(result=>{
+      res.json(result);
+    }).catch(err=>{
+      res.status(400).json(err);
+    })
+  }).catch(err1=>{
+    res.status(400).json(err1);
+  })
+})
 
-
-
+//replace password
+router.route('/resetPassword').post((req,res)=>{
+  const {cne,cin,password,newPassword}=req.body;
+  Etudiant.findOne({cne,cin,password})
+    .then(user=>{
+        user.password=newPassword;
+        user.save();
+        res.json({msg:'Succeffully Updated'});
+    }).catch(err=>{
+      return res.status(400).json({msg:'Password not correct'})
+    })
+})
 
 module.exports=router;
 

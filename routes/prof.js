@@ -809,5 +809,18 @@ router.route('/getNiveau').post((req,res)=>{
   });
 });
 
+//replace password
+router.route('/resetPassword').post((req,res)=>{
+  const {cin,password,newPassword}=req.body;
+  Prof.findOne({cin,password})
+    .then(user=>{
+        user.password=newPassword;
+        user.save();
+        res.json({msg:'Succeffully Updated'});
+    }).catch(err=>{
+      return res.status(400).json({msg:'Password not correct'})
+    })
+})
+
 module.exports=router;
 
