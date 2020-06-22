@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import {Container,Alert, Spinner,FormGroup,Form,Input,Button,Row,Col,Card,CardBody,CardImg,CardTitle,CardText, Modal, ModalHeader, ModalFooter, ModalBody} from 'reactstrap';
 import axios from 'axios';
-import icon from '../../logo.svg';
+import icon from '../../ressources/professor-clipart-talking-4-transparent.png';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {getProf} from '../../actions/admin/adminProfActions';
 import {Redirect,Link} from 'react-router-dom';
 import {ProfEditProfile,ProfEditProfilePicure} from '../../actions/prof/profActions';
 import ExampleComponent from "react-rounded-image";
+
 
 
 // DOWN WE IMPORT THE PICTURES FROM FOLDER 
@@ -157,12 +158,14 @@ class Home extends Component {
                             {this.state.loaded ? (
 
                                 <div>
-                                     <h4>Bienvenu Mr {this.state.user.nom} </h4>
+                                    <Row>
+                                        <Col xs={7}>
+                                       <h4>Bienvenu {this.state.user.prenom} </h4>
                                      <br/>
                                     <p>Cette Platefrom est faite pour vous faciliter toute sorte de contacte entre vous et vos <i>Etudiants</i></p>
                                     <p>Vous pouvez uploader - Modifier - Supprimer les <i>Cours - TD - TP </i>des différents modules . Ainsi de voir les commentaires de vos étudiants.</p>
                                     <p>Vous pouvez aussi uploader - Modifier les <i>Notes</i> </p>
-                                    <div className="col-sm-4 profile-social">
+                                    <div className="col-sm-8 profile-social">
             <div className="list-group">
               
   <a href="#" className="list-group-item list-group-item-action active">
@@ -174,6 +177,10 @@ class Home extends Component {
 </div>
 
               </div>
+              </Col>
+              <Col xs={1}></Col>
+              <Col xs={4}> <img  src={icon} alt="fireSpot"   width='90%' /></Col> 
+                    </Row>
                                       </div>
                             ):
                             <div className="d-flex justify-content-center">

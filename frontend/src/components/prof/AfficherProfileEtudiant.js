@@ -13,7 +13,7 @@ import ExampleComponent from "react-rounded-image";
 // DOWN WE IMPORT THE PICTURES FROM FOLDER 
 
 
-class ProfileProf extends Component {
+class ProfileEtudiant extends Component {
    
     state={
        
@@ -77,50 +77,52 @@ class ProfileProf extends Component {
     
     componentWillMount()
     {
-        if(this.props.user)
-        {
-            axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
+         console.log("pleaase"+this.props.match.params.id)
+
+            axios.get(`http://localhost:5000/prof/getEtudiantById/${this.props.match.params.id}`)
             .then((res)=>{
+                console.log("hahahha"+res)
                 this.setState({
-                    listMatiere:res.data,
+                   // listMatiere:res.data,
                     loaded:true,
-                    user:this.props.user
+                    user:res.data
+
+
                 });
+                console.log("myy shiit"+this.state);
+                
             });
-        }
+
     }
 
     componentDidUpdate(prevProps){
         const {error,success,user}=this.props;
-        if(error!==prevProps.error){
-            if(error.id==='PROF_EDIT_PROFILE_FAIL'){
-                this.setState({
-                    msg:error.msg.msg,
-                    success:null,
-                    
-                });
-            }
-            else{
-                this.setState({msg:null})
-            }
-        }
-        if(success!==prevProps.success && success==='PROF_EDIT_PROFILE'){
-            this.setState({
-                success:'Prof Modifier avec succes',
-                msg:null
-            });
-        }
-       
-        if(user!==prevProps.user && Object.keys(user).length !==0){
-            axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
+        console.log("pleaase"+this.props.match.params.id)
+     
+        
+            axios.get(`http://localhost:5000/prof/getEtudiantById/${this.props.match.params.id}`)
             .then((res)=>{
+                console.log("hahahha"+res)
                 this.setState({
-                    listMatiere:res.data,
+                   // listMatiere:res.data,
                     loaded:true,
-                    user:user
+                    user:res.data
+
+
                 });
-            });  
-        }
+                console.log("myy shiit"+this.state);
+
+                axios.get(`http://localhost:5000/etudiant/getMatiere/${this.state.user.niveauFiliere}`)
+                .then((res)=>{
+                    this.setState({
+                        listMatiere:res.data,
+                        loaded:true,
+                        
+                    });
+                });
+                
+            });
+        
              
         }
         
@@ -186,18 +188,12 @@ class ProfileProf extends Component {
                             imageWidth="140"
                             imageHeight="140"
                             roundedSize="8"
-                            image={require(`../../../../public/photoProfile/prof/${this.state.user.image}`)}
+                            image={require(`../../../../public/photoProfile/etudiant/${this.state.user.image}`)}
                       />
                      
                            
                         </div> <br/>
-                        
-                        <div class="d-flex justify-content-center">
-                        <label class="btn btn-dark" htmlFor="myInput"> <i className="logo fa fa-pencil-square fa-lg" /> 
-                          Modifier Photo
-                         </label> 
-                             <input id="myInput" style={{display:'none'}} type={"file"} onChange={this.onChangeImage}/>
-                        </div>
+                       
           
          
         </div>
@@ -206,12 +202,7 @@ class ProfileProf extends Component {
         <div className="main-box clearfix">
           <div className="profile-header">
             <h3><span>Professeur Profile</span></h3>
-            
-            
-              
-              <Button color="dark" className="edit-profile" onClick={()=>this.toggleEdit()}>
-              <i className="fa fa-pencil-square fa-lg" /> Modifier profile
-                 </Button>
+          
            
           </div>
 
@@ -295,7 +286,7 @@ class ProfileProf extends Component {
     List Matiere
   </a>
   {this.state.listMatiere.map((data)=>(
-                     <a href="#" className="list-group-item list-group-item-action">{data.nom}</a>
+                     <a href="#" className="list-group-item list-group-item-action">{data.matiere.nom}</a>
                                           ))}
 </div>
 
@@ -369,4 +360,4 @@ const mapStateToProps=(state)=>({
     
 });
 
-export default connect(mapStateToProps,{ProfEditProfile,ProfEditProfilePicure})(ProfileProf);
+export default connect(mapStateToProps,{ProfEditProfile,ProfEditProfilePicure})(ProfileEtudiant);

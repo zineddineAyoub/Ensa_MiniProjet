@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import {Container, Spinner,Col,Row} from 'reactstrap';
+import {Container, Spinner,Col,Row,CardGroup,Card,CardImg,CardBody,CardText,CardTitle,CardSubtitle,Button,NavLink} from 'reactstrap';
 import axios from 'axios';
-import icon from '../../ressources/student-with-backpack-png-5-transparent.png';
+import ExampleComponent from "react-rounded-image";
+import {Link} from 'react-router-dom';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 
 // DOWN WE IMPORT THE PICTURES FROM FOLDER 
 
-class Home extends Component {
+class ListProf extends Component {
    
     state={
        
@@ -15,7 +16,7 @@ class Home extends Component {
         msg:null,
         user:{},
         loaded:false,
-        listMatiere:[]
+        listProf:[]
       
         
     }
@@ -72,10 +73,12 @@ class Home extends Component {
     {
         if(this.props.user)
         {
-            axios.get(`http://localhost:5000/etudiant/getMatiere/${this.props.user.niveauFiliere}`)
+            axios.get(`http://localhost:5000/etudiant/getProfs/${this.props.user._id}`)
             .then((res)=>{
+                console.log(res);
+                
                 this.setState({
-                    listMatiere:res.data,
+                    listProf:res.data,
                     loaded:true,
                     user:this.props.user
                 });
@@ -105,12 +108,14 @@ class Home extends Component {
         }
        
         if(user!==prevProps.user && Object.keys(user).length !==0){
-            axios.get(`http://localhost:5000/etudiant/getMatiere/${this.props.user.niveauFiliere}`)
+            axios.get(`http://localhost:5000/etudiant/getProfs/${this.props.user._id}`)
             .then((res)=>{
+                console.log(res);
+                
                 this.setState({
-                    listMatiere:res.data,
+                    listProf:res.data,
                     loaded:true,
-                    user:user
+                    user:this.props.user
                 });
             });  
         }
@@ -133,7 +138,7 @@ class Home extends Component {
           background: 'linear-gradient(to top, #97aba4, #003973)',
           height:'100vh',
           display:'flex',  
-          color:'#FFFFFF'
+         // color:'#FFFFFF'
       }
 
       const scrolling = {
@@ -153,42 +158,50 @@ class Home extends Component {
 
         return (
             <div className="whole">
-               
-                
                 <AppNavbar />
                 <div style={styling}> 
                 <Container className="mt-5">
                     
                             {this.state.loaded ? (
-
                                 <div>
-                                     <Row>
-                   
-                    <Col xs={8}>
-                
-                                    <h4>Bienvenu {this.state.user.prenom} </h4>
-                                     <br/>
-                                    <p>Cette Platefrom est faite pour vous faciliter toute sorte de contacte entre vous et vos <i>Professeurs</i></p>
-                                    <p>Vous pouvez consulter et télecharger les <i>Cours - TD - TP </i>des différents modules . Ainsi de laissé un commentaire ou poser une question à votre professeur.</p>
-                                    <p>Vous pouvez aussi consulter vos <i>Notes</i> </p>
-                                    <p>Vous pouvez ainsi consulter les <i>Emploi du Temps - Planning des DS</i></p>
-                        <div className="col-sm-8 profile-social text-center" >
-                         <div className="list-group">
-              
-                        <a href="#" className="list-group-item list-group-item-action active">
-                         Voici la Liste de vos Matieres
-                         </a>
-                         {this.state.listMatiere.map((data)=>(
-                        <a href="#" className="list-group-item list-group-item-action">{data.matiere.nom}</a>
+                                   
+                               {this.state.listProf.map((data)=>(
+                                      <Col xs={4}>
+                                      <div class="card-deck">
+                                     <div className="card d-flex justify-content-center">
+                                    
+                                     <div className="d-flex justify-content-center">
+                                 <ExampleComponent 
+                            roundedColor="#66A5CC"
+                            imageWidth="140"
+                            imageHeight="140"
+                            roundedSize="8"
+                            image={require(`../../../../public/photoProfile/prof/${data.matiere.prof.image}`)}
+                      />
+                     
+                           
+                        </div  >
+                                     <div class="card-body text-center">
+                                       <h5 class="card-title">{data.matiere.prof.prenom} {data.matiere.prof.nom}</h5>
+                                       <p class="card-text"><b>Matiere</b> : {data.matiere.nom}</p>
+                               <p class="card-text"><b>E-mail </b> : {data.matiere.prof.email}</p>
+                               
+                                     </div>
+                                     <div class="card-footer text-center">
+                                     <Link to={`/etudiant/AfficherprofileProf/${data.matiere.prof._id}`}   style={{textDecoration:'none'}}>
+                                          Voir Profile   </Link>
+                                     </div>
+                                   
+                                     
+                                    
+                                                     </div>
+                                   </div>
+                                   </Col>
+                              
                                           ))}
-                        </div>
 
-                        </div>
-                    </Col>
-                    <Col xs={4}> <img  src={icon} alt="fireSpot"/></Col> 
-                    </Row>
-                    </div>
-                            ):
+                                </div>
+                                    ):
                             <div style={spinner}><Spinner /></div>
                             }
                        
@@ -208,4 +221,4 @@ const mapStateToProps=(state)=>({
     
 });
 
-export default connect(mapStateToProps)(Home);
+export default connect(mapStateToProps)(ListProf);
