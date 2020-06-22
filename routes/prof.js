@@ -341,6 +341,19 @@ const eleminateNull=(data)=>{
   });
 }
 
+const eleminateNullProf=(data)=>{
+  return new Promise((resolve,reject)=>{
+    newData=[];
+   
+    data.forEach(doc=>{
+        if(doc.matiere!=null)
+      {
+        newData.push(doc);
+        }
+    })
+    resolve(newData);
+  })
+}
 
 
 // afficher note des etudiants
@@ -821,6 +834,48 @@ router.route('/resetPassword').post((req,res)=>{
       return res.status(400).json({msg:'Password not correct'})
     })
 })
+
+
+
+
+router.route('/afficherNiveauFiliere/:id').post((req,res)=>{
+  // NiveauFiliere Matiere semestre 
+  const id = req.params.id;
+  NiveauFiliere_Matiere.find().populate('niveauFiliere').populate({
+    path: 'matiere',
+    match: { prof: {$eq:id}},
+    // Explicitly exclude _id, see http://bit.ly/2aEfTdB
+
+  })
+  .exec().then(async(data)=>{
+    res.json(await eleminateNullProf(data));
+  }).catch(
+    (error) => {
+      res.status(404).json({
+        msg: error
+      });
+    }
+  );
+  });
+
+
+  //modify prof notif
+  router.route('/getProfById/:id').get((req,res)=>{
+  const id=req.params.id;
+Prof.findOne({_id:id})
+  .then(data=>{
+    return res.json(data);
+  });
+});
+
+//modify prof notif
+router.route('/getEtudiantById/:id').get((req,res)=>{
+  const id=req.params.id;
+Etudiant.findOne({_id:id})
+  .then(data=>{
+    return res.json(data);
+  });
+});
 
 module.exports=router;
 

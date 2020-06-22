@@ -317,7 +317,7 @@ class ListNotes extends Component {
                          null
                          }                                                   
 
-                             <Table bordered id="table" style={table}>
+                             <Table bordered id="table" style={table} className="text-center">
                                  <thead>
                                      <tr>
                                          <th>Nom</th>

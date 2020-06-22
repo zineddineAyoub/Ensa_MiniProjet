@@ -9,6 +9,7 @@ const nodeMailer = require('nodemailer');
 const auth=require('../middleware/auth');
 const Notification=require('../models/Notification.model');
 const Emploie=require('../models/Emploie.model');
+const Prof = require('../models/Prof.model');
 const BusBoy = require('busboy');
 const path = require('path');
 const fs = require('fs');
@@ -343,6 +344,15 @@ router.route('/resetPassword').post((req,res)=>{
       return res.status(400).json({msg:'Password not correct'})
     })
 })
+
+router.route('/getProfById/:id').get((req,res)=>{
+  const id=req.params.id;
+Prof.findOne({_id:id})
+  .then(data=>{
+    return res.json(data);
+  });
+});
+
 
 module.exports=router;
 
