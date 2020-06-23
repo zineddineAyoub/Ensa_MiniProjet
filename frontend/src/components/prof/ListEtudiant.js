@@ -35,8 +35,15 @@ class ListEtudiant extends Component {
             console.log("it exist");
             axios.post(`http://localhost:5000/prof/afficherNiveauFiliere/${this.props.user._id}`)
             .then((res)=>{
+                var result = res.data.reduce((unique, o) => {
+                    if(!unique.some(obj => obj.niveauFiliere._id === o.niveauFiliere._id)) {
+                      unique.push(o);
+                    }
+                    return unique;
+                },[]);
+                console.log("pezo",res.data)
                  this.setState({
-                    listNiveau:res.data,
+                    listNiveau:result,
                     loaded:true
                 });
              });
@@ -62,7 +69,6 @@ class ListEtudiant extends Component {
 
         const {users,user}=this.props;
         if(users!==prevProps.users){
-            console.log("hola2"+this.props.users);
             
             this.setState({
                 users
@@ -71,8 +77,15 @@ class ListEtudiant extends Component {
         if(user!==prevProps.user && Object.keys(user).length !==0){
             axios.post(`http://localhost:5000/prof/afficherNiveauFiliere/${this.props.user._id}`)
             .then((res)=>{
+                var result = res.data.reduce((unique, o) => {
+                    if(!unique.some(obj => obj.niveauFiliere._id === o.niveauFiliere._id)) {
+                      unique.push(o);
+                    }
+                    return unique;
+                },[]);
+                console.log("pezo",result)
                  this.setState({
-                    listNiveau:res.data,
+                    listNiveau:result,
                     loaded:true
                 });
              }); 
