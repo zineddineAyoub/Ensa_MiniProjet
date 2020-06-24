@@ -3,7 +3,7 @@ import {Container,Alert,Spinner, FormGroup,Form,Input,Button,Row,Col,Table,Modal
 import axios from 'axios';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
-import {EtudiantByNiveauFiliere,AjouterNote} from '../../actions/prof/profActions';
+import {EtudiantByNiveauFiliere,AjouterNote,sendNotification} from '../../actions/prof/profActions';
 
 class AddNote extends Component {
     state={
@@ -54,6 +54,22 @@ class AddNote extends Component {
                 success:'Note Ajouter Avec Succées',
                 msg:null
             });
+    
+            
+                  // const prof = this.state.user._id;
+                  const matiere = this.state.matiere;
+                   const listMatiere = this.state.listMatiere;
+                   
+                   const result = listMatiere.filter(word => word._id ==matiere);
+                    
+                    const sendNotification = this.props.sendNotification;
+                      
+                    const body = {
+                        senderProf:this.props.user._id,
+                        content : "A ajouté les note de la matiere "+result[0].nom+"."
+                    }
+                   sendNotification(body,this.state.niveauFiliere);  
+                 
         }
 
         const {users,user}=this.props;
@@ -63,6 +79,8 @@ class AddNote extends Component {
             this.setState({
                 users
             });   
+
+
         }
         if(user!==prevProps.user && Object.keys(user).length !==0){
             axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
@@ -293,4 +311,4 @@ const mapStateToProps=(state)=>({
     user:state.profAuth.user,
 });
 
-export default connect(mapStateToProps,{EtudiantByNiveauFiliere,AjouterNote})(AddNote);
+export default connect(mapStateToProps,{EtudiantByNiveauFiliere,AjouterNote,sendNotification})(AddNote);

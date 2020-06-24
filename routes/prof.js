@@ -271,7 +271,6 @@ router.post('/ajouterNote', (req, res) => {
       })
       .catch(err=>res.status(400).json({msg:err}));
     }
-   
     
   })
   res.status(201).json({
@@ -802,7 +801,6 @@ router.route('/sendNotification/:id').post(async(req,res)=>{
         console.log(err);
       }
     })
-
     return res.json('success');
   }
   catch(err){
@@ -872,6 +870,14 @@ Prof.findOne({_id:id})
 router.route('/getEtudiantById/:id').get((req,res)=>{
   const id=req.params.id;
 Etudiant.findOne({_id:id})
+  .then(data=>{
+    return res.json(data);
+  });
+});
+
+router.route('/NiveauFiliereByMatiere/:id').get((req,res)=>{
+  const id=req.params.id;
+NiveauFiliere_Matiere.findOne({matiere:id})
   .then(data=>{
     return res.json(data);
   });

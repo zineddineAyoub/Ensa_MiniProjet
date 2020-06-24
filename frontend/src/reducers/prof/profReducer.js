@@ -21,7 +21,8 @@ import {
     MODIFIER_DOCUMENT_FAIL,
     DELETE_DOCUMENT,
     DELETE_DOCUMENT_FAIL,
-    
+    SEND_NOTIFICATION,
+    SEND_NOTIFICATION_FAIL
   } from '../../actions/prof/types';
 
   const initialState={
@@ -166,6 +167,19 @@ import {
                            success:null,
                            users:state.users.filter(user=>user._id!==action.payload)
                            }
+
+                           case SEND_NOTIFICATION:
+                            return {
+                              ...state,
+                              success:'SEND_NOTIFICATION'
+                            }
+          
+                            case SEND_NOTIFICATION_FAIL:
+                              return {
+                                ...state,
+                                success:null
+                              }
+          
 
             default:
             return state;
