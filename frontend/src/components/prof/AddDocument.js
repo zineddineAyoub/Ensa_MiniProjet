@@ -3,7 +3,7 @@ import {Container,Alert,Spinner, FormGroup,Form,Input,Button,Row,Col} from 'reac
 import axios from 'axios';
 import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
-import {addDocument} from '../../actions/prof/profActions';
+import {addDocument,sendNotification} from '../../actions/prof/profActions';
 
 class AddDocument extends Component {
     state={
@@ -58,14 +58,42 @@ class AddDocument extends Component {
             }
         }
         if(success!==prevProps.success && success==='ADD_DOCUMENT'){
-            this.setState({
-                success:'Le document a été enregistré avec succée',
-                msg:null,
-                nom:null,
-                type:null,
-                file:null,
+           
+            axios.get(`http://localhost:5000/prof/NiveauFiliereByMatiere/${this.state.matiere}`)
+                .then((res=>{
+                   const dataf = res.data;
+                   const prof = this.state.user._id;
+                   const matiere = this.state.matiere;
+                   const listMatiere = this.state.listMatiere;
+                   const type=this.state.type;
+
+                   const result = listMatiere.filter(word => word._id ==matiere);
+                    
+                    const sendNotification = this.props.sendNotification;
+                    console.log("heey wait "+this.state.user._id);
+                    
+                   dataf.forEach(function(item){
+                    const body = {
+                        senderProf:prof,
+                        content : "A ajouté un "+type+" de la matiere "+result[0].nom+"."
+                    }
+                   sendNotification(body,item.niveauFiliere._id);  
+
+                  
+                  });
+                  this.setState({
+                    success:'Le document a été enregistré avec succée',
+                    msg:null,
+                    nom:null,
+                    type:null,
+                    file:null,
+            
+                });
+                }))
+
+               
         
-            });
+
         }
         if(user!==prevProps.user && Object.keys(user).length !==0){
             axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)  
@@ -89,6 +117,7 @@ class AddDocument extends Component {
         formData.append("matiere",matiere);
         formData.append("file",file);
         this.props.addDocument(formData);
+
     }
     render() {
         
@@ -142,7 +171,7 @@ class AddDocument extends Component {
                                  <Form onSubmit={this.onSubmit}>
                                      <FormGroup>
                                          <Input type="select"  style={btn_back} name="matiere" onChange={this.onChange}>
-                                             <option>---Choisissez le niveau---</option>
+                                             <option>---Choisissez la matiere---</option>
                                              {this.state.listMatiere.map((data)=>(
                                                  <option value={data._id}>{data.nom}</option>
                                              ))}
@@ -185,4 +214,4 @@ const mapStateToProps=(state)=>({
     user:state.profAuth.user
 });
 
-export default connect(mapStateToProps,{addDocument})(AddDocument);
+export default connect(mapStateToProps,{addDocument,sendNotification})(AddDocument);

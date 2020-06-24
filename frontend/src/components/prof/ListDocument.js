@@ -210,13 +210,20 @@ class ListDocuments extends Component {
         const styling={
             background: 'linear-gradient(to top, #97aba4, #003973)',
             color:"#FFFFFF",
-            height:'100vh',
-            display:'flex'
+             display:'flex',
+             height:"100vh"
             
         }
 
+        const height = {
+            overflowY:'',
+            height:"60vh",
+            width:"100vh"
+        }
+
         const table={
-            background : '#FFFFFF'
+            background : '#FFFFFF',
+        
         }
         
         const spinner={ position: 'absolute',
@@ -228,7 +235,7 @@ class ListDocuments extends Component {
 
 
         return (
-            <div>
+            <div >
                 <AppNavbar />
                 <div style={styling}>
                 <Container className="mt-5">
@@ -255,8 +262,14 @@ class ListDocuments extends Component {
                              </Col>
                             <Col xs={1}></Col>
                              <Col xs={7}>
-                                                                             
-
+                                            
+                            {!this.state.documents? (
+                                    height.overflowY='scroll'
+                            ): 
+                            null
+                            }
+                                                                         
+                              <div style={height}>
                              <Table bordered id="table" style={table}>
                                  <thead>
                                      <tr>
@@ -298,6 +311,7 @@ class ListDocuments extends Component {
                                  </tbody>
                                 
                              </Table>
+                             </div>
                             
     
                              </Col>

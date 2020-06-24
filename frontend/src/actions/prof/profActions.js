@@ -20,7 +20,9 @@ import {
     LIST_DOCUMENT_FAIL,
     MODIFIER_DOCUMENT,
     MODIFIER_DOCUMENT_FAIL,
-    DELETE_DOCUMENT
+    DELETE_DOCUMENT,
+    SEND_NOTIFICATION,
+    SEND_NOTIFICATION_FAIL
   } from './types';
 
 import {returnErrors} from '../errorActions';
@@ -228,6 +230,8 @@ export const ListDocument=(id)=>dispatch=>{
   });
 }
 
+
+
 export const ModifierDocument=(formData)=>dispatch=>{
   axios.put('http://localhost:5000/prof/ModifierDocument',formData)
   .then(user=>{
@@ -251,5 +255,26 @@ export const deleteDocument=(id)=>dispatch=>{
       type:DELETE_DOCUMENT,
       payload:id
     });
+  });
+}
+
+export const sendNotification=(notif,id)=>dispatch=>{
+  const config={
+    headers:{
+        'Content-type':'application/json'
+    }
+  }
+  const body=JSON.stringify(notif);
+  axios.post(`http://localhost:5000/prof/sendNotification/${id}`,body,config)
+  .then(user=>{
+    dispatch({
+      type:SEND_NOTIFICATION,
+      payload:user.data
+    });
+  }).catch(err=>{
+    dispatch(returnErrors(err.response.data,err.response.status,'SEND_NOTIFICATION_FAIL'));
+    dispatch({
+        type:SEND_NOTIFICATION_FAIL
+    })
   });
 }
