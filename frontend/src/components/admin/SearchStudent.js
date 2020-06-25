@@ -6,6 +6,7 @@ import AppNavbar from './AppNavbar';
 import {connect} from 'react-redux';
 import {getStudent} from '../../actions/admin/adminEtudiantActions';
 import {clearSuccess} from '../../actions/admin/authActions';
+import ExampleComponent from "react-rounded-image";
 
 class SearchStudent extends Component {
     state={
@@ -95,11 +96,34 @@ class SearchStudent extends Component {
                         <Col xs={6}>
                             {this.state.userExist ? (
                                 <Card className="mb-5">
-                                    <CardImg src={icon} style={{height:"60px",width:"100%"}}></CardImg>
+                                  <div className="d-flex justify-content-center">
+                                 <ExampleComponent 
+                            roundedColor="#66A5CC"
+                            imageWidth="140"
+                            imageHeight="140"
+                            roundedSize="8"
+                            image={require(`../../../../public/photoProfile/etudiant/${this.state.user.image}`)}
+                      />
+                     
+                           
+                        </div>
                                     <CardBody >
-                                        <CardTitle className="text-center"><strong>{this.state.user.nom}</strong></CardTitle><br /><br />
                                         <CardText className="text-center">
-                                            {this.state.user.email}
+                                         <strong>Nom : </strong>{this.state.user.nom} <br></br>
+                                          <strong >Prenom: </strong> {this.state.user.prenom}<br></br>
+                                         <strong> Email :</strong>      {this.state.user.email} <br/>
+                                         <strong>CIN :</strong>    {this.state.user.cin} <br/>
+                                         <strong> Adresse : </strong>   {this.state.user.adresse ? (
+                                           this.state.user.adresse
+                                              ): 
+                                              "( Non Disponible)"
+                                              } <br></br>
+                                              <strong> Telephone :  </strong>
+                                              {this.state.user.telephone ? (
+                                                  this.state.user.telephone
+                                                      ): 
+                                                        "( Non Disponible)"
+                                                 }
                                         </CardText>
                                     </CardBody>  
                                 </Card>

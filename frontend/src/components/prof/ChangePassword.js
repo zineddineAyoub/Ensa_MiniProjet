@@ -105,9 +105,17 @@ class ChangePassword extends Component {
     }
 
     render() {
+        const styling={
+            background: 'linear-gradient(to top, #97aba4, #003973)',
+            height:'100vh',
+            display:'flex',
+            color:'#FFFFFF'
+            
+        }
         return (
             <div>
                 <AppNavbar />
+                <div style={styling}>
                  <Container className="col-sm-12 col-md-6 offset-md-3">
                     <br/>
                     {this.state.msg ? <Alert color="danger"> {this.state.msg} </Alert>:null}
@@ -152,6 +160,7 @@ class ChangePassword extends Component {
                     </Form>
 
                  </Container>
+                 </div>
             </div>
         )
     }

@@ -263,7 +263,7 @@ class ListDocuments extends Component {
                             <Col xs={1}></Col>
                              <Col xs={7}>
                                             
-                            {!this.state.documents? (
+                            {this.state.documents ? (
                                     height.overflowY='scroll'
                             ): 
                             null
