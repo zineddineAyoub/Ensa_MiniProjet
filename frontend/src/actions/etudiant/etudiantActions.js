@@ -4,6 +4,8 @@ import {
     ETUDIANT_EDIT_PROFILE_FAIL,
     ETUDIANT_EDIT_PROFILE_PICTURE,
     ETUDIANT_EDIT_PROFILE_PICTURE_FAIL,
+    ETUDIANT_EDIT_PASS,
+    ETUDIANT_EDIT_PASS_FAIL,
    
     LIST_NOTE,
     LIST_NOTE_FAIL,
@@ -98,7 +100,27 @@ export const ListDocument=(id)=>dispatch=>{
   });
 }
 
-
+//dispache changePass
+export const EditPass=({password},id)=>dispatch=>{
+  const config={
+    headers:{
+        'Content-type':'application/json'
+    }
+  }
+  const body=JSON.stringify({password});
+    axios.put(`http://localhost:5000/etudiant/ModifierPass/${id}`,body,config)
+    .then(user=>{
+      dispatch({
+        type:ETUDIANT_EDIT_PASS,
+        payload:user.data
+      });
+    }).catch(err=>{
+      dispatch(returnErrors(err.response.data,err.response.status,'ETUDIANT_EDIT_PASS_FAIL'));
+      dispatch({
+          type:ETUDIANT_EDIT_PASS_FAIL
+      })
+    });
+}
 
 
 

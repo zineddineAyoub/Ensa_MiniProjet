@@ -3,6 +3,8 @@ import {
     ETUDIANT_EDIT_PROFILE_FAIL,
     ETUDIANT_EDIT_PROFILE_PICTURE,
     ETUDIANT_EDIT_PROFILE_PICTURE_FAIL, 
+    ETUDIANT_EDIT_PASS,
+    ETUDIANT_EDIT_PASS_FAIL,
     LIST_NOTE_FAIL,
     LIST_NOTE,
     LIST_DOCUMENT,
@@ -41,6 +43,16 @@ import {
             success:null
           }
           
+          case ETUDIANT_EDIT_PASS:
+            return {
+              ...state,
+              success:'ETUDIANT_EDIT_PASS'
+            }
+            case  ETUDIANT_EDIT_PASS_FAIL:
+              return{
+                ...state,
+                success:null
+              }
         
             case  LIST_NOTE:
               console.log("list note from reducer "+action.payload);

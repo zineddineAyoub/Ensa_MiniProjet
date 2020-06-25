@@ -49,6 +49,7 @@ import ListNoteE from './components/etudiant/ListNote';
 import ListDocumentE from './components/etudiant/ListDocument';
 import EtudiantProfile from './components/etudiant/AfficherProfile';
 import NotificationsEtudiant from './components/etudiant/Notifications';
+import ChangePasswordEtud from './components/etudiant/ChangePassword';
 import EmploieEtudiant from './components/etudiant/Emploie';
 import ListProf from './components/etudiant/ListProf';
 import ProfileProf from './components/etudiant/AfficherProfileProf';
@@ -118,6 +119,7 @@ class App extends React.Component{
             <Route path="/etudiant/emploie" component={etudiantProtected(EmploieEtudiant)} exact />
             <Route path="/etudiant/listProf" component={etudiantProtected(ListProf)} exact />
             <Route path="/etudiant/AfficherprofileProf/:id" component={etudiantProtected(ProfileProf)} exact />
+            <Route path="/etudiant/ChangePassword" component={etudiantProtected(ChangePasswordEtud)} exact />
 
             <Route component={PageNotFound} />
           </Switch>
