@@ -7,6 +7,13 @@ import {ListDocument,ModifierDocument,deleteDocument} from '../../actions/prof/p
 import {getComments,postComment} from '../../actions/commentActions';
 import {Link} from 'react-router-dom';
 import ExampleComponent from "react-rounded-image";
+
+const height = {
+    overflowY:'initial',
+    height:"60vh",
+    width:"100vh"
+}
+
 class ListDocuments extends Component {
     state={
         editedUser:{},
@@ -27,7 +34,8 @@ class ListDocuments extends Component {
         document:{},
         comments:[],
         comment:null,
-        test:'lol'
+        test:'lol',
+        scroll:'initial'
     }
    
     componentWillMount(){
@@ -36,6 +44,7 @@ class ListDocuments extends Component {
         {
             axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
             .then((res)=>{
+                console.log('pezono',height.overflowY);
                 this.setState({
                     listMatiere:res.data,
                     loaded:true
@@ -71,8 +80,17 @@ class ListDocuments extends Component {
 
 
         if(users!==prevProps.users  && Object.keys(users).length !==0 ){
-        
-            
+
+            if(users.length >= 4){
+                this.setState({
+                    scroll:'scroll'
+                })
+            }
+            else{
+                this.setState({
+                    scroll:'initial'
+                })
+            }
             this.setState({
                documents:users,
                
@@ -82,6 +100,7 @@ class ListDocuments extends Component {
         if(user!==prevProps.user && Object.keys(user).length !==0){
             axios.get(`http://localhost:5000/prof/afficherMatieres/${this.props.user._id}`)
             .then((res)=>{
+                console.log('pezono',height.overflowY);
                 this.setState({
                     listMatiere:res.data,
                     loaded:true
@@ -215,12 +234,6 @@ class ListDocuments extends Component {
             
         }
 
-        const height = {
-            overflowY:'',
-            height:"60vh",
-            width:"100vh"
-        }
-
         const table={
             background : '#FFFFFF',
         
@@ -263,13 +276,9 @@ class ListDocuments extends Component {
                             <Col xs={1}></Col>
                              <Col xs={7}>
                                             
-                            {this.state.documents ? (
-                                    height.overflowY='scroll'
-                            ): 
-                            null
-                            }
+                            
                                                                          
-                              <div style={height}>
+                              <div style={{height:"60vh",width:"100vh",overflowY:this.state.scroll}}>
                              <Table bordered id="table" style={table}>
                                  <thead>
                                      <tr>
