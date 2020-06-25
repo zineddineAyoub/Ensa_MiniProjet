@@ -144,7 +144,7 @@ router.route('/ajouterEtudiant').post((req,res)=>{
           //  from: 'zineddine.ayoub98@gmail.com',
             to: data.email,
             subject: "Site Officiel Ensa",
-            text: 'Login : '+data.email+'\n Password : '+password
+            text: 'CNE : '+data.cne+'\n CIN : '+data.cin+'\n Password : '+password
         };
 
        transporter.sendMail(mailOptions);
@@ -246,7 +246,7 @@ router.route('/ajouterProf').post((req,res)=>{
           //  from: 'zineddine.ayoub98@gmail.com',
             to: data.email,
             subject: "Site Officiel Ensa",
-            text: 'Login : '+data.email+'\n Password : '+password
+            text: 'Email : '+data.email+'\n CIN : '+data.cin+'\n Password : '+password
         };
 
        transporter.sendMail(mailOptions);
@@ -420,7 +420,7 @@ router.route('/addOneEtudiant').post((req,res)=>{
       //  from: 'zineddine.ayoub98@gmail.com',
         to: email,
         subject: "Site Officiel Ensa",
-        text: 'Login : '+email+'\n Password : '+password
+        text: 'CNE : '+cne+'\n CIN : '+cin+'\n Password : '+password
     };
 
    transporter.sendMail(mailOptions);
@@ -453,7 +453,7 @@ router.route('/addOneProf').post((req,res)=>{
       //  from: 'zineddine.ayoub98@gmail.com',
         to: email,
         subject: "Site Officiel Ensa",
-        text: 'Login : '+email+'\n Password : '+password
+        text: 'Email : '+email+'\n CIN : '+cin+'\n Password : '+password
     };
 
     transporter.sendMail(mailOptions); 

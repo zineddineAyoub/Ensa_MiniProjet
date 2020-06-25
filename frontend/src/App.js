@@ -78,6 +78,7 @@ class App extends React.Component{
         
           <Route path="/" component={Home} exact />
 
+          <Route path="/prof" component={profProtected(HomeProf)} exact />
           <Route path="/prof/login" component={LoginProf} exact />
           <Route path="/prof/home" component={profProtected(HomeProf)} exact />
           <Route path="/prof/AddDocument" component={profProtected(AddDocument)} exact />
@@ -92,6 +93,7 @@ class App extends React.Component{
           <Route path="/prof/listEtudiant" component={profProtected(ListEtudiant)} exact />
           <Route path="/prof/AfficherProfileEtudiant/:id" component={profProtected(ProfileEtudiant)} exact />
            
+            <Route path="/admin" component={adminProtected(HomeAdmin)} exact />
             <Route path="/admin/login" component={LoginAdmin} exact />
             <Route path="/admin/home" component={adminProtected(HomeAdmin)} exact />
             <Route path="/admin/addStudent" component={adminProtected(AddStudent)} exact />
@@ -109,6 +111,7 @@ class App extends React.Component{
             <Route path="/admin/statistiques" component={adminProtected(Statistique)} exact />
             <Route path="/admin/feedbacks" component={adminProtected(FeedBacks)} exact />
 
+            <Route path="/etudiant" component={etudiantProtected(HomeEtudiant)} exact />
             <Route path="/etudiant/login" component={LoginEtudiant} exact />
             <Route path="/etudiant/home" component={etudiantProtected(HomeEtudiant)} exact />
             <Route path="/etudiant/forgottenPassword" component={ForgottenPasswordEtudiant} exact />
