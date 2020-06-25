@@ -353,6 +353,22 @@ Prof.findOne({_id:id})
   });
 });
 
+//Modifier pass
+router.route('/ModifierPass/:id').put((req,res)=>{
+  const {password}=req.body;
+  Etudiant.findOne({_id:req.params.id})
+  .then(user=>{
+      user.password = password,
+      
+      user.save();
+
+      res.json({msg:'success'});
+
+  }).catch(err=>{
+      res.status(400).json({msg:err});
+  });
+});
+
 
 module.exports=router;
 
